@@ -1,0 +1,7 @@
+.claude/settings.local.json
+__pycache__/
+*.pyc
+.venv/
+
+# generated EDA intermediate (rebuild with docs/eda-scripts/load.py)
+docs/eda-scripts/eye.parquet

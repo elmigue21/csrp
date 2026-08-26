@@ -1,0 +1,22 @@
+{
+  "epoch_seconds": 30,
+  "absolute_threshold": 4,
+  "n_epochs_total": 1087,
+  "n_features": 37,
+  "n_participants": 26,
+  "label_checks": {
+    "absolute": {
+      "spearman_rho": 0.5336183812895645,
+      "p_value": 6.274639962582006e-11,
+      "n_epochs_kept": 1087,
+      "n_epochs_dropped": 0
+    },
+    "within_person": {
+      "spearman_rho": 0.7350769532998077,
+      "p_value": 3.317846367009978e-17,
+      "n_epochs_kept": 768,
+      "n_epochs_dropped": 319
+    }
+  },
+  "runtime_seconds": 114.3
+}

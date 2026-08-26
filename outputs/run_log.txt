@@ -1,0 +1,41 @@
+﻿Loading windows and building epochs...
+  135,499 windows -> 1,087 epochs of 30s  (37 features, 26 participants)
+  recordings with timing gaps: 0 / 130
+  ratings per recording (should be 1): [np.int64(1)]
+  participants with rating range < 3: [12]
+  [absolute] label vs task difficulty rho=0.534 (p=6.3e-11), epochs kept 1087
+  [within_person] label vs task difficulty rho=0.735 (p=3.3e-17), epochs kept 768
+
+=== Config A: as-is label (rating >= 4) + raw features  [HEADLINE]
+    1087 epochs, 37 features, positive rate 0.530, majority-baseline accuracy 0.530
+    Logistic Regression  pooled AUC=0.480 acc=0.489 F1=0.540 | per-participant AUC 0.537+/-0.148 (n=23)  [8s]
+    XGBoost              pooled AUC=0.537 acc=0.521 F1=0.560 | per-participant AUC 0.585+/-0.154 (n=23)  [73s]
+    XGBoost - LR: dAUC=+0.047 (Wilcoxon p=0.0698, n=23)
+
+=== Config B: as-is label + raw features, lighting features removed
+    1087 epochs, 35 features, positive rate 0.530, majority-baseline accuracy 0.530
+    Logistic Regression  pooled AUC=0.448 acc=0.469 F1=0.537 | per-participant AUC 0.517+/-0.122 (n=23)  [4s]
+    XGBoost              pooled AUC=0.513 acc=0.514 F1=0.561 | per-participant AUC 0.545+/-0.124 (n=23)  [65s]
+    XGBoost - LR: dAUC=+0.028 (Wilcoxon p=0.687, n=23)
+
+=== Config C: as-is label + per-participant standardised features
+    1087 epochs, 37 features, positive rate 0.530, majority-baseline accuracy 0.530
+    Logistic Regression  pooled AUC=0.516 acc=0.517 F1=0.578 | per-participant AUC 0.564+/-0.143 (n=23)  [3s]
+    XGBoost              pooled AUC=0.542 acc=0.549 F1=0.583 | per-participant AUC 0.619+/-0.109 (n=23)  [77s]
+    XGBoost - LR: dAUC=+0.055 (Wilcoxon p=0.0424, n=23)
+
+=== Config D: per-participant label + raw features
+    768 epochs, 37 features, positive rate 0.533, majority-baseline accuracy 0.533
+    Logistic Regression  pooled AUC=0.560 acc=0.517 F1=0.570 | per-participant AUC 0.598+/-0.207 (n=24)  [2s]
+    XGBoost              pooled AUC=0.630 acc=0.594 F1=0.620 | per-participant AUC 0.645+/-0.158 (n=24)  [67s]
+    XGBoost - LR: dAUC=+0.047 (Wilcoxon p=0.152, n=24)
+
+=== Config E: per-participant label + per-participant standardised features
+    768 epochs, 37 features, positive rate 0.533, majority-baseline accuracy 0.533
+    Logistic Regression  pooled AUC=0.611 acc=0.574 F1=0.625 | per-participant AUC 0.634+/-0.172 (n=24)  [2s]
+    XGBoost              pooled AUC=0.673 acc=0.621 F1=0.651 | per-participant AUC 0.683+/-0.139 (n=24)  [80s]
+    XGBoost - LR: dAUC=+0.048 (Wilcoxon p=0.218, n=24)
+
+=== Config F: per-participant label + per-participant features, lighting removed
+    768 epochs, 35 features, positive rate 0.533, majority-baseline accuracy 0.533
+    Logistic Regression  pooled AUC=0.576 acc=0.565 F1=0.636 | per-participant AUC 0.597+/-0.147 (n=24)  [2s]

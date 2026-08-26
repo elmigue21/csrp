@@ -1,0 +1,63 @@
+﻿Loading windows and building epochs...
+  135,499 windows -> 1,087 epochs of 30s  (37 features, 26 participants)
+  recordings with timing gaps: 0 / 130
+  ratings per recording (should be 1): [np.int64(1)]
+  participants with rating range < 3: [12]
+  [absolute] label vs task difficulty rho=0.534 (p=6.3e-11), epochs kept 1087
+  [within_person] label vs task difficulty rho=0.735 (p=3.3e-17), epochs kept 768
+
+=== Config A: as-is label (rating >= 4) + raw features  [HEADLINE]
+    1087 epochs, 37 features, positive rate 0.530, majority-baseline accuracy 0.530
+    Logistic Regression  pooled AUC=0.480 acc=0.489 F1=0.540 | per-participant AUC 0.537+/-0.148 (n=23)  [reused]
+    XGBoost              pooled AUC=0.537 acc=0.521 F1=0.560 | per-participant AUC 0.585+/-0.154 (n=23)  [reused]
+    XGBoost - LR: dAUC=+0.047 (Wilcoxon p=0.0698, n=23)
+
+=== Config B: as-is label + raw features, lighting features removed
+    1087 epochs, 35 features, positive rate 0.530, majority-baseline accuracy 0.530
+    Logistic Regression  pooled AUC=0.448 acc=0.469 F1=0.537 | per-participant AUC 0.517+/-0.122 (n=23)  [reused]
+    XGBoost              pooled AUC=0.513 acc=0.514 F1=0.561 | per-participant AUC 0.545+/-0.124 (n=23)  [reused]
+    XGBoost - LR: dAUC=+0.028 (Wilcoxon p=0.615, n=23)
+
+=== Config C: as-is label + per-participant standardised features
+    1087 epochs, 37 features, positive rate 0.530, majority-baseline accuracy 0.530
+    Logistic Regression  pooled AUC=0.516 acc=0.517 F1=0.578 | per-participant AUC 0.564+/-0.143 (n=23)  [reused]
+    XGBoost              pooled AUC=0.542 acc=0.549 F1=0.583 | per-participant AUC 0.619+/-0.109 (n=23)  [reused]
+    XGBoost - LR: dAUC=+0.055 (Wilcoxon p=0.0424, n=23)
+
+=== Config D: per-participant label + raw features
+    768 epochs, 37 features, positive rate 0.533, majority-baseline accuracy 0.533
+    Logistic Regression  pooled AUC=0.560 acc=0.517 F1=0.570 | per-participant AUC 0.598+/-0.207 (n=24)  [reused]
+    XGBoost              pooled AUC=0.630 acc=0.594 F1=0.620 | per-participant AUC 0.645+/-0.158 (n=24)  [reused]
+    XGBoost - LR: dAUC=+0.047 (Wilcoxon p=0.152, n=24)
+
+=== Config E: per-participant label + per-participant standardised features
+    768 epochs, 37 features, positive rate 0.533, majority-baseline accuracy 0.533
+    Logistic Regression  pooled AUC=0.611 acc=0.574 F1=0.625 | per-participant AUC 0.634+/-0.172 (n=24)  [reused]
+    XGBoost              pooled AUC=0.673 acc=0.621 F1=0.651 | per-participant AUC 0.683+/-0.139 (n=24)  [reused]
+    XGBoost - LR: dAUC=+0.048 (Wilcoxon p=0.218, n=24)
+
+=== Config F: per-participant label + per-participant features, lighting removed
+    768 epochs, 35 features, positive rate 0.533, majority-baseline accuracy 0.533
+    Logistic Regression  pooled AUC=0.576 acc=0.565 F1=0.636 | per-participant AUC 0.597+/-0.147 (n=24)  [reused]
+    XGBoost              pooled AUC=0.610 acc=0.570 F1=0.607 | per-participant AUC 0.613+/-0.107 (n=24)  [111s]
+    XGBoost - LR: dAUC=+0.016 (Wilcoxon p=0.768, n=24)
+
+====================================================================================================
+POOLED RESULTS (leave-one-participant-out)
+====================================================================================================
+config               model  n_epochs  positive_rate  majority_accuracy  pooled_accuracy  pooled_precision  pooled_recall  pooled_f1  pooled_roc_auc
+     A Logistic Regression      1087          0.530              0.530           0.4885            0.5158         0.5677     0.5405          0.4803
+     A             XGBoost      1087          0.530              0.530           0.5207            0.5452         0.5764     0.5603          0.5375
+     B Logistic Regression      1087          0.530              0.530           0.4692            0.4993         0.5816     0.5373          0.4475
+     B             XGBoost      1087          0.530              0.530           0.5143            0.5383         0.5851     0.5607          0.5131
+     C Logistic Regression      1087          0.530              0.530           0.5170            0.5382         0.6233     0.5776          0.5160
+     C             XGBoost      1087          0.530              0.530           0.5492            0.5719         0.5938     0.5826          0.5421
+     D Logistic Regression       768          0.533              0.533           0.5169            0.5419         0.6015     0.5701          0.5600
+     D             XGBoost       768          0.533              0.533           0.5938            0.6180         0.6210     0.6195          0.6299
+     E Logistic Regression       768          0.533              0.533           0.5742            0.5884         0.6675     0.6254          0.6105
+     E             XGBoost       768          0.533              0.533           0.6211            0.6392         0.6626     0.6507          0.6733
+     F Logistic Regression       768          0.533              0.533           0.5651            0.5737         0.7139     0.6362          0.5761
+     F             XGBoost       768          0.533              0.533           0.5703            0.5916         0.6235     0.6071          0.6098
+
+Tables written to C:\dev\csrp\outputs\tables
+Total runtime 114.3s
