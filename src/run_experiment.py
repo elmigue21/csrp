@@ -1,9 +1,9 @@
 """Run the full comparison and write every table Chapter 4 needs.
 
-Six configurations are evaluated, crossing the two labellings with the two feature
-schemes, plus a no-lighting ablation for each labelling. Configuration A is the
-headline: the label as it comes off the questionnaire (rating >= 4) and the features
-as they come out of the dataset.
+Eight configurations are evaluated, crossing two labellings, two feature schemes
+and lighting-feature inclusion/exclusion. Configuration A is the simplest
+reference point: the label as it comes off the questionnaire (rating >= 4) and
+the features as they come out of the dataset.
 """
 from __future__ import annotations
 
@@ -49,8 +49,12 @@ CONFIGS = [
            "as-is label + raw features, lighting features removed"),
     Config("C", "absolute", "within_person", True,
            "as-is label + per-participant standardised features"),
+    Config("C_no_lux", "absolute", "within_person", False,
+           "as-is label + per-participant standardised features, lighting removed"),
     Config("D", "within_person", "raw", True,
            "per-participant label + raw features"),
+    Config("D_no_lux", "within_person", "raw", False,
+           "per-participant label + raw features, lighting removed"),
     Config("E", "within_person", "within_person", True,
            "per-participant label + per-participant standardised features"),
     Config("F", "within_person", "within_person", False,

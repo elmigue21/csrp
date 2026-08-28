@@ -118,11 +118,16 @@ def fig_config_comparison(main: pd.DataFrame) -> None:
         "A": "A  as-is label\n     raw features",
         "B": "B  as-is label\n     no illuminance",
         "C": "C  as-is label\n     per-person features",
+        "C_no_lux": "C no lux  as-is label\n     per-person features",
         "D": "D  per-person label\n     raw features",
+        "D_no_lux": "D no lux  per-person label\n     raw features",
         "E": "E  per-person label\n     per-person features",
         "F": "F  per-person label\n     no illuminance",
     }
-    configs = [c for c in ["A", "B", "C", "D", "E", "F"] if c in set(main["config"])]
+    configs = [
+        c for c in ["A", "B", "C", "C_no_lux", "D", "D_no_lux", "E", "F"]
+        if c in set(main["config"])
+    ]
     fig, ax = plt.subplots(figsize=(7.4, 0.92 * len(configs) + 1.5))
 
     offset = 0.20

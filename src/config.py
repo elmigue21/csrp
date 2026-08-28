@@ -2,9 +2,14 @@
 from pathlib import Path
 
 # --------------------------------------------------------------------------- paths
+# GAZELOAD_ROOT = Path(
+#     r"C:\Users\John\Downloads\GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
+#     r"\GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
+# )
+
+
 GAZELOAD_ROOT = Path(
-    r"C:\Users\John\Downloads\GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
-    r"\GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
+    "/home/miguel/Downloads/GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
 )
 METRICS_DIR = GAZELOAD_ROOT / "04_eye-metrics"
 RATINGS_XLSX = GAZELOAD_ROOT / "01_Metadata" / "Tasks_Rating.xlsx"

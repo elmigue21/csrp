@@ -19,9 +19,13 @@ warnings.filterwarnings("ignore")
 
 ROOT = os.environ.get(
     "GAZELOAD_ROOT",
-    r"C:\Users\John\Downloads\GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
-    r"\GAZELOAD A Multimodal Eye-Tracking Dataset for Men",
+    "/home/miguel/Downloads/GAZELOAD A Multimodal Eye-Tracking Dataset for Men",
 )
+# ROOT = os.environ.get(
+#     "GAZELOAD_ROOT",
+#     r"C:\Users\John\Downloads\GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
+#     r"\GAZELOAD A Multimodal Eye-Tracking Dataset for Men",
+# )
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "eye.parquet")
 
 files = sorted(glob.glob(os.path.join(ROOT, "04_eye-metrics", "*_Metrics_withLux.csv")))

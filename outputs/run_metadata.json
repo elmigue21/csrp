@@ -7,16 +7,16 @@
   "label_checks": {
     "absolute": {
       "spearman_rho": 0.5336183812895645,
-      "p_value": 6.274639962582006e-11,
+      "p_value": 6.274639962581966e-11,
       "n_epochs_kept": 1087,
       "n_epochs_dropped": 0
     },
     "within_person": {
       "spearman_rho": 0.7350769532998077,
-      "p_value": 3.317846367009978e-17,
+      "p_value": 3.317846367009981e-17,
       "n_epochs_kept": 768,
       "n_epochs_dropped": 319
     }
   },
-  "runtime_seconds": 114.3
+  "runtime_seconds": 7002.2
 }

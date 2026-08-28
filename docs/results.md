@@ -28,29 +28,34 @@ more closely than the absolute threshold does:
 ## 2. Main results
 
 Pooled over all 26 held-out folds. Majority-class baseline accuracy is 0.530
-(configs A–C) and 0.533 (configs D–F); chance ROC-AUC is 0.500.
+(absolute-label configs) and 0.533 (within-participant-label configs); chance
+ROC-AUC is 0.500.
 
 | Config | Label | Features | Model | Accuracy | Precision | Recall | F1 | **ROC-AUC** |
 |---|---|---|---|---|---|---|---|---|
-| **A** | ≥ 4 | raw | Logistic Regression | 0.489 | 0.516 | 0.568 | 0.541 | **0.480** |
-| **A** | ≥ 4 | raw | XGBoost | 0.521 | 0.545 | 0.576 | 0.560 | **0.537** |
-| B | ≥ 4 | raw, no illuminance | Logistic Regression | 0.469 | 0.499 | 0.582 | 0.537 | 0.448 |
-| B | ≥ 4 | raw, no illuminance | XGBoost | 0.514 | 0.538 | 0.585 | 0.561 | 0.513 |
-| C | ≥ 4 | per-participant | Logistic Regression | 0.517 | 0.538 | 0.623 | 0.578 | 0.516 |
-| C | ≥ 4 | per-participant | XGBoost | 0.549 | 0.572 | 0.594 | 0.583 | 0.542 |
-| D | within-P | raw | Logistic Regression | 0.517 | 0.542 | 0.602 | 0.570 | 0.560 |
-| D | within-P | raw | XGBoost | 0.594 | 0.618 | 0.621 | 0.620 | 0.630 |
-| **E** | within-P | per-participant | Logistic Regression | 0.574 | 0.588 | 0.668 | 0.625 | **0.611** |
-| **E** | within-P | per-participant | XGBoost | 0.621 | 0.639 | 0.663 | 0.651 | **0.673** |
-| **F** | within-P | per-P, no illuminance | Logistic Regression | 0.565 | 0.574 | 0.714 | 0.636 | **0.576** |
-| **F** | within-P | per-P, no illuminance | XGBoost | 0.570 | 0.592 | 0.624 | 0.607 | **0.610** |
+| **A** | ≥ 4 | raw | Logistic Regression | 0.488 | 0.515 | 0.561 | 0.537 | **0.479** |
+| **A** | ≥ 4 | raw | XGBoost | 0.526 | 0.550 | 0.580 | 0.565 | **0.530** |
+| B | ≥ 4 | raw, no illuminance | Logistic Regression | 0.467 | 0.498 | 0.580 | 0.536 | 0.446 |
+| B | ≥ 4 | raw, no illuminance | XGBoost | 0.510 | 0.535 | 0.564 | 0.549 | 0.501 |
+| C | ≥ 4 | per-participant | Logistic Regression | 0.519 | 0.539 | 0.635 | 0.583 | 0.514 |
+| C | ≥ 4 | per-participant | XGBoost | 0.534 | 0.558 | 0.585 | 0.571 | 0.550 |
+| C_no_lux | ≥ 4 | per-P, no illuminance | Logistic Regression | 0.506 | 0.527 | 0.667 | 0.589 | 0.499 |
+| C_no_lux | ≥ 4 | per-P, no illuminance | XGBoost | 0.522 | 0.544 | 0.613 | 0.576 | 0.528 |
+| D | within-P | raw | Logistic Regression | 0.535 | 0.559 | 0.602 | 0.580 | 0.565 |
+| D | within-P | raw | XGBoost | 0.579 | 0.604 | 0.611 | 0.608 | 0.628 |
+| D_no_lux | within-P | raw, no illuminance | Logistic Regression | 0.506 | 0.532 | 0.616 | 0.571 | 0.488 |
+| D_no_lux | within-P | raw, no illuminance | XGBoost | 0.527 | 0.550 | 0.614 | 0.580 | 0.521 |
+| **E** | within-P | per-participant | Logistic Regression | 0.570 | 0.586 | 0.660 | 0.621 | **0.621** |
+| **E** | within-P | per-participant | XGBoost | 0.629 | 0.644 | 0.677 | 0.660 | **0.682** |
+| **F** | within-P | per-P, no illuminance | Logistic Regression | 0.569 | 0.577 | 0.716 | 0.639 | **0.575** |
+| **F** | within-P | per-P, no illuminance | XGBoost | 0.565 | 0.586 | 0.626 | 0.605 | **0.603** |
 
 ### 2.1 Finding 1 — under the absolute threshold, neither model detects cognitive load
 
-In configuration A, Logistic Regression reaches ROC-AUC 0.480, i.e. **below chance**,
-and XGBoost 0.537. Neither model's accuracy (0.489, 0.521) exceeds the majority-class
+In configuration A, Logistic Regression reaches ROC-AUC 0.479, i.e. **below chance**,
+and XGBoost 0.530. Neither model's accuracy (0.488, 0.526) exceeds the majority-class
 baseline of 0.530. XGBoost's advantage over Logistic Regression is not statistically
-significant (Wilcoxon p = 0.070).
+significant (Wilcoxon p = 0.223).
 
 Logistic Regression scoring *below* chance across held-out participants is
 diagnostic rather than random: the linear relationship it fits on the training
@@ -68,14 +73,14 @@ to dominate a target that is partly participant identity.
 
 | Change made | Δ ROC-AUC (Logistic Regression) | Δ ROC-AUC (XGBoost) |
 |---|---|---|
-| Absolute → within-participant label (A → D) | **+0.080** | **+0.093** |
-| Raw → per-participant features (A → C) | +0.036 | +0.005 |
-| Both (A → E) | **+0.131** | **+0.136** |
-| Logistic Regression → XGBoost (within any config) | +0.016 to +0.055 | — |
+| Absolute → within-participant label (A → D) | **+0.087** | **+0.098** |
+| Raw → per-participant features (A → C) | +0.035 | +0.020 |
+| Both (A → E) | **+0.142** | **+0.152** |
+| Logistic Regression → XGBoost (within any config) | +0.028 to +0.062 pooled ROC-AUC | — |
 
 Re-cutting the label at each participant's own median moves performance further than
 switching model families does. Applying both corrections lifts Logistic Regression from
-below chance (0.480) to 0.611 and XGBoost from 0.537 to 0.673.
+below chance (0.479) to 0.621 and XGBoost from 0.530 to 0.682.
 
 ### 2.3 Finding 3 — XGBoost is consistently ahead, but rarely significantly so
 
@@ -83,24 +88,28 @@ Paired Wilcoxon signed-rank tests over the per-participant scores:
 
 | Config | Δ ROC-AUC (XGB − LR) | p | Δ Accuracy | p |
 |---|---|---|---|---|
-| A | +0.047 | 0.070 | +0.035 | 0.149 |
-| B | +0.028 | 0.615 | +0.049 | 0.121 |
-| C | +0.055 | **0.042** | +0.032 | 0.420 |
-| D | +0.047 | 0.152 | +0.074 | **0.017** |
-| E | +0.048 | 0.218 | +0.043 | 0.178 |
-| F | +0.016 | 0.768 | −0.001 | 0.833 |
+| A | +0.042 | 0.223 | +0.041 | 0.163 |
+| B | +0.035 | 0.360 | +0.047 | 0.062 |
+| C | +0.051 | 0.075 | +0.015 | 0.715 |
+| C_no_lux | −0.005 | 0.777 | +0.016 | 0.603 |
+| D | +0.032 | 0.465 | +0.043 | 0.196 |
+| D_no_lux | +0.002 | 0.808 | +0.021 | 0.381 |
+| E | +0.044 | 0.181 | +0.059 | **0.031** |
+| F | +0.008 | 0.877 | −0.010 | 0.753 |
 
-XGBoost has the higher ROC-AUC in **all six** configurations, but the difference
-reaches p < .05 in only one (C), and its accuracy advantage in only one other (D).
-With 26 participants the test has limited power, so the defensible claim is that
-**XGBoost is consistently but not significantly better**, not that it is superior.
-Reporting the pooled difference alone (0.673 vs 0.611) would overstate the evidence.
+XGBoost has the higher pooled ROC-AUC in all eight configurations, but no
+participant-level ROC-AUC difference reaches p < .05. Its accuracy advantage
+reaches p < .05 only in configuration E. With 26 participants the test has
+limited power, so the defensible claim is that **XGBoost is consistently higher
+in pooled ROC-AUC but not significantly better by participant-level ROC-AUC**.
+Reporting the pooled difference alone (0.682 vs 0.621) would overstate the
+evidence.
 
 ### 2.4 Finding 4 — illuminance is the strongest single predictor in both models
 
 Out-of-fold SHAP, configuration E: `illuminance (SD)` ranks **1st** (mean |SHAP|
-0.613) and `illuminance (mean)` **2nd** (0.309). The strongest oculomotor feature,
-`std gaze y (mean)`, is third at 0.256. Together the two illuminance features account
+0.609) and `illuminance (mean)` **2nd** (0.294). The strongest oculomotor feature,
+`std gaze y (mean)`, is third at 0.231. Together the two illuminance features account
 for **20.4 %** of total attribution in config E and 16.4 % in config A. Logistic
 Regression agrees: `illuminance (SD)` is its largest coefficient at +0.46, more than
 double the next.
@@ -110,14 +119,14 @@ covaries with task in this dataset. Removing it costs:
 
 | | with illuminance (E) | without (F) | Δ |
 |---|---|---|---|
-| Logistic Regression | 0.611 | 0.576 | −0.035 |
-| XGBoost | 0.673 | 0.610 | −0.063 |
+| Logistic Regression | 0.621 | 0.575 | −0.047 |
+| XGBoost | 0.682 | 0.603 | −0.080 |
 
 **Configuration F is therefore the honest eye-tracking-only result**: Logistic
-Regression 0.576, XGBoost 0.610. Configuration E should not be reported as a
+Regression 0.575, XGBoost 0.603. Configuration E should not be reported as a
 gaze-based result without stating that a fifth of its attribution comes from a light
 sensor. Note also that in F the two models are statistically indistinguishable
-(Δ AUC +0.016, p = 0.768).
+(Δ AUC +0.008, p = 0.877).
 
 ### 2.5 Finding 5 — performance varies enormously between individuals
 
@@ -126,11 +135,11 @@ class in their held-out data):
 
 | | mean | SD | range |
 |---|---|---|---|
-| Logistic Regression | 0.634 | 0.172 | 0.30 (P21) – 0.86 (P12) |
-| XGBoost | 0.683 | 0.139 | 0.37 (P20) – 0.91 (P15) |
+| Logistic Regression | 0.634 | 0.174 | 0.30 (P21) – 0.88 (P15) |
+| XGBoost | 0.679 | 0.140 | 0.39 (P20) – 0.88 (P15) |
 
-XGBoost is below chance for 3 participants and above 0.80 for 6. A pooled figure of
-0.673 conceals the fact that for several individuals the model is no better than
+XGBoost is below chance for 4 participants and above 0.80 for 5. A pooled figure of
+0.682 conceals the fact that for several individuals the model is no better than
 guessing. Logistic Regression also outperforms XGBoost for 8 of the 24 participants,
 which is consistent with the non-significant paired tests in §2.3.
 
@@ -139,7 +148,7 @@ which is consistent with the non-significant paired tests in §2.3.
 Task index alone predicts the label at ROC-AUC 0.933 (within-participant labelling).
 Since task identity is fixed by the protocol and is excluded from the feature matrix,
 this quantifies the upper bound available to any model of this target. Gaze plus
-illuminance recovers 0.673 of it; gaze alone recovers 0.610.
+illuminance recovers 0.682 of it; gaze alone recovers 0.603.
 
 ## 3. What can and cannot be claimed
 
@@ -150,9 +159,9 @@ illuminance recovers 0.673 of it; gaze alone recovers 0.610.
    Regression performs below chance.
 2. Re-expressing the label and features relative to each participant lifts both models
    substantially above chance, and does so more than the choice of model does.
-3. XGBoost outperforms Logistic Regression in every configuration tested, by
-   0.016–0.055 ROC-AUC, a difference that is not statistically significant in five of
-   six configurations.
+3. XGBoost has higher pooled ROC-AUC than Logistic Regression in every
+   configuration tested, by 0.028-0.062 pooled ROC-AUC, but the paired
+   participant-level ROC-AUC differences are not statistically significant.
 4. Ambient illuminance, not any oculomotor measure, is the strongest single predictor
    in both models.
 5. Model performance varies from below chance to 0.91 across individuals.
@@ -160,7 +169,7 @@ illuminance recovers 0.673 of it; gaze alone recovers 0.610.
 **Not supported**
 
 1. That XGBoost is significantly better than Logistic Regression for this task.
-2. That eye-tracking features alone achieve the 0.673 of configuration E.
+2. That eye-tracking features alone achieve the 0.682 of configuration E.
 3. Any claim about pupil dilation — the released dataset contains no pupil data.
 4. Any claim about cross-dataset or cross-task generalisation, neither of which was
    evaluated.
@@ -190,7 +199,7 @@ the consequence, and configuration F is the illuminance-free comparison.
 | File | Content |
 |---|---|
 | `fig1_roc_A.png`, `fig1_roc_E.png` | ROC curves, both models, pooled over held-out folds |
-| `fig2_configuration_comparison.png` | ROC-AUC across all six configurations |
+| `fig2_configuration_comparison.png` | ROC-AUC across completed configurations |
 | `fig3_shap_importance_A/E.png` | XGBoost out-of-fold SHAP, top 15 features |
 | `fig4_lr_coefficients_A/E.png` | Logistic Regression signed standardised coefficients |
 | `fig5_per_participant_A/E.png` | Per-participant ROC-AUC, both models, paired |

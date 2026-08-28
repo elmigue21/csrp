@@ -227,17 +227,19 @@ Wilcoxon signed-rank test** over the per-participant scores of the 26 held-out f
 
 ## 7. Experimental configurations
 
-Six configurations cross the two labellings with the two feature schemes and add an
-illuminance ablation for each labelling. Illuminance is an environmental variable
-rather than an oculomotor one, and lighting differs between tasks, so removing it
-tests how much of any result is ambient light rather than eye behaviour.
+Eight configurations cross the two labellings, two feature schemes, and
+illuminance inclusion/exclusion. Illuminance is an environmental variable rather
+than an oculomotor one, and lighting differs between tasks, so removing it tests
+how much of any result is ambient light rather than eye behaviour.
 
 | Config | Label | Features | Illuminance |
 |---|---|---|---|
 | A (headline) | absolute, ≥ 4 | raw | included |
 | B | absolute, ≥ 4 | raw | removed |
 | C | absolute, ≥ 4 | per-participant | included |
+| C_no_lux | absolute, ≥ 4 | per-participant | removed |
 | D | within-participant | raw | included |
+| D_no_lux | within-participant | raw | removed |
 | E | within-participant | per-participant | included |
 | F | within-participant | per-participant | removed |
 
