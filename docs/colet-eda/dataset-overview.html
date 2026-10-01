@@ -1,0 +1,284 @@
+<title>COLET Dataset Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;700;800&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column, figures full-width inside it; lab-notebook feel. */
+:root{
+  --bg:#f6f7f6; --surface:#ffffff; --ink:#18201f; --muted:#5d6966; --rule:#d9dfdd;
+  --accent:#0d7a6f; --accent-soft:#d6ece8; --a1:#3d6fb6; --a2:#6aa0d8; --a3:#c8643b; --a4:#9b3a1e;
+  --ok:#2e7d4f; --warn:#b07a12; --bad:#b3362c;
+  --display:"Libre Franklin",system-ui,sans-serif; --body:"Public Sans",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101615; --surface:#172120; --ink:#e6ecea; --muted:#9aa8a4; --rule:#2c3a37;
+  --accent:#4cc3b3; --accent-soft:#1d3a36; --a1:#7fa8e6; --a2:#a9cbf0; --a3:#e8906a; --a4:#d4664a;
+  --ok:#5cc489; --warn:#e0b04a; --bad:#ef7468; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#101615; --surface:#172120; --ink:#e6ecea; --muted:#9aa8a4; --rule:#2c3a37;
+  --accent:#4cc3b3; --accent-soft:#1d3a36; --a1:#7fa8e6; --a2:#a9cbf0; --a3:#e8906a; --a4:#d4664a;
+  --ok:#5cc489; --warn:#e0b04a; --bad:#ef7468; color-scheme:dark }
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body);padding:0 16px}
+main{max-width:920px;margin:0 auto;padding-block:40px 64px;display:grid;gap:44px}
+h1{font:800 clamp(28px,4vw,38px)/1.1 var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font:700 21px/1.25 var(--display);margin:0 0 6px;text-wrap:balance}
+h3{font:700 15px/1.3 var(--display);margin:0}
+p{margin:0;max-width:68ch}
+.lede{color:var(--muted);font-size:16px;margin-top:10px}
+.eyebrow{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+section{display:grid;gap:14px}
+.note{color:var(--muted);font-size:13.5px}
+.mono{font-family:var(--mono);font-size:12.5px}
+.tree{display:grid;gap:10px;overflow-x:auto}
+.lvl{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.node{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;min-width:0}
+.node b{font-family:var(--display)}
+.node .n{font:500 12px var(--mono);color:var(--muted)}
+.arrow{color:var(--muted);font:500 12px var(--mono);padding-left:10px}
+.tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.tcard{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px;display:grid;gap:8px;min-width:0}
+.tcard .size{font:500 12.5px var(--mono);color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font:400 11px var(--mono);padding:2px 6px;border-radius:4px;background:var(--bg);border:1px solid var(--rule);color:var(--muted)}
+.chip.key{background:var(--accent-soft);border-color:transparent;color:var(--ink)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:520px}
+.cell{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:10px 12px}
+.cell .tag{font:700 13px var(--display)}
+.cell .meta{font:400 12px var(--mono);color:var(--muted)}
+.fig{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:12px;overflow-x:auto}
+svg text{fill:var(--muted);font:11px var(--mono)}
+svg .lbl{fill:var(--ink);font:600 12px var(--body)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:600 12px var(--body);color:var(--muted)}
+td.num{font:400 12.5px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tw{overflow-x:auto}
+.pill{display:inline-block;font:600 11px var(--body);padding:2px 8px;border-radius:999px}
+.pill.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font:12px var(--mono);padding:4px 7px;border-radius:4px;opacity:0;transition:opacity .1s}
+.decide{border-left:3px solid var(--accent);padding:4px 0 4px 12px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+</style>
+
+<main>
+<header>
+  <div class="eyebrow">Thesis data · COLET v3</div>
+  <h1>COLET Dataset Overview</h1>
+  <p class="lede">What the downloaded COLET data contains, how it is organised, and what the first exploration found for the two open decisions: which recordings to exclude (C3) and which features to use (C4).</p>
+</header>
+
+<section>
+  <div><h2>How the data is organised</h2>
+  <p>One MATLAB file holds 47 participants. Each participant has four activities, and each activity has four tables. We converted every table to its own Parquet file.</p></div>
+  <div class="tree">
+    <div class="lvl"><div class="node"><b>data_v3.mat</b> <span class="n">3.8 GB · MATLAB v7.3</span></div></div>
+    <div class="arrow">↓ 47 participants (P01–P47) · each also has subject_info</div>
+    <div class="lvl"><div class="node"><b>Participant</b> <span class="n">× 47</span></div></div>
+    <div class="arrow">↓ 4 activities each, randomised order</div>
+    <div class="lvl">
+      <div class="node"><b>A1</b> <span class="n">single · no pressure</span></div>
+      <div class="node"><b>A2</b> <span class="n">single · pressure</span></div>
+      <div class="node"><b>A3</b> <span class="n">multitask · no pressure</span></div>
+      <div class="node"><b>A4</b> <span class="n">multitask · pressure</span></div>
+    </div>
+    <div class="arrow">↓ 4 tables per activity → 188 recordings</div>
+    <div class="lvl">
+      <div class="node"><b>gaze</b> <span class="n">~240 Hz</span></div>
+      <div class="node"><b>pupil</b> <span class="n">~240 Hz per eye</span></div>
+      <div class="node"><b>blinks</b> <span class="n">events</span></div>
+      <div class="node"><b>annotation</b> <span class="n">NASA-RTLX</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div><h2>The tables</h2><p>Highlighted columns are the ones the pipeline uses.</p></div>
+  <div class="tables" id="tables"></div>
+</section>
+
+<section>
+  <div><h2>The experiment: a 2 × 2 design</h2>
+  <p>Each cell shows the median activity length and the mean NASA-RTLX workload score. Our analysis compares the lowest-load cell (A1) with the highest (A4).</p></div>
+  <div class="grid2" id="design"></div>
+  <p class="note">Multitask means counting aloud backwards from 1000 by 4 while solving the puzzle. Time pressure was a spoken instruction only, which the COLET authors judged weak.</p>
+</section>
+
+<section>
+  <div><h2>Activities are short</h2>
+  <p>Each dot is one recording. Activities last 11–141 s, so 30-second windows are not workable; we decided to use one sample per whole activity (C1).</p></div>
+  <div class="fig"><svg id="dur" role="img" aria-label="Activity duration per recording by activity"></svg></div>
+</section>
+
+<section>
+  <div class="eyebrow">Decision C3</div>
+  <div><h2>Data quality: share of invalid gaze samples</h2>
+  <p>A sample counts as invalid when the tracker's confidence is below 0.8. Single-task activities are nearly clean; multitask activities lose more, from talking and blinking. Dashed lines mark candidate exclusion thresholds.</p></div>
+  <div class="fig"><svg id="inv" role="img" aria-label="Invalid gaze samples per recording by activity"></svg></div>
+  <div class="tw"><table>
+    <thead><tr><th>Exclude a recording if invalid &gt;</th><th>Recordings removed (of 188)</th><th>Participants lost from A1 vs A4</th></tr></thead>
+    <tbody id="thr"></tbody>
+  </table></div>
+  <p class="decide"><b>Suggested:</b> exclude above 35%, following Nenna (2023). This removes 3 recordings and leaves 45 participants for A1 vs A4.</p>
+</section>
+
+<section>
+  <div><h2>Blink rate jumps when people count aloud</h2>
+  <p>Talking raises blink rate on its own. The team decided to follow the RRL and keep blinks as workload features (C2b); this chart shows why a sentence on it belongs in the limitations.</p></div>
+  <div class="fig"><svg id="blink" role="img" aria-label="Blink rate per recording by activity"></svg></div>
+</section>
+
+<section>
+  <div class="eyebrow">Decision C4</div>
+  <div><h2>Does our first-pass pipeline reproduce COLET?</h2>
+  <p>Bars show our activity means divided by the means published in the COLET paper (Table 4). A value near 1.0 means we reproduce their numbers. Features were judged on quality only, never on how well they separate A1 from A4.</p></div>
+  <div class="fig"><svg id="ratio" role="img" aria-label="Ratio of our feature means to COLET published means"></svg></div>
+  <div class="legend"><span><i style="background:var(--ok)"></i>Matches (0.9–1.1)</span><span><i style="background:var(--warn)"></i>Same pattern, different level</span><span><i style="background:var(--bad)"></i>Far off: fix before use</span></div>
+  <p class="note">Pupil and blink features match almost exactly. Fixation and saccade features do not yet: we computed eye angles from the 3D gaze point, while COLET converted 2D screen coordinates to degrees. That step gets fixed next.</p>
+</section>
+
+<section>
+  <div><h2>Features that duplicate each other</h2>
+  <p>Spearman correlation between first-pass features across all 188 recordings. Two pairs exceed 0.8 and should not both enter the model.</p></div>
+  <div class="fig"><svg id="corr" role="img" aria-label="Feature correlation matrix"></svg></div>
+  <div class="tw"><table>
+    <thead><tr><th>Pair</th><th>ρ</th><th>Suggested action</th></tr></thead>
+    <tbody>
+      <tr><td>Saccade peak velocity ↔ mean saccade velocity</td><td class="num">0.95</td><td>Keep peak velocity (the literature measure)</td></tr>
+      <tr><td>Saccade amplitude ↔ saccade duration</td><td class="num">0.83</td><td>Expected (main sequence); keep amplitude, duration optional</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div><h2>Suggested feature set (C4)</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>Feature</th><th>Status</th><th>Note</th></tr></thead>
+    <tbody id="fs"></tbody>
+  </table></div>
+</section>
+
+<p class="note">Source: COLET (Ktistakis et al., 2022), Zenodo record 7766785, v3. Exploration run 2026-10-01 with <span class="mono">docs/colet-eda/eda_colet.py</span>; settings: confidence ≥ 0.8, I-VT 45°/s, minimum fixation 55 ms.</p>
+</main>
+<div class="tip" id="tip"></div>
+
+<script>
+const D = {"rec": [{"p": 1, "t": 1, "dur": 33.8, "inv": 1.89}, {"p": 1, "t": 2, "dur": 28.5, "inv": 0.04}, {"p": 1, "t": 3, "dur": 71.4, "inv": 9.74}, {"p": 1, "t": 4, "dur": 38.2, "inv": 1.83}, {"p": 2, "t": 1, "dur": 41.7, "inv": 0.02}, {"p": 2, "t": 2, "dur": 29.5, "inv": 0.07}, {"p": 2, "t": 3, "dur": 42.0, "inv": 9.48}, {"p": 2, "t": 4, "dur": 49.0, "inv": 12.96}, {"p": 3, "t": 1, "dur": 42.3, "inv": 4.82}, {"p": 3, "t": 2, "dur": 45.1, "inv": 2.18}, {"p": 3, "t": 3, "dur": 86.7, "inv": 9.82}, {"p": 3, "t": 4, "dur": 53.1, "inv": 4.11}, {"p": 4, "t": 1, "dur": 18.1, "inv": 0.44}, {"p": 4, "t": 2, "dur": 24.0, "inv": 1.86}, {"p": 4, "t": 3, "dur": 43.5, "inv": 10.33}, {"p": 4, "t": 4, "dur": 32.1, "inv": 11.15}, {"p": 5, "t": 1, "dur": 40.5, "inv": 0.19}, {"p": 5, "t": 2, "dur": 38.7, "inv": 0.45}, {"p": 5, "t": 3, "dur": 50.1, "inv": 5.05}, {"p": 5, "t": 4, "dur": 141.0, "inv": 12.29}, {"p": 6, "t": 1, "dur": 42.7, "inv": 1.13}, {"p": 6, "t": 2, "dur": 25.8, "inv": 2.11}, {"p": 6, "t": 3, "dur": 94.4, "inv": 57.38}, {"p": 6, "t": 4, "dur": 63.5, "inv": 38.76}, {"p": 7, "t": 1, "dur": 28.4, "inv": 6.49}, {"p": 7, "t": 2, "dur": 49.7, "inv": 8.62}, {"p": 7, "t": 3, "dur": 54.7, "inv": 7.5}, {"p": 7, "t": 4, "dur": 45.5, "inv": 3.98}, {"p": 8, "t": 1, "dur": 34.0, "inv": 0.07}, {"p": 8, "t": 2, "dur": 35.7, "inv": 3.02}, {"p": 8, "t": 3, "dur": 50.0, "inv": 6.39}, {"p": 8, "t": 4, "dur": 68.5, "inv": 7.28}, {"p": 9, "t": 1, "dur": 30.4, "inv": 1.1}, {"p": 9, "t": 2, "dur": 22.6, "inv": 1.02}, {"p": 9, "t": 3, "dur": 62.9, "inv": 8.98}, {"p": 9, "t": 4, "dur": 43.3, "inv": 3.29}, {"p": 10, "t": 1, "dur": 28.6, "inv": 1.18}, {"p": 10, "t": 2, "dur": 29.3, "inv": 0.52}, {"p": 10, "t": 3, "dur": 86.8, "inv": 19.82}, {"p": 10, "t": 4, "dur": 33.3, "inv": 10.15}, {"p": 11, "t": 1, "dur": 59.0, "inv": 3.12}, {"p": 11, "t": 2, "dur": 29.2, "inv": 1.39}, {"p": 11, "t": 3, "dur": 112.8, "inv": 6.28}, {"p": 11, "t": 4, "dur": 53.9, "inv": 6.55}, {"p": 12, "t": 1, "dur": 39.5, "inv": 0.0}, {"p": 12, "t": 2, "dur": 23.0, "inv": 0.07}, {"p": 12, "t": 3, "dur": 78.0, "inv": 2.27}, {"p": 12, "t": 4, "dur": 68.7, "inv": 8.06}, {"p": 13, "t": 1, "dur": 58.3, "inv": 0.72}, {"p": 13, "t": 2, "dur": 27.5, "inv": 0.18}, {"p": 13, "t": 3, "dur": 108.9, "inv": 15.99}, {"p": 13, "t": 4, "dur": 43.5, "inv": 10.71}, {"p": 14, "t": 1, "dur": 62.8, "inv": 0.35}, {"p": 14, "t": 2, "dur": 43.0, "inv": 0.47}, {"p": 14, "t": 3, "dur": 129.8, "inv": 3.34}, {"p": 14, "t": 4, "dur": 122.2, "inv": 11.48}, {"p": 15, "t": 1, "dur": 69.8, "inv": 7.08}, {"p": 15, "t": 2, "dur": 30.1, "inv": 4.14}, {"p": 15, "t": 3, "dur": 40.9, "inv": 12.32}, {"p": 15, "t": 4, "dur": 74.5, "inv": 19.91}, {"p": 16, "t": 1, "dur": 21.6, "inv": 1.91}, {"p": 16, "t": 2, "dur": 22.2, "inv": 1.12}, {"p": 16, "t": 3, "dur": 57.4, "inv": 2.83}, {"p": 16, "t": 4, "dur": 31.4, "inv": 2.36}, {"p": 17, "t": 1, "dur": 42.0, "inv": 0.82}, {"p": 17, "t": 2, "dur": 21.0, "inv": 0.02}, {"p": 17, "t": 3, "dur": 51.0, "inv": 24.32}, {"p": 17, "t": 4, "dur": 61.3, "inv": 48.61}, {"p": 18, "t": 1, "dur": 34.5, "inv": 0.4}, {"p": 18, "t": 2, "dur": 26.6, "inv": 0.25}, {"p": 18, "t": 3, "dur": 68.1, "inv": 2.91}, {"p": 18, "t": 4, "dur": 51.0, "inv": 14.06}, {"p": 19, "t": 1, "dur": 33.8, "inv": 0.0}, {"p": 19, "t": 2, "dur": 31.0, "inv": 0.08}, {"p": 19, "t": 3, "dur": 57.9, "inv": 20.86}, {"p": 19, "t": 4, "dur": 39.5, "inv": 2.72}, {"p": 20, "t": 1, "dur": 28.1, "inv": 0.48}, {"p": 20, "t": 2, "dur": 31.2, "inv": 0.85}, {"p": 20, "t": 3, "dur": 100.1, "inv": 16.35}, {"p": 20, "t": 4, "dur": 58.8, "inv": 15.21}, {"p": 21, "t": 1, "dur": 42.9, "inv": 0.63}, {"p": 21, "t": 2, "dur": 41.2, "inv": 0.36}, {"p": 21, "t": 3, "dur": 112.7, "inv": 7.22}, {"p": 21, "t": 4, "dur": 113.0, "inv": 21.96}, {"p": 22, "t": 1, "dur": 40.3, "inv": 0.11}, {"p": 22, "t": 2, "dur": 30.9, "inv": 0.05}, {"p": 22, "t": 3, "dur": 56.5, "inv": 0.98}, {"p": 22, "t": 4, "dur": 57.1, "inv": 0.42}, {"p": 23, "t": 1, "dur": 39.6, "inv": 0.43}, {"p": 23, "t": 2, "dur": 18.1, "inv": 0.05}, {"p": 23, "t": 3, "dur": 28.1, "inv": 2.9}, {"p": 23, "t": 4, "dur": 27.7, "inv": 2.51}, {"p": 24, "t": 1, "dur": 34.4, "inv": 2.51}, {"p": 24, "t": 2, "dur": 22.3, "inv": 0.7}, {"p": 24, "t": 3, "dur": 58.5, "inv": 22.85}, {"p": 24, "t": 4, "dur": 118.6, "inv": 15.9}, {"p": 25, "t": 1, "dur": 37.0, "inv": 0.74}, {"p": 25, "t": 2, "dur": 23.8, "inv": 0.72}, {"p": 25, "t": 3, "dur": 71.4, "inv": 15.88}, {"p": 25, "t": 4, "dur": 47.8, "inv": 7.51}, {"p": 26, "t": 1, "dur": 25.3, "inv": 0.93}, {"p": 26, "t": 2, "dur": 33.1, "inv": 1.91}, {"p": 26, "t": 3, "dur": 52.3, "inv": 3.58}, {"p": 26, "t": 4, "dur": 42.2, "inv": 4.62}, {"p": 27, "t": 1, "dur": 31.0, "inv": 0.05}, {"p": 27, "t": 2, "dur": 26.4, "inv": 0.13}, {"p": 27, "t": 3, "dur": 129.7, "inv": 14.47}, {"p": 27, "t": 4, "dur": 47.8, "inv": 6.53}, {"p": 28, "t": 1, "dur": 41.6, "inv": 3.97}, {"p": 28, "t": 2, "dur": 19.4, "inv": 0.3}, {"p": 28, "t": 3, "dur": 44.9, "inv": 7.52}, {"p": 28, "t": 4, "dur": 33.4, "inv": 14.45}, {"p": 29, "t": 1, "dur": 35.2, "inv": 1.7}, {"p": 29, "t": 2, "dur": 25.6, "inv": 1.0}, {"p": 29, "t": 3, "dur": 61.9, "inv": 15.21}, {"p": 29, "t": 4, "dur": 51.6, "inv": 15.57}, {"p": 30, "t": 1, "dur": 50.4, "inv": 0.76}, {"p": 30, "t": 2, "dur": 21.7, "inv": 3.64}, {"p": 30, "t": 3, "dur": 57.6, "inv": 7.96}, {"p": 30, "t": 4, "dur": 86.3, "inv": 21.69}, {"p": 31, "t": 1, "dur": 41.6, "inv": 3.97}, {"p": 31, "t": 2, "dur": 19.4, "inv": 0.3}, {"p": 31, "t": 3, "dur": 44.9, "inv": 7.52}, {"p": 31, "t": 4, "dur": 33.4, "inv": 14.45}, {"p": 32, "t": 1, "dur": 75.8, "inv": 1.58}, {"p": 32, "t": 2, "dur": 31.4, "inv": 1.14}, {"p": 32, "t": 3, "dur": 88.7, "inv": 2.49}, {"p": 32, "t": 4, "dur": 91.7, "inv": 3.86}, {"p": 33, "t": 1, "dur": 27.0, "inv": 1.32}, {"p": 33, "t": 2, "dur": 25.2, "inv": 2.65}, {"p": 33, "t": 3, "dur": 34.3, "inv": 1.74}, {"p": 33, "t": 4, "dur": 43.7, "inv": 2.4}, {"p": 34, "t": 1, "dur": 33.3, "inv": 0.04}, {"p": 34, "t": 2, "dur": 29.6, "inv": 0.13}, {"p": 34, "t": 3, "dur": 24.6, "inv": 0.0}, {"p": 34, "t": 4, "dur": 44.7, "inv": 1.29}, {"p": 35, "t": 1, "dur": 29.5, "inv": 1.33}, {"p": 35, "t": 2, "dur": 29.5, "inv": 0.0}, {"p": 35, "t": 3, "dur": 48.6, "inv": 4.11}, {"p": 35, "t": 4, "dur": 35.3, "inv": 1.37}, {"p": 36, "t": 1, "dur": 30.9, "inv": 3.55}, {"p": 36, "t": 2, "dur": 25.1, "inv": 2.7}, {"p": 36, "t": 3, "dur": 70.8, "inv": 10.8}, {"p": 36, "t": 4, "dur": 58.9, "inv": 11.94}, {"p": 37, "t": 1, "dur": 16.8, "inv": 2.04}, {"p": 37, "t": 2, "dur": 11.3, "inv": 2.8}, {"p": 37, "t": 3, "dur": 36.0, "inv": 1.97}, {"p": 37, "t": 4, "dur": 71.5, "inv": 10.05}, {"p": 38, "t": 1, "dur": 57.5, "inv": 0.24}, {"p": 38, "t": 2, "dur": 28.6, "inv": 0.09}, {"p": 38, "t": 3, "dur": 102.8, "inv": 5.04}, {"p": 38, "t": 4, "dur": 79.5, "inv": 5.6}, {"p": 39, "t": 1, "dur": 32.0, "inv": 0.14}, {"p": 39, "t": 2, "dur": 47.2, "inv": 0.6}, {"p": 39, "t": 3, "dur": 59.9, "inv": 6.67}, {"p": 39, "t": 4, "dur": 32.7, "inv": 1.24}, {"p": 40, "t": 1, "dur": 45.9, "inv": 1.47}, {"p": 40, "t": 2, "dur": 40.6, "inv": 1.68}, {"p": 40, "t": 3, "dur": 100.5, "inv": 20.39}, {"p": 40, "t": 4, "dur": 96.8, "inv": 21.1}, {"p": 41, "t": 1, "dur": 71.8, "inv": 0.23}, {"p": 41, "t": 2, "dur": 62.7, "inv": 0.03}, {"p": 41, "t": 3, "dur": 118.9, "inv": 0.27}, {"p": 41, "t": 4, "dur": 86.7, "inv": 0.34}, {"p": 42, "t": 1, "dur": 43.4, "inv": 1.12}, {"p": 42, "t": 2, "dur": 27.3, "inv": 0.7}, {"p": 42, "t": 3, "dur": 71.0, "inv": 1.48}, {"p": 42, "t": 4, "dur": 42.7, "inv": 1.38}, {"p": 43, "t": 1, "dur": 34.4, "inv": 2.87}, {"p": 43, "t": 2, "dur": 33.5, "inv": 1.28}, {"p": 43, "t": 3, "dur": 52.0, "inv": 3.32}, {"p": 43, "t": 4, "dur": 53.4, "inv": 2.43}, {"p": 44, "t": 1, "dur": 26.8, "inv": 0.81}, {"p": 44, "t": 2, "dur": 34.6, "inv": 0.87}, {"p": 44, "t": 3, "dur": 63.4, "inv": 22.73}, {"p": 44, "t": 4, "dur": 99.7, "inv": 23.07}, {"p": 45, "t": 1, "dur": 69.1, "inv": 0.25}, {"p": 45, "t": 2, "dur": 35.5, "inv": 0.02}, {"p": 45, "t": 3, "dur": 70.7, "inv": 0.69}, {"p": 45, "t": 4, "dur": 40.6, "inv": 0.31}, {"p": 46, "t": 1, "dur": 25.6, "inv": 1.59}, {"p": 46, "t": 2, "dur": 33.3, "inv": 1.36}, {"p": 46, "t": 3, "dur": 43.0, "inv": 6.04}, {"p": 46, "t": 4, "dur": 45.5, "inv": 5.79}, {"p": 47, "t": 1, "dur": 41.9, "inv": 1.57}, {"p": 47, "t": 2, "dur": 22.8, "inv": 0.07}, {"p": 47, "t": 3, "dur": 90.3, "inv": 19.22}, {"p": 47, "t": 4, "dur": 34.2, "inv": 22.01}], "blink": [{"p": 1, "t": 1, "b": 3.55}, {"p": 1, "t": 2, "b": 0.0}, {"p": 1, "t": 3, "b": 10.08}, {"p": 1, "t": 4, "b": 1.57}, {"p": 2, "t": 1, "b": 0.0}, {"p": 2, "t": 2, "b": 0.0}, {"p": 2, "t": 3, "b": 4.28}, {"p": 2, "t": 4, "b": 9.79}, {"p": 3, "t": 1, "b": 7.08}, {"p": 3, "t": 2, "b": 3.99}, {"p": 3, "t": 3, "b": 11.76}, {"p": 3, "t": 4, "b": 7.91}, {"p": 4, "t": 1, "b": 3.31}, {"p": 4, "t": 2, "b": 2.5}, {"p": 4, "t": 3, "b": 26.18}, {"p": 4, "t": 4, "b": 33.66}, {"p": 5, "t": 1, "b": 0.0}, {"p": 5, "t": 2, "b": 1.55}, {"p": 5, "t": 3, "b": 15.56}, {"p": 5, "t": 4, "b": 41.28}, {"p": 6, "t": 1, "b": 4.21}, {"p": 6, "t": 2, "b": 4.65}, {"p": 6, "t": 3, "b": 10.17}, {"p": 6, "t": 4, "b": 16.06}, {"p": 7, "t": 1, "b": 10.58}, {"p": 7, "t": 2, "b": 6.04}, {"p": 7, "t": 3, "b": 16.45}, {"p": 7, "t": 4, "b": 13.19}, {"p": 8, "t": 1, "b": 0.0}, {"p": 8, "t": 2, "b": 0.0}, {"p": 8, "t": 3, "b": 22.79}, {"p": 8, "t": 4, "b": 15.76}, {"p": 9, "t": 1, "b": 3.95}, {"p": 9, "t": 2, "b": 5.3}, {"p": 9, "t": 3, "b": 18.11}, {"p": 9, "t": 4, "b": 17.99}, {"p": 10, "t": 1, "b": 2.1}, {"p": 10, "t": 2, "b": 0.0}, {"p": 10, "t": 3, "b": 41.47}, {"p": 10, "t": 4, "b": 30.6}, {"p": 11, "t": 1, "b": 13.22}, {"p": 11, "t": 2, "b": 4.11}, {"p": 11, "t": 3, "b": 21.81}, {"p": 11, "t": 4, "b": 15.58}, {"p": 12, "t": 1, "b": 0.0}, {"p": 12, "t": 2, "b": 0.0}, {"p": 12, "t": 3, "b": 12.31}, {"p": 12, "t": 4, "b": 14.84}, {"p": 13, "t": 1, "b": 2.06}, {"p": 13, "t": 2, "b": 0.0}, {"p": 13, "t": 3, "b": 18.73}, {"p": 13, "t": 4, "b": 6.9}, {"p": 14, "t": 1, "b": 0.96}, {"p": 14, "t": 2, "b": 1.4}, {"p": 14, "t": 3, "b": 0.92}, {"p": 14, "t": 4, "b": 8.34}, {"p": 15, "t": 1, "b": 25.79}, {"p": 15, "t": 2, "b": 15.97}, {"p": 15, "t": 3, "b": 32.28}, {"p": 15, "t": 4, "b": 33.0}, {"p": 16, "t": 1, "b": 5.56}, {"p": 16, "t": 2, "b": 2.7}, {"p": 16, "t": 3, "b": 10.46}, {"p": 16, "t": 4, "b": 7.63}, {"p": 17, "t": 1, "b": 2.86}, {"p": 17, "t": 2, "b": 0.0}, {"p": 17, "t": 3, "b": 28.22}, {"p": 17, "t": 4, "b": 29.37}, {"p": 18, "t": 1, "b": 1.74}, {"p": 18, "t": 2, "b": 0.0}, {"p": 18, "t": 3, "b": 8.82}, {"p": 18, "t": 4, "b": 15.31}, {"p": 19, "t": 1, "b": 0.0}, {"p": 19, "t": 2, "b": 0.0}, {"p": 19, "t": 3, "b": 11.4}, {"p": 19, "t": 4, "b": 4.56}, {"p": 20, "t": 1, "b": 2.13}, {"p": 20, "t": 2, "b": 3.85}, {"p": 20, "t": 3, "b": 29.38}, {"p": 20, "t": 4, "b": 25.52}, {"p": 21, "t": 1, "b": 2.8}, {"p": 21, "t": 2, "b": 1.46}, {"p": 21, "t": 3, "b": 23.42}, {"p": 21, "t": 4, "b": 27.08}, {"p": 22, "t": 1, "b": 0.0}, {"p": 22, "t": 2, "b": 0.0}, {"p": 22, "t": 3, "b": 4.25}, {"p": 22, "t": 4, "b": 2.1}, {"p": 23, "t": 1, "b": 1.52}, {"p": 23, "t": 2, "b": 0.0}, {"p": 23, "t": 3, "b": 12.79}, {"p": 23, "t": 4, "b": 12.99}, {"p": 24, "t": 1, "b": 8.71}, {"p": 24, "t": 2, "b": 2.69}, {"p": 24, "t": 3, "b": 19.49}, {"p": 24, "t": 4, "b": 22.26}, {"p": 25, "t": 1, "b": 1.62}, {"p": 25, "t": 2, "b": 0.0}, {"p": 25, "t": 3, "b": 15.96}, {"p": 25, "t": 4, "b": 18.83}, {"p": 26, "t": 1, "b": 0.0}, {"p": 26, "t": 2, "b": 7.26}, {"p": 26, "t": 3, "b": 9.18}, {"p": 26, "t": 4, "b": 18.46}, {"p": 27, "t": 1, "b": 0.0}, {"p": 27, "t": 2, "b": 0.0}, {"p": 27, "t": 3, "b": 15.73}, {"p": 27, "t": 4, "b": 16.3}, {"p": 28, "t": 1, "b": 4.32}, {"p": 28, "t": 2, "b": 0.0}, {"p": 28, "t": 3, "b": 12.01}, {"p": 28, "t": 4, "b": 17.94}, {"p": 29, "t": 1, "b": 1.7}, {"p": 29, "t": 2, "b": 0.0}, {"p": 29, "t": 3, "b": 20.35}, {"p": 29, "t": 4, "b": 17.44}, {"p": 30, "t": 1, "b": 1.19}, {"p": 30, "t": 2, "b": 0.0}, {"p": 30, "t": 3, "b": 5.2}, {"p": 30, "t": 4, "b": 4.87}, {"p": 31, "t": 1, "b": 4.32}, {"p": 31, "t": 2, "b": 0.0}, {"p": 31, "t": 3, "b": 12.01}, {"p": 31, "t": 4, "b": 17.94}, {"p": 32, "t": 1, "b": 1.58}, {"p": 32, "t": 2, "b": 0.0}, {"p": 32, "t": 3, "b": 10.15}, {"p": 32, "t": 4, "b": 15.7}, {"p": 33, "t": 1, "b": 0.0}, {"p": 33, "t": 2, "b": 4.76}, {"p": 33, "t": 3, "b": 5.24}, {"p": 33, "t": 4, "b": 9.61}, {"p": 34, "t": 1, "b": 0.0}, {"p": 34, "t": 2, "b": 0.0}, {"p": 34, "t": 3, "b": 0.0}, {"p": 34, "t": 4, "b": 8.06}, {"p": 35, "t": 1, "b": 2.03}, {"p": 35, "t": 2, "b": 0.0}, {"p": 35, "t": 3, "b": 13.57}, {"p": 35, "t": 4, "b": 5.1}, {"p": 36, "t": 1, "b": 0.0}, {"p": 36, "t": 2, "b": 0.0}, {"p": 36, "t": 3, "b": 5.09}, {"p": 36, "t": 4, "b": 11.2}, {"p": 37, "t": 1, "b": 3.58}, {"p": 37, "t": 2, "b": 0.0}, {"p": 37, "t": 3, "b": 3.33}, {"p": 37, "t": 4, "b": 5.88}, {"p": 38, "t": 1, "b": 1.04}, {"p": 38, "t": 2, "b": 0.0}, {"p": 38, "t": 3, "b": 8.17}, {"p": 38, "t": 4, "b": 8.3}, {"p": 39, "t": 1, "b": 0.0}, {"p": 39, "t": 2, "b": 1.27}, {"p": 39, "t": 3, "b": 17.02}, {"p": 39, "t": 4, "b": 3.67}, {"p": 40, "t": 1, "b": 1.31}, {"p": 40, "t": 2, "b": 2.95}, {"p": 40, "t": 3, "b": 46.55}, {"p": 40, "t": 4, "b": 34.08}, {"p": 41, "t": 1, "b": 0.0}, {"p": 41, "t": 2, "b": 0.0}, {"p": 41, "t": 3, "b": 0.0}, {"p": 41, "t": 4, "b": 1.38}, {"p": 42, "t": 1, "b": 4.15}, {"p": 42, "t": 2, "b": 2.2}, {"p": 42, "t": 3, "b": 5.07}, {"p": 42, "t": 4, "b": 5.62}, {"p": 43, "t": 1, "b": 5.24}, {"p": 43, "t": 2, "b": 3.59}, {"p": 43, "t": 3, "b": 3.46}, {"p": 43, "t": 4, "b": 4.49}, {"p": 44, "t": 1, "b": 2.24}, {"p": 44, "t": 2, "b": 3.47}, {"p": 44, "t": 3, "b": 53.97}, {"p": 44, "t": 4, "b": 33.1}, {"p": 45, "t": 1, "b": 0.87}, {"p": 45, "t": 2, "b": 0.0}, {"p": 45, "t": 3, "b": 4.24}, {"p": 45, "t": 4, "b": 1.48}, {"p": 46, "t": 1, "b": 4.69}, {"p": 46, "t": 2, "b": 5.4}, {"p": 46, "t": 3, "b": 8.38}, {"p": 46, "t": 4, "b": 7.91}, {"p": 47, "t": 1, "b": 5.72}, {"p": 47, "t": 2, "b": 0.0}, {"p": 47, "t": 3, "b": 23.25}, {"p": 47, "t": 4, "b": 33.35}], "rtlx": [{"p": 1, "t": 1, "v": 15.0}, {"p": 1, "t": 2, "v": 32.5}, {"p": 1, "t": 3, "v": 62.5}, {"p": 1, "t": 4, "v": 35.8}, {"p": 2, "t": 1, "v": 15.8}, {"p": 2, "t": 2, "v": 34.2}, {"p": 2, "t": 3, "v": 29.2}, {"p": 2, "t": 4, "v": 73.3}, {"p": 3, "t": 1, "v": 4.2}, {"p": 3, "t": 2, "v": 9.2}, {"p": 3, "t": 3, "v": 45.0}, {"p": 3, "t": 4, "v": 22.5}, {"p": 4, "t": 1, "v": 39.2}, {"p": 4, "t": 2, "v": 50.0}, {"p": 4, "t": 3, "v": 68.3}, {"p": 4, "t": 4, "v": 67.5}, {"p": 5, "t": 1, "v": 23.3}, {"p": 5, "t": 2, "v": 14.2}, {"p": 5, "t": 3, "v": 47.5}, {"p": 5, "t": 4, "v": 83.3}, {"p": 6, "t": 1, "v": 25.0}, {"p": 6, "t": 2, "v": 40.8}, {"p": 6, "t": 3, "v": 57.5}, {"p": 6, "t": 4, "v": 64.2}, {"p": 7, "t": 1, "v": 16.7}, {"p": 7, "t": 2, "v": 68.3}, {"p": 7, "t": 3, "v": 62.5}, {"p": 7, "t": 4, "v": 34.2}, {"p": 8, "t": 1, "v": 17.5}, {"p": 8, "t": 2, "v": 15.8}, {"p": 8, "t": 3, "v": 26.7}, {"p": 8, "t": 4, "v": 46.7}, {"p": 9, "t": 1, "v": 6.7}, {"p": 9, "t": 2, "v": 9.2}, {"p": 9, "t": 3, "v": 65.0}, {"p": 9, "t": 4, "v": 74.2}, {"p": 10, "t": 1, "v": 16.7}, {"p": 10, "t": 2, "v": 9.2}, {"p": 10, "t": 3, "v": 45.0}, {"p": 10, "t": 4, "v": 44.2}, {"p": 11, "t": 1, "v": 23.3}, {"p": 11, "t": 2, "v": 29.2}, {"p": 11, "t": 3, "v": 64.2}, {"p": 11, "t": 4, "v": 65.0}, {"p": 12, "t": 1, "v": 11.7}, {"p": 12, "t": 2, "v": 35.8}, {"p": 12, "t": 3, "v": 30.8}, {"p": 12, "t": 4, "v": 49.2}, {"p": 13, "t": 1, "v": 11.7}, {"p": 13, "t": 2, "v": 18.3}, {"p": 13, "t": 3, "v": 36.7}, {"p": 13, "t": 4, "v": 51.7}, {"p": 14, "t": 1, "v": 16.7}, {"p": 14, "t": 2, "v": 5.0}, {"p": 14, "t": 3, "v": 40.8}, {"p": 14, "t": 4, "v": 39.2}, {"p": 15, "t": 1, "v": 65.8}, {"p": 15, "t": 2, "v": 54.2}, {"p": 15, "t": 3, "v": 49.3}, {"p": 15, "t": 4, "v": 75.0}, {"p": 16, "t": 1, "v": 5.8}, {"p": 16, "t": 2, "v": 10.8}, {"p": 16, "t": 3, "v": 29.2}, {"p": 16, "t": 4, "v": 58.3}, {"p": 17, "t": 1, "v": 45.8}, {"p": 17, "t": 2, "v": 31.7}, {"p": 17, "t": 3, "v": 36.7}, {"p": 17, "t": 4, "v": 47.5}, {"p": 18, "t": 1, "v": 34.2}, {"p": 18, "t": 2, "v": 40.0}, {"p": 18, "t": 3, "v": 40.0}, {"p": 18, "t": 4, "v": 50.8}, {"p": 19, "t": 1, "v": 8.3}, {"p": 19, "t": 2, "v": 29.2}, {"p": 19, "t": 3, "v": 52.5}, {"p": 19, "t": 4, "v": 53.3}, {"p": 20, "t": 1, "v": 21.7}, {"p": 20, "t": 2, "v": 25.8}, {"p": 20, "t": 3, "v": 30.0}, {"p": 20, "t": 4, "v": 43.3}, {"p": 21, "t": 1, "v": 30.8}, {"p": 21, "t": 2, "v": 22.5}, {"p": 21, "t": 3, "v": 70.0}, {"p": 21, "t": 4, "v": 73.3}, {"p": 22, "t": 1, "v": 4.2}, {"p": 22, "t": 2, "v": 9.2}, {"p": 22, "t": 3, "v": 5.0}, {"p": 22, "t": 4, "v": 5.8}, {"p": 23, "t": 1, "v": 16.7}, {"p": 23, "t": 2, "v": 27.5}, {"p": 23, "t": 3, "v": 50.0}, {"p": 23, "t": 4, "v": 45.0}, {"p": 24, "t": 1, "v": 19.2}, {"p": 24, "t": 2, "v": 32.5}, {"p": 24, "t": 3, "v": 44.2}, {"p": 24, "t": 4, "v": 56.7}, {"p": 25, "t": 1, "v": 13.3}, {"p": 25, "t": 2, "v": 30.8}, {"p": 25, "t": 3, "v": 42.5}, {"p": 25, "t": 4, "v": 45.0}, {"p": 26, "t": 1, "v": 21.7}, {"p": 26, "t": 2, "v": 31.7}, {"p": 26, "t": 3, "v": 58.3}, {"p": 26, "t": 4, "v": 54.2}, {"p": 27, "t": 1, "v": 17.5}, {"p": 27, "t": 2, "v": 45.0}, {"p": 27, "t": 3, "v": 55.0}, {"p": 27, "t": 4, "v": 66.7}, {"p": 28, "t": 1, "v": 30.8}, {"p": 28, "t": 2, "v": 39.2}, {"p": 28, "t": 3, "v": 44.2}, {"p": 28, "t": 4, "v": 37.5}, {"p": 29, "t": 1, "v": 15.8}, {"p": 29, "t": 2, "v": 24.2}, {"p": 29, "t": 3, "v": 44.2}, {"p": 29, "t": 4, "v": 57.5}, {"p": 30, "t": 1, "v": 41.7}, {"p": 30, "t": 2, "v": 34.2}, {"p": 30, "t": 3, "v": 36.7}, {"p": 30, "t": 4, "v": 52.5}, {"p": 31, "t": 1, "v": 23.3}, {"p": 31, "t": 2, "v": 42.5}, {"p": 31, "t": 3, "v": 40.0}, {"p": 31, "t": 4, "v": 62.5}, {"p": 32, "t": 1, "v": 22.5}, {"p": 32, "t": 2, "v": 30.0}, {"p": 32, "t": 3, "v": 73.3}, {"p": 32, "t": 4, "v": 84.2}, {"p": 33, "t": 1, "v": 12.5}, {"p": 33, "t": 2, "v": 45.8}, {"p": 33, "t": 3, "v": 28.3}, {"p": 33, "t": 4, "v": 60.0}, {"p": 34, "t": 1, "v": 8.3}, {"p": 34, "t": 2, "v": 38.3}, {"p": 34, "t": 3, "v": 24.2}, {"p": 34, "t": 4, "v": 36.7}, {"p": 35, "t": 1, "v": 21.7}, {"p": 35, "t": 2, "v": 25.0}, {"p": 35, "t": 3, "v": 35.8}, {"p": 35, "t": 4, "v": 65.8}, {"p": 36, "t": 1, "v": 25.0}, {"p": 36, "t": 2, "v": 25.0}, {"p": 36, "t": 3, "v": 50.0}, {"p": 36, "t": 4, "v": 64.2}, {"p": 37, "t": 1, "v": 12.5}, {"p": 37, "t": 2, "v": 22.5}, {"p": 37, "t": 3, "v": 20.0}, {"p": 37, "t": 4, "v": 30.8}, {"p": 38, "t": 1, "v": 15.0}, {"p": 38, "t": 2, "v": 31.7}, {"p": 38, "t": 3, "v": 41.7}, {"p": 38, "t": 4, "v": 38.3}, {"p": 39, "t": 1, "v": 5.0}, {"p": 39, "t": 2, "v": 20.8}, {"p": 39, "t": 3, "v": 20.0}, {"p": 39, "t": 4, "v": 10.0}, {"p": 40, "t": 1, "v": 25.0}, {"p": 40, "t": 2, "v": 44.2}, {"p": 40, "t": 3, "v": 64.2}, {"p": 40, "t": 4, "v": 66.7}, {"p": 41, "t": 1, "v": 12.5}, {"p": 41, "t": 2, "v": 11.7}, {"p": 41, "t": 3, "v": 65.0}, {"p": 41, "t": 4, "v": 65.8}, {"p": 42, "t": 1, "v": 17.5}, {"p": 42, "t": 2, "v": 32.5}, {"p": 42, "t": 3, "v": 65.8}, {"p": 42, "t": 4, "v": 49.2}, {"p": 43, "t": 1, "v": 5.8}, {"p": 43, "t": 2, "v": 7.5}, {"p": 43, "t": 3, "v": 30.8}, {"p": 43, "t": 4, "v": 50.8}, {"p": 44, "t": 1, "v": 25.8}, {"p": 44, "t": 2, "v": 37.5}, {"p": 44, "t": 3, "v": 53.3}, {"p": 44, "t": 4, "v": 40.8}, {"p": 45, "t": 1, "v": 31.7}, {"p": 45, "t": 2, "v": 25.0}, {"p": 45, "t": 3, "v": 58.3}, {"p": 45, "t": 4, "v": 62.5}, {"p": 46, "t": 1, "v": 7.5}, {"p": 46, "t": 2, "v": 35.0}, {"p": 46, "t": 3, "v": 37.5}, {"p": 46, "t": 4, "v": 54.2}, {"p": 47, "t": 1, "v": 5.0}, {"p": 47, "t": 2, "v": 15.8}, {"p": 47, "t": 3, "v": 35.8}, {"p": 47, "t": 4, "v": 21.7}], "corr": {"f": ["fixation_rate_hz", "fixation_dur_median_ms", "fixation_dur_sd_ms", "saccade_rate_hz", "saccade_amp_median_deg", "saccade_peakvel_mean_dps", "saccade_vel_mean_dps", "saccade_dur_median_ms", "blink_rate_per_min", "blink_dur_mean_ms", "pupil_mean_mm", "pupil_sd_mm", "gaze_disp_x_deg", "gaze_disp_y_deg", "gaze_entropy_stationary"], "m": [[1.0, -0.59, -0.71, 0.75, 0.17, -0.05, -0.11, 0.2, -0.58, -0.25, 0.05, -0.27, -0.23, -0.27, -0.18], [-0.59, 1.0, 0.64, -0.71, 0.21, -0.07, -0.09, 0.13, 0.16, -0.14, -0.1, -0.14, -0.13, -0.14, -0.19], [-0.71, 0.64, 1.0, -0.72, 0.05, 0.08, 0.09, 0.04, 0.31, -0.01, -0.08, 0.03, -0.07, -0.0, -0.05], [0.75, -0.71, -0.72, 1.0, -0.11, -0.05, -0.09, -0.03, -0.36, -0.07, 0.1, -0.12, -0.05, -0.06, 0.15], [0.17, 0.21, 0.05, -0.11, 1.0, 0.4, 0.31, 0.83, -0.29, -0.18, -0.05, -0.19, -0.08, -0.19, -0.13], [-0.05, -0.07, 0.08, -0.05, 0.4, 1.0, 0.95, 0.48, 0.13, 0.1, 0.33, 0.19, 0.27, 0.14, 0.21], [-0.11, -0.09, 0.09, -0.09, 0.31, 0.95, 1.0, 0.37, 0.19, 0.15, 0.23, 0.23, 0.25, 0.16, 0.2], [0.2, 0.13, 0.04, -0.03, 0.83, 0.48, 0.37, 1.0, -0.27, -0.17, -0.04, -0.18, -0.08, -0.18, -0.12], [-0.58, 0.16, 0.31, -0.36, -0.29, 0.13, 0.19, -0.27, 1.0, 0.25, 0.06, 0.29, 0.23, 0.27, 0.23], [-0.25, -0.14, -0.01, -0.07, -0.18, 0.1, 0.15, -0.17, 0.25, 1.0, 0.07, 0.18, 0.17, 0.27, 0.18], [0.05, -0.1, -0.08, 0.1, -0.05, 0.33, 0.23, -0.04, 0.06, 0.07, 1.0, 0.23, 0.28, 0.2, 0.22], [-0.27, -0.14, 0.03, -0.12, -0.19, 0.19, 0.23, -0.18, 0.29, 0.18, 0.23, 1.0, 0.32, 0.32, 0.28], [-0.23, -0.13, -0.07, -0.05, -0.08, 0.27, 0.25, -0.08, 0.23, 0.17, 0.28, 0.32, 1.0, 0.66, 0.6], [-0.27, -0.14, -0.0, -0.06, -0.19, 0.14, 0.16, -0.18, 0.27, 0.27, 0.2, 0.32, 0.66, 1.0, 0.65], [-0.18, -0.19, -0.05, 0.15, -0.13, 0.21, 0.2, -0.12, 0.23, 0.18, 0.22, 0.28, 0.6, 0.65, 1.0]]}, "miss": {"fixation_rate_hz": 0, "fixation_dur_median_ms": 0, "fixation_dur_sd_ms": 0, "saccade_rate_hz": 0, "saccade_amp_median_deg": 0, "saccade_peakvel_mean_dps": 0, "saccade_vel_mean_dps": 0, "saccade_dur_median_ms": 0, "blink_rate_per_min": 0, "blink_dur_mean_ms": 41, "pupil_mean_mm": 0, "pupil_sd_mm": 0, "gaze_disp_x_deg": 0, "gaze_disp_y_deg": 0, "gaze_entropy_stationary": 0}, "ours": {"fixation_rate_hz": [3.44, 3.64, 2.76, 2.87], "fixation_dur_median_ms": [196.13, 185.77, 207.37, 200.82], "fixation_dur_sd_ms": [166.74, 134.62, 212.23, 202.52], "saccade_rate_hz": [4.0, 4.27, 3.41, 3.48], "saccade_amp_median_deg": [2.6, 2.81, 2.39, 2.54], "saccade_peakvel_mean_dps": [170.27, 179.93, 180.23, 190.78], "saccade_vel_mean_dps": [115.14, 119.32, 121.9, 128.64], "saccade_dur_median_ms": [30.11, 30.84, 28.97, 29.32], "blink_rate_per_min": [3.14, 1.85, 15.09, 15.19], "blink_dur_mean_ms": [203.53, 198.98, 227.8, 212.75], "pupil_mean_mm": [3.5, 3.67, 3.74, 3.8], "pupil_sd_mm": [0.26, 0.29, 0.35, 0.34], "gaze_disp_x_deg": [6.32, 6.06, 9.57, 7.47], "gaze_disp_y_deg": [3.73, 3.78, 5.17, 4.65], "gaze_entropy_stationary": [0.36, 0.37, 0.4, 0.39]}};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ACT = ["A1","A2","A3","A4"], ACOL = ["--a1","--a2","--a3","--a4"];
+const tip = document.getElementById("tip");
+function showTip(e, t){ tip.textContent = t; tip.style.left = (e.clientX + 12) + "px"; tip.style.top = (e.clientY + 12) + "px"; tip.style.opacity = 1; }
+function hideTip(){ tip.style.opacity = 0; }
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent){ const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+
+// tables
+const TABLES = [
+  {name:"gaze", size:"188 files · 2,252,854 rows · 21 columns", key:["gaze_timestamp","confidence","norm_pos_x","norm_pos_y","gaze_point_3d_x","gaze_point_3d_y","gaze_point_3d_z"], other:["world_index","base_data","eye_center0_3d_x/y/z","gaze_normal0_x/y/z","eye_center1_3d_x/y/z","gaze_normal1_x/y/z"]},
+  {name:"pupil", size:"188 files · 4,506,032 rows · 34 columns", key:["pupil_timestamp","eye_id","confidence","method","diameter_3d"], other:["diameter (px)","model_confidence","norm_pos_x/y","ellipse_*","sphere_*","circle_3d_*","theta","phi","projected_sphere_*"]},
+  {name:"blinks", size:"188 files · 1,992 rows · 10 columns", key:["start_timestamp","duration","end_timestamp","confidence"], other:["id","start/end_frame_index","index","filter_response","base_data"]},
+  {name:"annotation", size:"188 rows · NASA-RTLX", key:["mental","physical","temporal","performance","effort","frustration","mean"], other:[]},
+  {name:"subject_info", size:"47 rows", key:[], other:["VisualAcuity_logMAR","Gender","Age","Education"]},
+];
+document.getElementById("tables").innerHTML = TABLES.map(t => `<div class="tcard"><h3>${t.name}</h3><div class="size">${t.size}</div><div class="chips">${t.key.map(c=>`<span class="chip key">${c}</span>`).join("")}${t.other.map(c=>`<span class="chip">${c}</span>`).join("")}</div></div>`).join("");
+
+// 2x2 design
+const rtlxByT = [1,2,3,4].map(t => { const v = D.rtlx.filter(r=>r.t===t).map(r=>r.v); return v.reduce((a,b)=>a+b,0)/v.length; });
+const medDur = [1,2,3,4].map(t => { const v = D.rec.filter(r=>r.t===t).map(r=>r.dur).sort((a,b)=>a-b); return v[Math.floor(v.length/2)]; });
+const cells = [[1,"Single task","No time pressure"],[2,"Single task","Time pressure"],[3,"Multitask","No time pressure"],[4,"Multitask","Time pressure"]];
+document.getElementById("design").innerHTML = cells.map(([t,a,b]) => `<div class="cell" style="border-left:4px solid var(${ACOL[t-1]})"><div class="tag">A${t}${t===1?" · low":t===4?" · high":""}</div><div class="meta">${a} · ${b}</div><div class="meta">${medDur[t-1].toFixed(0)} s median · RTLX ${rtlxByT[t-1].toFixed(1)}</div></div>`).join("");
+
+// dot strip chart
+function strip(id, rows, valKey, xmax, xlabel, unit, lines){
+  const svg = document.getElementById(id), W = 860, rowH = 46, top = 16, left = 46, H = top + rowH*4 + 40;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%");
+  const x = v => left + (W - left - 20) * Math.min(v, xmax) / xmax;
+  const grid = css("--rule");
+  for (let i = 0; i <= 5; i++){ const v = xmax*i/5, xx = x(v);
+    el("line",{x1:xx,x2:xx,y1:top,y2:top+rowH*4,stroke:grid,"stroke-width":1},svg);
+    const tx = el("text",{x:xx,y:top+rowH*4+16,"text-anchor":"middle"},svg); tx.textContent = Math.round(v); }
+  const xl = el("text",{x:left+(W-left-20)/2,y:H-4,"text-anchor":"middle"},svg); xl.textContent = xlabel;
+  (lines||[]).forEach(v => { const xx = x(v); el("line",{x1:xx,x2:xx,y1:top-4,y2:top+rowH*4,stroke:css("--muted"),"stroke-dasharray":"4 3","stroke-width":1},svg);
+    const t = el("text",{x:xx+3,y:top+6},svg); t.textContent = v + unit; });
+  [1,2,3,4].forEach((t,i) => {
+    const cy = top + rowH*i + rowH/2;
+    const lab = el("text",{x:8,y:cy+4,class:"lbl"},svg); lab.textContent = "A"+t;
+    rows.filter(r=>r.t===t).forEach((r,j) => {
+      const jitter = ((r.p*37)%17 - 8) * 1.4;
+      const c = el("circle",{cx:x(r[valKey]),cy:cy+jitter,r:4.2,fill:css(ACOL[i]),"fill-opacity":0.75},svg);
+      c.addEventListener("mousemove", e => showTip(e, `P${String(r.p).padStart(2,"0")} A${t}: ${r[valKey]}${unit}`));
+      c.addEventListener("mouseleave", hideTip);
+    });
+  });
+}
+strip("dur", D.rec, "dur", 150, "Activity duration (seconds)", " s", [30]);
+strip("inv", D.rec, "inv", 60, "Gaze samples with confidence < 0.8 (%)", "%", [20,35]);
+strip("blink", D.blink, "b", 55, "Blinks per minute", "/min");
+
+// threshold table
+const thr = [20,30,35,40,50].map(th => { const bad = D.rec.filter(r=>r.inv>th); const prim = [...new Set(bad.filter(r=>r.t===1||r.t===4).map(r=>"P"+String(r.p).padStart(2,"0")))];
+  return `<tr${th===35?' style="background:var(--accent-soft)"':""}><td class="num">${th}%</td><td class="num">${bad.length}</td><td>${prim.length} ${prim.length?"("+prim.join(", ")+")":""}</td></tr>`; });
+document.getElementById("thr").innerHTML = thr.join("");
+
+// ratio chart ours / COLET
+const REF = {fixation_rate_hz:["Fixation rate",[2.50,2.80,2.24,2.35]], fixation_dur_median_ms:["Fixation duration",[272.65,244.43,269.32,254.13]],
+  saccade_rate_hz:["Saccade rate",[1.71,1.85,3.40,3.35]], saccade_amp_median_deg:["Saccade amplitude",[14.10,13.96,14.15,14.06]],
+  saccade_peakvel_mean_dps:["Saccade peak velocity",[216.89,204.14,350.49,357.25]], saccade_dur_median_ms:["Saccade duration",[15.33,15.39,19.05,19.16]],
+  blink_dur_mean_ms:["Blink duration",[205.54,200.31,229.0,212.29]], pupil_mean_mm:["Pupil diameter",[3.49,3.66,3.80,3.82]],
+  blink_rate_per_min:["Blink rate",[3.0,1.8,14.4,14.4]]};
+(function(){
+  const svg = document.getElementById("ratio"), keys = Object.keys(REF), W = 860, rowH = 30, top = 10, left = 170, H = top + rowH*keys.length + 34;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`); svg.setAttribute("width","100%");
+  const xmax = 2.5, x = v => left + (W-left-20) * Math.min(v,xmax)/xmax;
+  for (const v of [0,0.5,1,1.5,2,2.5]){ const xx = x(v); el("line",{x1:xx,x2:xx,y1:top,y2:top+rowH*keys.length,stroke:css(v===1?"--muted":"--rule"),"stroke-width":v===1?1.5:1},svg);
+    const t = el("text",{x:xx,y:top+rowH*keys.length+16,"text-anchor":"middle"},svg); t.textContent = v.toFixed(1)+"×"; }
+  const xl = el("text",{x:left+(W-left-20)/2,y:H-2,"text-anchor":"middle"},svg); xl.textContent = "Our mean ÷ COLET published mean (1.0 = identical)";
+  keys.forEach((k,i) => {
+    const [label, ref] = REF[k], ours = D.ours[k], y0 = top + rowH*i;
+    const ratios = ref.map((r,j) => ours[j]/r), avg = ratios.reduce((a,b)=>a+b,0)/4;
+    const col = Math.abs(avg-1) <= 0.1 ? "--ok" : (Math.abs(avg-1) <= 0.6 ? "--warn" : "--bad");
+    const lab = el("text",{x:left-10,y:y0+rowH/2+4,"text-anchor":"end",class:"lbl"},svg); lab.textContent = label;
+    ratios.forEach((r,j) => {
+      const c = el("circle",{cx:x(r),cy:y0+rowH/2,r:5,fill:css(ACOL[j]),stroke:css(col),"stroke-width":2},svg);
+      c.addEventListener("mousemove", e => showTip(e, `${label}, A${j+1}: ours ${ours[j]} vs COLET ${ref[j]} (${r.toFixed(2)}×)`));
+      c.addEventListener("mouseleave", hideTip);
+    });
+  });
+})();
+
+// correlation heat map
+(function(){
+  const NAMES = {fixation_rate_hz:"fix rate",fixation_dur_median_ms:"fix dur",fixation_dur_sd_ms:"fix dur SD",saccade_rate_hz:"sacc rate",saccade_amp_median_deg:"sacc amp",
+    saccade_peakvel_mean_dps:"sacc peak vel",saccade_vel_mean_dps:"sacc mean vel",saccade_dur_median_ms:"sacc dur",blink_rate_per_min:"blink rate",blink_dur_mean_ms:"blink dur",
+    pupil_mean_mm:"pupil mean",pupil_sd_mm:"pupil SD",gaze_disp_x_deg:"gaze disp x",gaze_disp_y_deg:"gaze disp y",gaze_entropy_stationary:"gaze entropy"};
+  const f = D.corr.f, m = D.corr.m, n = f.length, cs = 34, left = 104, top = 96, W = left + cs*n + 10, H = top + cs*n + 10;
+  const svg = document.getElementById("corr"); svg.setAttribute("viewBox",`0 0 ${W} ${H}`); svg.setAttribute("width","100%"); svg.style.maxWidth = W+"px";
+  const pos = css("--a4"), neg = css("--a1"), base = css("--surface");
+  f.forEach((name,i) => {
+    const ty = el("text",{x:left-6,y:top+cs*i+cs/2+4,"text-anchor":"end"},svg); ty.textContent = NAMES[name]||name;
+    const tx = el("text",{x:0,y:0,transform:`translate(${left+cs*i+cs/2+4},${top-6}) rotate(-55)`},svg); tx.textContent = NAMES[name]||name;
+    f.forEach((_,j) => {
+      const v = m[i][j]; if (v === null) return;
+      const r = el("rect",{x:left+cs*j,y:top+cs*i,width:cs-2,height:cs-2,rx:3,fill:v>=0?pos:neg,"fill-opacity":Math.abs(v)*0.9+0.04},svg);
+      if (i!==j && Math.abs(v)>0.8) el("rect",{x:left+cs*j+1,y:top+cs*i+1,width:cs-4,height:cs-4,rx:3,fill:"none",stroke:css("--ink"),"stroke-width":1.5},svg);
+      r.addEventListener("mousemove", e => showTip(e, `${NAMES[name]} × ${NAMES[f[j]]}: ρ = ${v.toFixed(2)}`));
+      r.addEventListener("mouseleave", hideTip);
+    });
+  });
+})();
+
+// feature set table
+const FS = [
+  ["Pupil diameter (mean, SD)","ok","Ready","Matches COLET"],["Blink rate","ok","Ready","Matches COLET; spoken task raises it (limitation)"],
+  ["Blink duration","ok","Ready","Missing in "+D.miss.blink_dur_mean_ms+" recordings with no valid blink (handled by the models)"],
+  ["Fixation rate, fixation duration","warn","Fix first","Same pattern as COLET, different level"],
+  ["Saccade rate, amplitude, peak velocity","bad","Fix first","Far from COLET until gaze is converted the way they did"],
+  ["Gaze dispersion x / y","warn","Fix first","One impossible value (102°) to clean"],
+  ["Mean saccade velocity","bad","Drop","Duplicate of peak velocity (ρ = 0.95)"],
+  ["Saccade duration","warn","Optional","Correlated with amplitude (ρ = 0.83)"],
+  ["Stationary gaze entropy","warn","Exploratory","Approximate: computed on camera, not screen, coordinates"],
+];
+document.getElementById("fs").innerHTML = FS.map(([a,c,s,n]) => `<tr><td>${a}</td><td><span class="pill ${c}">${s}</span></td><td>${n}</td></tr>`).join("");
+</script>

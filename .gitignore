@@ -3,5 +3,8 @@ __pycache__/
 *.pyc
 .venv/
 
+# raw datasets (download from source; too large for git)
+data/
+
 # generated EDA intermediate (rebuild with docs/eda-scripts/load.py)
-docs/eda-scripts/eye.parquet
+archive/gazeload/docs/eda-scripts/eye.parquet
