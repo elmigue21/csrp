@@ -92,7 +92,7 @@ Team rule for round 3: approve only items that add no new analysis (researcher-n
 
 | # | Outcome |
 |---|---|
-| R4-1 | ✅ Gaze input changed to `gaze_normal0/1` (two eyes averaged); `norm_pos` cross-check and ±15% rule removed. Reviewer's numbers reproduced (N25). 🟡 One-eye samples as missing: pending team OK. RRL: PP17–PP19 added (vergence depth unreliable; vector-angle velocity); the field choice itself is a design choice (§13) |
+| R4-1 | ✅ Gaze input changed to `gaze_normal0/1` (two eyes averaged); `norm_pos` cross-check and ±15% rule removed. Reviewer's numbers reproduced (N25). ✅ One-eye samples as missing (decided 2026-10-02). RRL: PP17–PP19 added (vergence depth unreliable; vector-angle velocity); the field choice itself is a design choice (§13) |
 | R4-2 | ✅ Sanity check per activity (§5 step 7) |
 | V3-1 | ✅ Limitation sentence (§11) |
 
@@ -107,4 +107,4 @@ With V3-1 decided, V2-1 and V2-3 above are effectively closed by the limitation 
 |---|---|
 | M9 / C5 | Adviser sign-off (on hold) |
 | R7, R8 / C7 | Year consistency, full author lists, abstract-only full-text checks (pinned) |
-| C8 | Stimulus-luminance check (pinned) |
+| C8 | Stimulus-luminance check: optional (decided 2026-10-02) |

@@ -5,7 +5,7 @@ judgment calls, known weaknesses, and traps in the data or the method. Each note
 it is, why it matters, and what we do about it. Decisions themselves are recorded in
 `rrl-decision-log.md`, and the method in `methodology-colet.md`.
 
-Dataset: **COLET** (Ktistakis et al., 2022). Last updated: 2026-10-01.
+Dataset: **COLET** (Ktistakis et al., 2022). Last updated: 2026-10-02.
 
 ---
 
@@ -13,7 +13,7 @@ Dataset: **COLET** (Ktistakis et al., 2022). Last updated: 2026-10-01.
 
 - **What COLET is:**
   - 47 participants solved visual-search puzzles ("find the squares with a chandelier") on a
-    screen while a Pupil Core eye tracker recorded their eyes at 240 Hz.
+    screen while a Pupil Core eye tracker recorded their eyes (gaze ≈ 242 Hz; pupil ≈ 121 Hz per eye).
   - A chin rest kept their heads still.
   - After each activity they rated their workload with NASA-RTLX (0–100).
 - **The main task, a picture puzzle like a CAPTCHA:**
@@ -354,7 +354,8 @@ the task (talking). That is part of N3, not a data error.
   2018). The puzzle images differ in brightness.
 - **What's known:** COLET checked this. Only 2 of 47 participants showed pupil size following
   image brightness. Lighting was controlled (400–450 lx).
-- **Still to do:** our own stimulus-brightness check (pinned, C8).
+- **Decided 2026-10-02:** our own stimulus-brightness check is **optional** (C8). The RRL's answer is to
+  control lighting and check once; COLET did both. Cite COLET's check; brightness is a limitation.
 
 ## N11. Results can change across computers
 
@@ -368,6 +369,11 @@ the task (talking). That is part of N3, not a data error.
 - **What:** COLET's MATLAB file stores data as MATLAB "tables", which standard Python tools
   can't read. We used the open-source `mat-io` package to decode it, then saved every table
   as a Parquet file without changing any values.
+- **Before → after ("flattening"):** one nested 3.8 GB `data_v3.mat` (47 participants → 4
+  activities → gaze / pupil / blinks / annotation tables) became 564 flat Parquet files
+  (`pXX_tY_{gaze,pupil,blinks}`, 188 recordings × 3 signals, 847 MB) plus `annotation.csv`
+  (188 rows) and `subject_info.csv` (47 rows). Totals: about 2.25 M gaze rows (21 columns),
+  4.51 M pupil rows (34 columns), 1,992 blinks. Object cells were stored as text.
 - **Why it matters:** be able to describe the data-preparation chain. It is reproducible:
   `data/colet/convert_colet.py`, from the Zenodo file (MD5 verified).
 
@@ -478,7 +484,7 @@ directions in our own data. Our pupil and blink values already match theirs.
 | Part | What | Why it is defensible |
 |---|---|---|
 | **Main method** | Use each eye's own **gaze direction** (`gaze_normal0/1`), averaged over the two eyes. The angle between two consecutive directions is how far the eye moved, in degrees. | A direction needs no distance guess. Averaging cancels each eye's inward bias (N25). Removes the 102° artifact (max spread 9.4°). **RRL:** distance guesses from the eyes' turning are unreliable at about 80 cm (Hooge 2019) and on Pupil Core specifically (Velisar & Shanidze 2024); eye speed from the angle between direction vectors (Kothari 2020). **Our own choice:** no study names `gaze_normal` itself. |
-| **One eye missing** (pending team OK) | Treat the sample as missing; the P6 gap rule handles it | Each eye alone is about 10° off, so switching eyes would create fake jumps (N25) |
+| **One eye missing** (decided 2026-10-02) | Treat the sample as missing; the P6 gap rule handles it | Each eye alone is about 10° off, so switching eyes would create fake jumps (N25) |
 | **Check: sanity check** | Median fixation 150–400 ms and saccade:fixation 0.8–1.25, in every activity (N23) | Fails → 5-feature fallback |
 | **COLET comparison** | Put our averages next to COLET's Table 4 and explain differences; main-sequence plausibility described, not tested | COLET never described its conversion, so exact replication isn't possible. Comparing openly is honest. |
 
@@ -818,8 +824,50 @@ with confidence ≥ 0.8. Script: `colet-eda/check_r4_1.py`; output `colet-eda/ch
   P37 A4 12.9° vs 4.8°.
 - Samples with only one valid eye: median **0.8%** per recording, max **19%** (P06 A3, already
   excluded by C3).
-- **Proposed (pending team OK):** use both-eye samples only; one-eye samples are missing, and
+- **Decided 2026-10-02:** use both-eye samples only; one-eye samples are missing, and
   the existing P6 gap rule handles them. No new step.
 
 **Why this matters for a panel:** the method change rests on our own numbers, not only on the
 reviewer's.
+
+---
+
+## N26. Pipeline implementation notes
+
+Things found or decided while writing `src/` (2026-10-02). None changes the frozen method; each
+explains a detail a panel could ask about.
+
+- **Event-rate denominator.** Fixation and saccade rates divide by the time with a **valid
+  gaze direction**, not by the whole recording. Why: missing gaze is linked to the condition
+  (more blinks and data loss in some activities), so dividing by total time would turn
+  missing data into a fake rate difference. Blink rate uses valid recording time (P4).
+- **The 240 / 121 Hz correction.** The inventory measured a **gaze stream of ≈ 242 Hz**
+  (binocular; median 241.9). The "242 Hz" pupil rate counted the duplicated `2d` and `3d`
+  rows, so the real pupil rate is **≈ 121 Hz per eye**. Earlier text saying "240 Hz per eye"
+  was wrong and is corrected.
+- **The permutation test uses default hyperparameters.** Tuning inside every permuted run
+  would be very slow, and the null and observed runs must be treated alike. So each model
+  runs with its **default (untuned)** settings; the p-value therefore tests the untuned
+  pipeline against chance. The **headline AUC is the nested one**; report the permutation
+  p-value next to the untuned observed AUC, not as a test of the headline number.
+- **Blinks inside fixations.** A blink inside a fixation splits it into two (standard I-VT,
+  gaze stays missing during blinks). Fixation and blink features can therefore be linked.
+  Mention it when interpreting both.
+- **Pupil handling details.** Blink gaps ≤ 250 ms are interpolated in pupil (gaze keeps
+  blinks missing). Pupil needs **both eyes**. Short finite runs (≤ 30 samples at 120 Hz) are
+  dropped, and the MAD used for outlier removal is floored so a flat signal cannot reject
+  everything.
+- **Feature cache.** Features are cached on disk, keyed to a **hash of the preprocessing
+  settings and of the source of the feature modules** (data, preprocess, events, features,
+  dataset). Changing a setting or editing that code makes a new cache automatically.
+- **One-eye gaze samples are missing** (decided 2026-10-02; N25).
+- **Fold stability.** Under leave-one-participant-out each fold's held-out set has only two
+  rows, so per-fold SHAP is not informative. Stability is shown by LR sign consistency and
+  coefficient SD, and by XGBoost `folds_used`.
+- **Blinks and gaps split fixations.** At about 15 blinks/min in A4 versus about 2 in A1, each
+  masked blink (and any gap > 75 ms) cuts a fixation in two. This can raise A4's fixation rate
+  and lower its mean fixation duration by roughly 5-8% (an estimate from the final code
+  review, not measured). The gaze-time denominator fixes the denominator, not this count
+  effect. There is no blink padding, so eyelid-edge samples can create pseudo-saccades more
+  often in A4. State this as a limitation in Ch. 3/5; it is not a method change (methodology
+  frozen).

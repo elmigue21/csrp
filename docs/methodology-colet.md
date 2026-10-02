@@ -69,7 +69,7 @@ reasons, in **§17 Out of scope**. These are scope decisions, not omissions.
 | Participants | 56 recruited, 9 excluded by the authors (7 vision criteria, 2 poor recordings). **47** released: 26 F / 21 M, age 32 ± 8 | EM7 |
 | Ethics | Approved by the FORTH Ethics Committee (110/12-02-2021). Our study is a secondary analysis of public, de-identified data. | EM7 |
 | Setting | Lab. Chin and head rest; 24" LCD, 1280×720, 80 cm away. Controlled photopic light (400 lx screen off / 450 lx blank screen). | EM7 |
-| Tracker | Pupil Labs Pupil Core, binocular, **240 Hz per eye** (measured), accuracy 0.60° (reported) | EM7; P0 |
+| Tracker | Pupil Labs Pupil Core, binocular, **gaze stream ≈ 242 Hz** (binocular, measured); **pupil ≈ 121 Hz per eye** (each sample appears twice, as 2d and 3d rows), accuracy 0.60° (reported) | EM7; P0 |
 | Task | Visual-search "CAPTCHA" puzzles, 5 images per activity (drawn from 21). Activities in random order, with 2-minute breaks. | EM7 |
 | Design | 2 × 2: time pressure (spoken instruction only) × secondary task (counting backwards **aloud** from 1000 by 4) | EM7 |
 | Released data | Raw Pupil Core exports per participant × activity: `gaze`, `pupil`, `blinks`, `annotation` (NASA-RTLX), plus `subject_info`. **No fixation/saccade events; no rest baseline.** | Zenodo README |
@@ -125,15 +125,15 @@ All thresholds were chosen after a **label-blind** data-quality inspection and f
 | P1. Time alignment | **Trim pupil and blink data to each recording's gaze time range.** P18 A3/A4 contain stray pupil samples about 2 hours later. | Data check (review D1) |
 | P2. Sample validity | A gaze/pupil sample is invalid if confidence < **0.8** | PP7, PP8, PP5, PP6 |
 | P3. Recording exclusion (C3) | Exclude a recording if > **35%** of its gaze samples are invalid. A participant missing A1 or A4 is dropped from the main analysis. Removes P06 A3, P06 A4 and P17 A4, so P06 and P17 drop out. | Nenna 2023 (HR4) |
-| P4. Valid time | Rates use **valid recording time**, excluding gaps over 1 s (P18 A3: 12 s; P18 A4: 3.7 s; P16 A4: 1.4 s) | Data check (review D2) |
+| P4. Valid time | Rates use **valid recording time**, excluding gaps over 1 s (P18 A3: 12 s; P18 A4: 3.7 s; P16 A4: 1.4 s). Event rates (fixations, saccades) are per second of **time with a valid gaze direction**; blink rate is per minute of valid recording time (researcher-notes N26) | Data check (review D2) |
 | P5. Blinks | Use COLET's blink events. Keep 50–500 ms; merge blinks < 100 ms apart; treat blink periods as missing for gaze and pupil. | PP10, PP6, CF2 |
 | P6. Gaze gaps | Linearly interpolate gaze gaps < 75 ms; leave longer gaps missing | PP7, PP11 |
 | P7. Pupil | `diameter_3d` (mm) from the `3d c++` rows. Range 1.5–9 mm; MAD speed-outlier removal; average both eyes; interpolate gaps ≤ 250 ms; 4 Hz low-pass. **Count 3D-model refits per recording** (reported in P14; V2-3). | PP11, PP9, NM7, CF2 |
-| P8. Gaze to degrees | **Per-eye gaze direction** (`gaze_normal0/1`; D-M1 revised by R4-1): average the two eyes; samples with only one valid eye are treated as missing (P6 gap rule; **pending team OK**, researcher-notes N25); see §5 | PP17, PP18 (vergence depth unreliable); PP19 (vector-angle velocity); data checks (R4-1, N25) |
+| P8. Gaze to degrees | **Per-eye gaze direction** (`gaze_normal0/1`; D-M1 revised by R4-1): average the two eyes; samples with only one valid eye are treated as missing (P6 gap rule; decided 2026-10-02, researcher-notes N25); see §5 | PP17, PP18 (vergence depth unreliable); PP19 (vector-angle velocity); data checks (R4-1, N25) |
 | P9. Event detection | See §5 | PP1–PP3, PP12, PP13 |
-| P10. Features | §6, computed per whole activity, as **rates** (never counts or duration) | N5 |
+| P10. Features | §6, computed per whole activity, as **rates** (never counts or duration). Fixation and saccade rates: per second of time with a valid gaze direction; blink rate: per minute of valid recording time (N26) | N5 |
 | P11. Quality report | Valid-sample % per recording, reported by condition. It is **not** a feature. | PP7, LB13 |
-| P12. Luminance check | Brightness of the 21 stimulus images by condition (pinned, C8). COLET's own check: 2 of 47 participants correlated. | CF2, CF3, EM7 |
+| P12. Luminance check | Brightness of the 21 stimulus images by condition (**optional**, C8; decided 2026-10-02). COLET's own check: 2 of 47 participants correlated. | CF2, CF3, EM7 |
 | P13. Fold-aware steps | Per-person normalization (§7), scaling and imputation, all fitted inside training folds | EV2, LB13 |
 | P14. Retention table | Samples and recordings kept at each step, by participant and condition | LB13 |
 
@@ -180,14 +180,20 @@ All thresholds were chosen after a **label-blind** data-quality inspection and f
 - **Decided (D-M1, revised 2026-10-01 after R4-1):** compute angles from each eye's own gaze
   direction, **`gaze_normal0/1`**, which does not depend on gaze depth. Angle between
   consecutive directions = how far the eye moved. Average the two eyes.
-  - **Pending team OK (N25):** the two eyes' directions converge by about 25° (expected about
+  - **Decided 2026-10-02 (N25):** the two eyes' directions converge by about 25° (expected about
     4–5° at 80 cm), so a single eye is biased by about 10°. Switching to one eye when the other
-    drops out would create fake jumps. Proposed: samples with only one valid eye are treated as
+    drops out would create fake jumps. So samples with only one valid eye are treated as
     missing and handled by the P6 gap rule (median 0.8% of samples per recording, max 19%).
   - The `norm_pos` cross-check and its ±15% agreement rule are **removed** (scope shrinks).
   - Validation is the sanity check (step 7). Main-sequence plausibility (ET10) and COLET's
     Table 4 (about 14° median saccade; conversion undisclosed; gaze spans only about 20°
     horizontally) are compared descriptively only.
+
+**Limitation (final review):** blinks (about 15/min in A4 versus about 2 in A1) and gaps
+longer than 75 ms split fixations, which can raise A4's fixation rate and lower its mean
+fixation duration by roughly 5-8% (estimate, not measured); there is no blink padding, so
+eyelid-edge samples may create more pseudo-saccades in A4. Stated as a limitation, not a
+method change (N26).
 
 **First-pass caution:** the exploratory hand-rolled detector's fixation and saccade numbers
 must not be used (N1).
@@ -205,7 +211,7 @@ well they separate A1 from A4.
 | Blink duration | **Dropped (D-M3 decided):** missing whenever there are no blinks (13/45 A1, 0/45 A4), so missingness would reveal the label | EM9 (Hogervorst), EV2 |
 | Fixation rate, fixation duration | Core, after the event detection is validated | CL7, ET21 |
 | Saccade rate, amplitude | Core, after validation | CL7, ET8, ET20 |
-| Saccade peak velocity | **Core (D-N2 decided).** Limitation: the 240 Hz stream may blunt peak speeds. | EM7, ET9, ET10, CL7 |
+| Saccade peak velocity | **Core (D-N2 decided).** Limitation: the ≈ 242 Hz gaze stream may blunt peak speeds. | EM7, ET9, ET10, CL7 |
 | Gaze dispersion x/y | Core; Božak 2026 "fixation dispersion". SD of gaze angle from `gaze_normal0/1` (§5). The 102° artifact came from the 3D gaze point (R4-1), not from fast samples, so the velocity rejection alone did not remove it (V3-4 superseded) | ET14–ET16, EM5; PP8 (rejection) |
 | Mean saccade velocity | Dropped (duplicate of peak velocity, ρ = 0.95) | FI13 |
 | Saccade duration | Dropped (tied to amplitude, ρ = 0.83) | FI13 |
@@ -273,14 +279,18 @@ well they separate A1 from A4.
 - **Paired Wilcoxon** on per-participant scores as a supporting test (EV12). It is an
   adaptation; see M9, M10.
 - **Optional:** Bayesian equivalence test (M11).
-- **Chance check:** grouped permutation test against chance (FI11).
+- **Chance check:** grouped permutation test against chance (FI11). It uses each model's
+  **default hyperparameters** (not tuned), so the null and observed runs are treated alike; its
+  p-value tests the untuned pipeline against chance. The headline AUC is the nested one (N26);
+  `perm_observed_auc` (untuned) is not the headline AUC. With 200 permutations the p-value
+  cannot go below 1/(200+1) ≈ 0.005.
 
 **Importance:**
 - LR standardized elastic-net coefficients (FI12, X5).
-- **SHAP for both models** (D-M8): TreeSHAP for XGBoost (FI3), linear SHAP for LR (FI1), on held-out data. Rankings are compared on the same scale.
+- **SHAP for both models** (D-M8): TreeSHAP for XGBoost (FI3), linear SHAP for LR (FI1), on held-out data. LinearExplainer uses the interventional (feature-independence) convention. Rankings are compared on the same scale.
 - **Permutation importance for both models, on pooled out-of-fold predictions** (FI4, FI5;
   review N4).
-- Agreement between the two models' rankings (Kendall τ, **with a bootstrap CI or permutation p-value**, as 10 features give a wide interval) and fold stability (FI14).
+- Agreement between the two models' rankings (Kendall τ, **with a bootstrap CI or permutation p-value**, as 10 features give a wide interval) and fold stability (FI14). Fold stability is shown by LR sign consistency and coefficient SD, and by XGBoost `folds_used` (per-fold SHAP under LOPO covers only two rows).
 - Gain importance in the appendix only (FI6).
 - Interpretation: importance means model reliance, not cause (FI9).
 
@@ -333,6 +343,13 @@ were more frequent in the multitask activities (researcher-notes N22)."*
   names this field. The switch is justified by our data check (N25), supported by evidence that
   vergence depth is unreliable (PP17, PP18) and by the vector-angle velocity method (PP19).
 - The sanity-check tolerance: saccade:fixation ratio 0.8–1.25 (V3-3).
+- Implementation choices with no published value (set when the pipeline was written):
+  - pupil resampling grid of 120 Hz;
+  - 2nd-order Butterworth for the 4 Hz pupil low-pass;
+  - both-eyes rule for pupil averaging (a sample needs both eyes);
+  - blinks merged before the 50–500 ms filter;
+  - sanity statistic = median of the recording-level medians;
+  - blink gaps ≤ 250 ms are interpolated in pupil only (gaze keeps blinks missing); short finite pupil runs (≤ 30 samples at 120 Hz) are dropped; the MAD is floored.
 
 ## 14. Decisions (summary)
 
@@ -344,16 +361,20 @@ All methodology decisions are recorded in `rrl-decision-log.md`:
 
 **Round 4:** the reviewer proposes freezing the methodology once R4-1, R4-2 and V3-1 are applied
 (`review-issues-status-4.md` §5); the next review would be of the pipeline and results, not the
-plan. Freezing is the team's call.
+plan. **Frozen by the team on 2026-10-02.** Further changes only if the data shows a Critical
+problem when the pipeline runs.
 
-Still pending: **C5, adviser sign-off** (on hold). Also pinned: C7 reference checks and C8
-luminance check.
+Still pending: **C5, adviser sign-off** (on hold). Also pinned: C7 reference checks. C8 luminance check: optional (2026-10-02).
 
 ## 15. Code status
 
-- **Reusable:** `src/models.py`, `src/evaluate.py`, `src/importance.py`, `src/figures.py`.
-- **To rewrite for COLET:** `src/data.py`, `src/labels.py`, `src/config.py`,
-  `src/normalize.py`.
+- **Written, not run on real data:** the COLET pipeline in `src/`:
+  - `config.py` (settings), `data.py` (loading), `dataset.py` (rows and labels), `preprocess.py`
+    (pupil and gaze cleaning), `events.py` (I-VT fixations/saccades), `features.py`, `checks.py`
+    (sanity and NASA-RTLX checks);
+  - `labels.py`, `normalize.py`, `models.py`, `evaluate.py`, `importance.py`;
+  - `run_colet.py` (entry point: `python src/run_colet.py`).
+- **Colab:** `notebooks/colet_pipeline.ipynb` with `requirements-colab.txt` (pinned versions).
 - **Exploration:** `docs/colet-eda/eda_colet.py` (first pass only).
 
 ## Appendix A. RRL support matrix (regraded 2026-10-01)
@@ -468,7 +489,7 @@ be named as a limitation or future work.
 | **A second gaze-conversion method as a cross-check** and a **formal main-sequence slope test** | Lean sanity check instead (fixation 150–400 ms; saccade:fixation 0.8–1.25, per activity). `gaze_normal0/1` is now the *primary* input (R4-1), not an extra | V2-2, V3-3, R4-1, N23 |
 | **Refit-free P2 run** (P2 on participants with no refits) | Limitation sentence instead (§11) | V3-1, N24 |
 | **Deep or large XGBoost settings** | Depth 1–3, 50–300 trees for 88 training samples | V2-9, N23 |
-| **Stimulus-luminance correction** | COLET's own check (2/47 correlated) is cited; our brightness check is pinned (C8) | N10, C8 |
+| **Stimulus-luminance correction** | COLET's own check (2/47 correlated) is cited; our own brightness check is optional (C8, decided 2026-10-02) | N10, C8 |
 | **Required COLET replication** ("showing COLET's inflation" as a contribution) | Kept optional (§16); removed from stated contributions | V2-5, D-M7, N23 |
 | **Required no-standardization run** | Kept optional; answer with Tognotti 2026 and N7 if asked | V2-8, D-M4, N23 |
 | **Optional analyses** S1 (multitask), S2 (NASA bins), S3 (replication), S4 (no standardization), S5 (pupil-free), and robustness runs | Not required for P1/P2; decide later | D-N5, N19 |

@@ -1,80 +1,72 @@
-"""Paths, column groups and experiment settings for the GAZELOAD study."""
+"""Paths and every fixed setting of the COLET pipeline (methodology-colet.md, frozen 2026-10-02).
+
+All thresholds were fixed after a label-blind inspection and before any model was run.
+Changing one here means changing methodology-colet.md and the decision log too.
+"""
+import os
 from pathlib import Path
 
 # --------------------------------------------------------------------------- paths
-# GAZELOAD_ROOT = Path(
-#     r"C:\Users\John\Downloads\GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
-#     r"\GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
-# )
-
-
-GAZELOAD_ROOT = Path(
-    "/home/miguel/Downloads/GAZELOAD A Multimodal Eye-Tracking Dataset for Men"
-)
-METRICS_DIR = GAZELOAD_ROOT / "04_eye-metrics"
-RATINGS_XLSX = GAZELOAD_ROOT / "01_Metadata" / "Tasks_Rating.xlsx"
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = PROJECT_ROOT / "outputs"
+# Colab points these at Google Drive; locally they default to the converted copy and
+# to outputs/colet/ (both git-ignored).
+DATA_DIR = Path(os.environ.get("COLET_DATA_DIR", PROJECT_ROOT / "data" / "colet" / "parquet"))
+OUT_DIR = Path(os.environ.get("COLET_OUT_DIR", PROJECT_ROOT / "outputs" / "colet"))
 TABLE_DIR = OUT_DIR / "tables"
-FIG_DIR = OUT_DIR / "figures"
 CACHE_DIR = OUT_DIR / "cache"
 
-# --------------------------------------------------------------------------- columns
-LABEL_COL = "selfreport_mental_load(1-10)"
+# --------------------------------------------------------------------------- design
+ACTIVITIES = (1, 2, 3, 4)
+LOW_ACTIVITY = 1    # single task, no time pressure
+HIGH_ACTIVITY = 4   # counting aloud + time pressure
 
-# Excluded from the feature matrix. `tasks` alone predicts the label at AUC 0.93,
-# so leaving it in would let both models read the task number instead of the eyes.
-# Participant_ID is corrupted in 6 files ('Hedi', 'Wassim') and is a group key, not
-# a feature. Timestamps are used to build epochs, then dropped.
-LEAKY_COLS = ["tasks", "Participant_ID", "timestamps_start_ms", "timestamps_end_ms"]
+# --------------------------------------------------------------------------- P2-P4 quality
+CONFIDENCE_MIN = 0.8
+MAX_INVALID_FRACTION = 0.35
+VALID_TIME_MAX_GAP_S = 1.0
 
-# Aggregated as mean + SD within each epoch.
-AGG_BASE = [
-    "fixation_count",
-    "saccade_count",
-    "saccade_amplitude_degree",
-    "saccade_velocity_degree/s",
-    "EyeGaze_x",
-    "std_EyeGaze_x",
-    "EyeGaze_y",
-    "std_EyeGaze_y",
-    "EyeGaze_z",
-    "std_EyeGaze_z",
-    "gaze_x_scene_mean",
-    "gaze_y_scene_mean",
-    "GTE",
-    "FDI",
-    "SaccRate",
-    "lux_interpolated",
+# --------------------------------------------------------------------------- P5 blinks
+BLINK_MERGE_S = 0.100
+BLINK_MIN_S = 0.050
+BLINK_MAX_S = 0.500
+
+# --------------------------------------------------------------------------- P6/P8 gaze
+GAZE_GRID_HZ = 240.0
+GAZE_MAX_INTERP_S = 0.075
+
+# --------------------------------------------------------------------------- P7 pupil
+PUPIL_METHOD_TAG = "3d"          # the `method` column holds e.g. "array(['3d c++'], ...)"
+PUPIL_MIN_MM = 1.5
+PUPIL_MAX_MM = 9.0
+PUPIL_MAD_MULTIPLIER = 16.0      # Kret & Sjak-Shie 2019 dilation-speed filter default
+PUPIL_GRID_HZ = 120.0
+PUPIL_MAX_INTERP_S = 0.250
+PUPIL_LOWPASS_HZ = 4.0
+PUPIL_LOWPASS_ORDER = 2
+
+# --------------------------------------------------------------------------- P9 events
+MAX_VELOCITY_DEG_S = 1000.0
+IVT_THRESHOLD_DEG_S = 45.0
+MIN_FIXATION_S = 0.055
+SANITY_FIXATION_MEDIAN_MS = (150.0, 400.0)
+SANITY_SACCADE_FIXATION_RATIO = (0.8, 1.25)
+
+# --------------------------------------------------------------------------- features
+FEATURES = [
+    "pupil_mean", "pupil_sd", "blink_rate",
+    "fixation_rate", "fixation_duration",
+    "saccade_rate", "saccade_amplitude", "saccade_peak_velocity",
+    "gaze_sd_x", "gaze_sd_y",
 ]
-
-# Features derived from lighting rather than from the eyes. Lighting varies by task,
-# so an ablation without them tells us how much of the signal is ambient light.
-LUX_FEATURES = ["lux_interpolated_mean", "lux_interpolated_std"]
-
-# --------------------------------------------------------------------------- epochs
-WINDOW_MS = 250          # native sampling period of the published metrics
-EPOCH_SECONDS = 30
-EPOCH_MS = EPOCH_SECONDS * 1000
-MIN_WINDOW_COVERAGE = 0.8   # keep an epoch only if >=80% of its 250 ms slots are present
-
-# --------------------------------------------------------------------------- labels
-ABSOLUTE_THRESHOLD = 4      # rating >= 4 counts as high load in the as-is labelling
+FALLBACK_FEATURES = ["pupil_mean", "pupil_sd", "blink_rate", "gaze_sd_x", "gaze_sd_y"]
+PUPIL_FEATURES = ["pupil_mean", "pupil_sd"]
 
 # --------------------------------------------------------------------------- evaluation
 RANDOM_STATE = 0
-INNER_FOLDS = 5             # nested tuning, grouped by participant
-
-# Worker count for the inner grid search. Deliberately bounded: the outer loop opens
-# a new pool for each of the 26 folds of each configuration, and an unbounded pool
-# churns hard enough on Windows to kill the interpreter part-way through a run.
-GRID_SEARCH_JOBS = 4
-
-LR_GRID = {"clf__C": [0.01, 0.1, 1.0, 10.0]}
-
-XGB_GRID = {
-    "max_depth": [2, 3, 4],
-    "learning_rate": [0.05, 0.1],
-    "n_estimators": [200, 400],
-}
+INNER_FOLDS = 5
+SEARCH_JOBS = -1            # parallel inner-search fits; candidates are seeded, so results do not change
+N_ITER = 30                 # random-search candidates per model: the equal tuning budget
+N_BOOTSTRAP = 2000
+N_PERMUTATIONS = 200
+N_PERM_IMPORTANCE = 50
+CEILING_AUC = 0.95

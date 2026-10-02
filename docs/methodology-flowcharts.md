@@ -17,7 +17,7 @@ required scope (`methodology-colet.md` §0, §17).
 
 ```mermaid
 flowchart TD
-    RAW["COLET raw data<br/>gaze · pupil · blinks, 240 Hz"]
+    RAW["COLET raw data<br/>gaze ≈ 242 Hz · pupil ≈ 121 Hz per eye · blinks"]
     RAW --> S1["1 · Remove bad data<br/>low-confidence samples;<br/>recordings over 35% bad"]
     S1 --> S2["2 · Clean each signal<br/>blinks · pupil · gaze direction"]
     S2 --> S3["3 · Detect fixations and saccades<br/>I-VT 45 °/s + sanity check"]
@@ -42,7 +42,7 @@ numbers; they do not change the data.
 
 ```mermaid
 flowchart TD
-    RAW["COLET raw data<br/>47 participants × 4 activities<br/>gaze · pupil · blinks, 240 Hz"]
+    RAW["COLET raw data<br/>47 participants × 4 activities<br/>gaze ≈ 242 Hz · pupil ≈ 121 Hz per eye · blinks"]
 
     RAW --> P0["P0 · Inventory<br/>duration, sampling rate, gaps"]
     P0 --> P1["P1 · Time alignment<br/>trim pupil and blinks to the gaze time range"]
@@ -61,7 +61,7 @@ flowchart TD
 
     subgraph GAZE["Gaze"]
         GZ["Blink periods → missing"]
-        GZ --> G1["One-eye samples → missing<br/>(pending team OK)"]
+        GZ --> G1["One-eye samples → missing"]
         G1 --> G2["P8 · Average both eyes' directions<br/>gaze_normal0/1"]
         G2 --> G3["P6 · Fill gaps under 75 ms<br/>longer gaps stay missing"]
         G3 --> G4["Angle between consecutive<br/>directions, in degrees"]
@@ -122,7 +122,7 @@ No single RRL study did the whole pipeline; each step has its own source. Full c
 | Fill gaze gaps < 75 ms | ✅ | Faraji 2023 (Pupil Core) |
 | Pupil cleaning (1.5–9 mm, MAD, 4 Hz) | 📘 | Kret & Sjak-Shie 2019; Mathôt 2018 |
 | Average both eyes' directions (`gaze_normal`) | ✅ + ⚙️ | Kothari 2020 (velocity from direction vectors, Pupil Labs); Hooge 2019 and Velisar & Shanidze 2024 (depth guess unreliable); the exact column is our choice (N25) |
-| One-eye samples → missing | ⚙️ | Data check (N25); pending team OK |
+| One-eye samples → missing | ⚙️ | Data check (N25); follows Faraji 2023 (unreliable samples = gaps); decided 2026-10-02 |
 | 5-tap filter, I-VT 45°/s, fixations ≥ 55 ms | ✅ | COLET (Ktistakis 2022), following Duchowski 2017, Salvucci & Goldberg 2000, Andersson 2017, Trabulsi 2021 |
 | Reject > 1000°/s | ✅ | Hausamann 2020 |
 | Sanity check (150–400 ms; ratio 0.8–1.25) | 📘 + ⚙️ | Komogortsev 2010 (detection must be checked); typical values from COLET and Salvucci & Goldberg 2000; the rule and tolerance are ours |

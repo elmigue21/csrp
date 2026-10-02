@@ -15,5 +15,7 @@ moved here on 2026-10-01, when the team switched datasets from GAZELOAD to COLET
   original Chapter 1–3 PDF and its copy. These carry the rejected COLET + GAZELOAD
   cross-dataset scope.
 
-The code in `src/` was left in place. It is GAZELOAD-specific and will be adapted for COLET.
-Running it as it is would recreate `outputs/` at the repository root.
+- `gazeload/src/` and `gazeload/tests/`: a complete snapshot of the GAZELOAD pipeline code
+  (`run_experiment.py`, `figures.py` and the modules they import), archived on 2026-10-02 so that
+  `src/` can be rewritten for COLET. It runs as a set: from the repo root, `python
+  archive/gazeload/src/run_experiment.py` (needs the GAZELOAD data path in its `config.py`).

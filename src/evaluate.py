@@ -1,179 +1,157 @@
-"""Leave-one-participant-out evaluation with nested hyperparameter tuning.
+"""Leave-one-participant-out evaluation, metrics and model comparison (§§9-10).
 
-Outer loop: 26 folds, each holding out one participant entirely.
-Inner loop: 5 stratified group folds over the 25 training participants, used to pick
-hyperparameters. Tuning never sees the held-out participant, so the reported scores
-are not inflated by hyperparameter selection.
-
-Two views of the results are produced:
-
-  pooled          -- held-out predictions from all 26 folds concatenated, then scored
-                     once. This is the headline, and it sidesteps the fact that a
-                     participant whose recordings all fall in one class has no
-                     defined ROC-AUC of their own.
-  per-participant -- 26 separate scores, summarised as mean +/- SD. This shows how
-                     much performance varies between people, which pooling hides.
+Outer loop: one participant (both recordings) held out per fold.
+Inner loop: StratifiedGroupKFold over the training participants, random search with the
+same number of candidates for both models. Scores are computed on pooled out-of-fold
+probabilities; uncertainty comes from a bootstrap that resamples participants.
 """
 from __future__ import annotations
 
-import warnings
-
-import joblib
 import numpy as np
 import pandas as pd
+from scipy.stats import wilcoxon
 from sklearn.base import clone
-from sklearn.model_selection import GridSearchCV, LeaveOneGroupOut, StratifiedGroupKFold
 from sklearn.metrics import (
-    accuracy_score,
-    balanced_accuracy_score,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
+    balanced_accuracy_score, brier_score_loss, f1_score, recall_score, roc_auc_score,
 )
+from sklearn.model_selection import LeaveOneGroupOut, RandomizedSearchCV, StratifiedGroupKFold
 
-from config import GRID_SEARCH_JOBS, INNER_FOLDS, RANDOM_STATE
-
-warnings.filterwarnings("ignore", category=UserWarning)
-
-
-def _score(y_true, y_pred, y_proba) -> dict:
-    """Accuracy, precision, recall, F1 and ROC-AUC; AUC is None if only one class."""
-    out = {
-        "accuracy": accuracy_score(y_true, y_pred),
-        "balanced_accuracy": balanced_accuracy_score(y_true, y_pred),
-        "precision": precision_score(y_true, y_pred, zero_division=0),
-        "recall": recall_score(y_true, y_pred, zero_division=0),
-        "f1": f1_score(y_true, y_pred, zero_division=0),
-    }
-    out["roc_auc"] = (
-        roc_auc_score(y_true, y_proba) if len(np.unique(y_true)) == 2 else np.nan
-    )
-    return out
+from config import INNER_FOLDS, N_BOOTSTRAP, N_ITER, N_PERMUTATIONS, RANDOM_STATE, SEARCH_JOBS
 
 
-def score_predictions(y_true, y_pred, y_proba) -> dict:
-    """Public entry point for the metric set, for scoring predictions loaded from disk."""
-    return _score(y_true, y_pred, y_proba)
-
-
-def run_lopo(X, y, groups, factory, grid, tune: bool = True):
-    """Run the outer LOPO loop, returning out-of-fold predictions and fold models.
-
-    X is a DataFrame so that feature names survive into the importance step.
-    """
+def run_lopo(X, y, groups, factory, space, n_iter=N_ITER, tune=True, params=None) -> dict:
     X = pd.DataFrame(X).reset_index(drop=True)
-    y = np.asarray(y)
-    groups = np.asarray(groups)
-
-    oof_proba = np.full(len(y), np.nan)
-    fold_models, chosen_params = [], []
-
-    outer = LeaveOneGroupOut()
-    for train_idx, test_idx in outer.split(X, y, groups):
-        y_train = y[train_idx]
-        estimator = factory()
-
-        if tune and grid and len(np.unique(y_train)) == 2:
-            inner = StratifiedGroupKFold(
-                n_splits=min(INNER_FOLDS, len(np.unique(groups[train_idx]))),
-                shuffle=True,
-                random_state=RANDOM_STATE,
-            )
-            # Bounded, not n_jobs=-1: the outer loop creates a fresh worker pool for
-            # every one of the 26 folds in every configuration, and unbounded pools
-            # churn hard enough on Windows to take the interpreter down mid-run.
-            search = GridSearchCV(
-                estimator,
-                grid,
-                scoring="roc_auc",
-                cv=inner,
-                n_jobs=GRID_SEARCH_JOBS,
-                pre_dispatch="2*n_jobs",
-                error_score=np.nan,
-                refit=True,
-            )
-            # Threads, not processes. The outer loop runs 26 grid searches per
-            # configuration, and spawning a fresh process pool for each one exhausts
-            # OS resources part-way through a run on Windows. XGBoost's fit releases
-            # the GIL, so a thread pool parallelises it just as well.
-            with joblib.parallel_backend("threading", n_jobs=GRID_SEARCH_JOBS):
-                search.fit(X.iloc[train_idx], y_train, groups=groups[train_idx])
-            fitted = search.best_estimator_
-            chosen_params.append(search.best_params_)
+    y, groups = np.asarray(y), np.asarray(groups)
+    oof = np.full(len(y), np.nan)
+    folds, chosen = [], []
+    for train_idx, test_idx in LeaveOneGroupOut().split(X, y, groups):
+        est = factory()
+        if params:
+            est.set_params(**params)
+        if tune and space:
+            inner = StratifiedGroupKFold(n_splits=INNER_FOLDS, shuffle=True, random_state=RANDOM_STATE)
+            search = RandomizedSearchCV(est, space, n_iter=n_iter, scoring="roc_auc", cv=inner,
+                                        random_state=RANDOM_STATE, n_jobs=SEARCH_JOBS, error_score=np.nan)
+            search.fit(X.iloc[train_idx], y[train_idx], groups=groups[train_idx])
+            model, best = search.best_estimator_, search.best_params_
         else:
-            fitted = clone(estimator).fit(X.iloc[train_idx], y_train)
-            chosen_params.append({})
+            model, best = clone(est).fit(X.iloc[train_idx], y[train_idx]), dict(params or {})
+        oof[test_idx] = model.predict_proba(X.iloc[test_idx])[:, 1]
+        folds.append({"model": model, "train_idx": train_idx, "test_idx": test_idx,
+                      "participant": groups[test_idx][0]})
+        chosen.append(best)
+    return {"oof_proba": oof, "fold_models": folds, "chosen_params": chosen}
 
-        oof_proba[test_idx] = fitted.predict_proba(X.iloc[test_idx])[:, 1]
-        fold_models.append({"model": fitted, "test_idx": test_idx,
-                            "participant": groups[test_idx][0]})
 
-    oof_pred = (oof_proba >= 0.5).astype(int)
+def score(y, proba) -> dict:
+    y, proba = np.asarray(y), np.asarray(proba)
+    pred = (proba >= 0.5).astype(int)
     return {
-        "oof_proba": oof_proba,
-        "oof_pred": oof_pred,
-        "fold_models": fold_models,
-        "chosen_params": chosen_params,
-        "pooled": _score(y, oof_pred, oof_proba),
-        "per_participant": _per_participant(y, oof_pred, oof_proba, groups),
+        "roc_auc": float(roc_auc_score(y, proba)),
+        "balanced_accuracy": float(balanced_accuracy_score(y, pred)),
+        "macro_f1": float(f1_score(y, pred, average="macro", zero_division=0)),
+        "recall_low": float(recall_score(y, pred, pos_label=0, zero_division=0)),
+        "recall_high": float(recall_score(y, pred, pos_label=1, zero_division=0)),
+        "brier": float(brier_score_loss(y, proba)),
     }
 
 
-def _per_participant(y, y_pred, y_proba, groups) -> pd.DataFrame:
-    rows = []
-    for pid in np.unique(groups):
-        m = groups == pid
-        rec = {"participant": pid, "n_epochs": int(m.sum()),
-               "positive_rate": float(y[m].mean())}
-        rec.update(_score(y[m], y_pred[m], y_proba[m]))
-        rows.append(rec)
-    return pd.DataFrame(rows)
+def participant_margins(y, proba, groups) -> pd.Series:
+    """p(high) - p(low) for each participant; > 0 means A4 was ranked above A1."""
+    df = pd.DataFrame({"g": groups, "y": y, "p": proba})
+    hi = df[df.y == 1].groupby("g")["p"].mean()
+    lo = df[df.y == 0].groupby("g")["p"].mean()
+    return (hi - lo).dropna()
 
 
-def summarise_per_participant(df: pd.DataFrame) -> dict:
-    """Mean +/- SD across participants, skipping participants with undefined AUC."""
-    out = {}
-    for metric in ["accuracy", "balanced_accuracy", "precision", "recall", "f1", "roc_auc"]:
-        vals = df[metric].dropna()
-        out[f"{metric}_mean"] = float(vals.mean())
-        out[f"{metric}_sd"] = float(vals.std())
-        out[f"{metric}_n"] = int(len(vals))
+def bootstrap_auc(y, proba, groups, n_boot=N_BOOTSTRAP, other=None) -> dict:
+    y, proba, groups = np.asarray(y), np.asarray(proba), np.asarray(groups)
+    other = None if other is None else np.asarray(other)
+    rng = np.random.default_rng(RANDOM_STATE)
+    ids = np.unique(groups)
+    idx_by = {g: np.flatnonzero(groups == g) for g in ids}
+    aucs, diffs = [], []
+    for _ in range(n_boot):
+        idx = np.concatenate([idx_by[g] for g in rng.choice(ids, len(ids), replace=True)])
+        if len(np.unique(y[idx])) < 2:
+            continue
+        a = roc_auc_score(y[idx], proba[idx])
+        aucs.append(a)
+        if other is not None:
+            diffs.append(roc_auc_score(y[idx], other[idx]) - a)
+    out = {"auc_ci_low": float(np.percentile(aucs, 2.5)), "auc_ci_high": float(np.percentile(aucs, 97.5))}
+    if other is not None:
+        out.update({"diff": float(roc_auc_score(y, other) - roc_auc_score(y, proba)),
+                    "diff_ci_low": float(np.percentile(diffs, 2.5)),
+                    "diff_ci_high": float(np.percentile(diffs, 97.5))})
     return out
 
 
-def compare_models(per_participant_a: pd.DataFrame, per_participant_b: pd.DataFrame,
-                   metric: str = "roc_auc") -> dict:
-    """Paired Wilcoxon signed-rank test across participants.
-
-    A difference in pooled AUC is a single number with no uncertainty attached; the
-    paired test over the 26 held-out participants is what licenses the claim that one
-    model outperforms the other rather than merely scoring higher once.
-    """
-    from scipy.stats import wilcoxon
-
-    merged = per_participant_a[["participant", metric]].merge(
-        per_participant_b[["participant", metric]], on="participant",
-        suffixes=("_a", "_b"),
-    ).dropna()
-
-    a, b = merged[f"{metric}_a"].to_numpy(), merged[f"{metric}_b"].to_numpy()
-    diff = b - a
-    if len(diff) < 3 or np.allclose(diff, 0):
-        return {"n": len(diff), "mean_difference": float(diff.mean()) if len(diff) else np.nan,
-                "statistic": np.nan, "p_value": np.nan}
-    stat, p = wilcoxon(a, b)
-    return {"n": int(len(diff)), "mean_difference": float(diff.mean()),
-            "median_difference": float(np.median(diff)),
-            "statistic": float(stat), "p_value": float(p)}
+def compare_models(y, proba_lr, proba_xgb, groups, n_boot=N_BOOTSTRAP) -> dict:
+    """XGBoost minus LR: pooled AUC difference with a participant-bootstrap CI, plus a paired
+    Wilcoxon on per-participant margins (supporting test; an adaptation, see M9/M10)."""
+    b = bootstrap_auc(y, proba_lr, groups, n_boot, other=proba_xgb)
+    m_lr = participant_margins(y, proba_lr, groups)
+    m_xgb = participant_margins(y, proba_xgb, groups)
+    d = (m_xgb - m_lr).dropna()
+    if len(d) >= 3 and not np.allclose(d, 0):
+        stat, p = wilcoxon(m_xgb.loc[d.index], m_lr.loc[d.index])
+    else:
+        stat, p = np.nan, np.nan
+    return {"auc_difference": b["diff"], "auc_difference_ci_low": b["diff_ci_low"],
+            "auc_difference_ci_high": b["diff_ci_high"], "wilcoxon_statistic": float(stat),
+            "wilcoxon_p": float(p), "n_participants": int(len(d))}
 
 
 def majority_baseline(y, groups) -> dict:
-    """Accuracy of always predicting the training-majority class, under LOPO."""
-    y = np.asarray(y)
-    groups = np.asarray(groups)
-    pred = np.zeros(len(y), dtype=int)
-    for _, test_idx in LeaveOneGroupOut().split(y.reshape(-1, 1), y, groups):
-        train_idx = np.setdiff1d(np.arange(len(y)), test_idx)
-        pred[test_idx] = int(round(y[train_idx].mean()))
-    return {"accuracy": accuracy_score(y, pred), "f1": f1_score(y, pred, zero_division=0)}
+    """Always predict the training-majority class under LOPO (balanced design -> 0.5)."""
+    y, groups = np.asarray(y), np.asarray(groups)
+    pred = np.zeros(len(y), int)
+    for train_idx, test_idx in LeaveOneGroupOut().split(y.reshape(-1, 1), y, groups):
+        pred[test_idx] = int(y[train_idx].mean() > 0.5)
+    return {"balanced_accuracy": float(balanced_accuracy_score(y, pred)),
+            "macro_f1": float(f1_score(y, pred, average="macro", zero_division=0))}
+
+
+def chosen_params_table(chosen_params: list[dict], participants) -> pd.DataFrame:
+    """One row per outer fold: the held-out participant and every hyperparameter chosen."""
+    return pd.DataFrame(chosen_params).assign(participant=list(participants))[
+        ["participant", *pd.DataFrame(chosen_params).columns]]
+
+
+def param_summary(chosen_params: list[dict]) -> dict:
+    """Median and IQR of each chosen hyperparameter across folds.
+
+    The spaces are continuous, so almost every fold picks a unique set and a "modal set" is
+    meaningless; per-parameter spread says how stable the tuning was. max_depth is a small
+    integer grid, so its mode is reported as well.
+    """
+    df = pd.DataFrame(chosen_params)
+    out = {}
+    for c in df.columns:
+        out[f"param_{c}_median"] = float(df[c].median())
+        out[f"param_{c}_iqr"] = float(df[c].quantile(0.75) - df[c].quantile(0.25))
+    if "max_depth" in df:
+        out["param_max_depth_mode"] = float(df["max_depth"].mode().iloc[0])
+    return out
+
+
+def permutation_test(X, y, groups, factory, params, n_perm=N_PERMUTATIONS) -> dict:
+    """Grouped permutation test against chance (§10).
+
+    Labels are permuted within participants (each participant's A1/A4 swapped at random),
+    keeping the paired structure; hyperparameters are fixed to `params` for speed.
+    """
+    y, groups = np.asarray(y), np.asarray(groups)
+    observed = roc_auc_score(y, run_lopo(X, y, groups, factory, None, tune=False, params=params)["oof_proba"])
+    rng = np.random.default_rng(RANDOM_STATE)
+    null = []
+    for _ in range(n_perm):
+        yp = y.copy()
+        for g in np.unique(groups):
+            if rng.random() < 0.5:
+                idx = np.flatnonzero(groups == g)
+                yp[idx] = yp[idx][::-1]
+        null.append(roc_auc_score(yp, run_lopo(X, yp, groups, factory, None, tune=False, params=params)["oof_proba"]))
+    p = (1 + sum(n >= observed for n in null)) / (1 + n_perm)
+    return {"observed_auc": float(observed), "p_value": float(p), "n_perm": int(n_perm)}
