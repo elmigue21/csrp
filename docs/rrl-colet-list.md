@@ -101,11 +101,14 @@ Last updated: 2026-10-01
     cognitive workload estimation," in *Proc. MUM*, 2023, pp. 526–528,
     doi:10.1145/3626705.3631796. `[§9b]` A (short paper; full text not available)
 26. S. Wibirama *et al.*, "Classification of cognitive load using deep learning based on eye
-    movement indices," *IEEE Access*, vol. 13, 2025, doi:10.1109/ACCESS.2025.3613292. `[§9b]` V
-    (used COLET; overlapping windows, likely leakage)
-27. Dell'Acqua, Garofalo, La Rosa, and Villari, "Inferring cognitive workload from symbolic gaze
-    sequences using large language models," *IEEE Access*, 2025,
-    doi:10.1109/ACCESS.2025.3646271. `[§9b]` V (used COLET; trial-level split)
+    movement indices," *IEEE Access*, vol. 13, pp. 167324–167343, 2025, doi:10.1109/ACCESS.2025.3613292.
+    `[§9b]` V (used COLET; 385-sample windows with 312-sample overlap; plain 5-fold CV, not grouped by
+    participant; confirmed in full text 2026-10-02)
+27. P. Dell'Acqua, M. Garofalo, F. La Rosa, and M. Villari, "Inferring cognitive workload from symbolic
+    gaze sequences using large language models," *IEEE Access*, vol. 13, pp. 215160–215176, 2025,
+    doi:10.1109/ACCESS.2025.3646271. `[§9b]` V (used COLET; stratified 70/15/15 split of the 188
+    recordings, not grouped by participant; confirmed in full text 2026-10-02. Note: the paper says it
+    used COLET's fixation/saccade data, which the release does not contain)
 28. T. Foulsham, E. Walker, and A. Kingstone, "The where, what and when of gaze allocation in the
     lab and the natural environment," *Vision Res.*, vol. 51, no. 17, pp. 1920–1931, 2011,
     doi:10.1016/j.visres.2011.07.002. `[DS1]` A (screen-based lab limitation)
@@ -482,6 +485,9 @@ but that were missing from this list (review R3/R4/R6).
 139. R. Kothari *et al.*, "Gaze-in-wild: A dataset for studying eye and head coordination in
      everyday activities," *Sci. Rep.*, vol. 10, 2539, 2020, doi:10.1038/s41598-020-59251-5.
      `[PP19]` V (velocity from angles between unit gaze vectors, Pupil Labs; R4-1)
+140. M. Ojala and G. C. Garriga, "Permutation tests for studying classifier performance," *J. Mach.
+     Learn. Res.*, vol. 11, pp. 1833–1863, 2010. `[EV14]` M (label-permutation test of classifier
+     performance against chance; replaces Altmann 2010 for that use; added by reference check C7)
 
 **ID alias:** `X5` in the support matrix refers to the Kaczorowska studies, entries 36–38
 (EM1/EM2/EM18).

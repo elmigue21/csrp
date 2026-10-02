@@ -1,9 +1,10 @@
 """Fixation and saccade detection (methodology-colet.md §5).
 
-Velocity: a 5-tap differentiator, h = [1, 1, 0, -1, -1] / (6 dt), applied to each
-component of the unit gaze vector; for unit vectors the norm of the derivative is the
-angular speed. (Velocity filtering follows Duchowski 2017; confirm the exact taps against
-the book before the defense, reference check C7.)
+Velocity: a five-point smoothed central difference, h = [1, 1, 0, -1, -1] / (6 dt), applied
+to each component of the unit gaze vector on the uniform grid; for unit vectors the norm of
+the derivative is the angular speed. This filter is our own choice: reference check C7
+(2026-10-02) found that Duchowski's 5-tap filter is a {1, 2, 3, 2, 1} smoother of sample-to-
+sample displacement, not this differentiator.
 Classification: I-VT at 45 deg/s (Salvucci & Goldberg 2000), fixations >= 55 ms (COLET),
 samples above 1000 deg/s rejected as artifacts (Hausamann 2020).
 """

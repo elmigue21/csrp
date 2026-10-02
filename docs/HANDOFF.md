@@ -164,7 +164,7 @@ DETECTION USING EYE TRACKING FEATURES WITH FEATURE IMPORTANCE ANALYSIS
 - **Explain simply,** with examples and tables. Expect follow-ups like "what did the RRL do?"
   and "explain simpler". Answer each with the RRL evidence.
 - **Record every decision** in `rrl-decision-log.md`, and **record awareness items** in
-  `researcher-notes.md` as new numbered notes (next is **N27**). Update
+  `researcher-notes.md` as new numbered notes (next is **N29**). Update
   `methodology-colet.md` so the files never contradict each other; reviewers check.
 - **Ask before** downloading, installing packages, or running long jobs.
 - Don't choose features by how well they separate A1 from A4. Stay label-blind.

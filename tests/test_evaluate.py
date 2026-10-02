@@ -50,6 +50,14 @@ def test_compare_and_baseline():
     assert 0.0 <= majority_baseline(y, g)["balanced_accuracy"] <= 0.5
 
 
+def test_permutation_test_same_result_serial_and_parallel():
+    X, y, g = _toy(signal=1.0)
+    factory = MODELS["Logistic Regression"]["factory"]
+    serial = permutation_test(X, y, g, factory, {}, n_perm=9, n_jobs=1)
+    parallel = permutation_test(X, y, g, factory, {}, n_perm=9, n_jobs=2)
+    assert serial == parallel
+
+
 def test_permutation_test_detects_signal():
     X, y, g = _toy(signal=3.0)
     out = permutation_test(X, y, g, MODELS["Logistic Regression"]["factory"], {}, n_perm=19)

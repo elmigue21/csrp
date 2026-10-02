@@ -7,6 +7,7 @@ probabilities; uncertainty comes from a bootstrap that resamples participants.
 """
 from __future__ import annotations
 
+from joblib import Parallel, delayed
 import numpy as np
 import pandas as pd
 from scipy.stats import wilcoxon
@@ -16,7 +17,7 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import LeaveOneGroupOut, RandomizedSearchCV, StratifiedGroupKFold
 
-from config import INNER_FOLDS, N_BOOTSTRAP, N_ITER, N_PERMUTATIONS, RANDOM_STATE, SEARCH_JOBS
+from config import INNER_FOLDS, N_BOOTSTRAP, N_ITER, N_PERMUTATIONS, PERM_JOBS, RANDOM_STATE, SEARCH_JOBS
 
 
 def run_lopo(X, y, groups, factory, space, n_iter=N_ITER, tune=True, params=None) -> dict:
@@ -136,22 +137,30 @@ def param_summary(chosen_params: list[dict]) -> dict:
     return out
 
 
-def permutation_test(X, y, groups, factory, params, n_perm=N_PERMUTATIONS) -> dict:
+def _null_auc(X, yp, groups, factory, params) -> float:
+    return roc_auc_score(yp, run_lopo(X, yp, groups, factory, None, tune=False, params=params)["oof_proba"])
+
+
+def permutation_test(X, y, groups, factory, params, n_perm=N_PERMUTATIONS, n_jobs=None) -> dict:
     """Grouped permutation test against chance (§10).
 
     Labels are permuted within participants (each participant's A1/A4 swapped at random),
     keeping the paired structure; hyperparameters are fixed to `params` for speed.
+    All permuted label vectors are drawn first, in a fixed order, and only the refits run
+    in parallel (PERM_JOBS workers), so the p-value does not depend on the worker count.
     """
     y, groups = np.asarray(y), np.asarray(groups)
-    observed = roc_auc_score(y, run_lopo(X, y, groups, factory, None, tune=False, params=params)["oof_proba"])
+    observed = _null_auc(X, y, groups, factory, params)
     rng = np.random.default_rng(RANDOM_STATE)
-    null = []
+    permuted = []
     for _ in range(n_perm):
         yp = y.copy()
         for g in np.unique(groups):
             if rng.random() < 0.5:
                 idx = np.flatnonzero(groups == g)
                 yp[idx] = yp[idx][::-1]
-        null.append(roc_auc_score(yp, run_lopo(X, yp, groups, factory, None, tune=False, params=params)["oof_proba"]))
+        permuted.append(yp)
+    jobs = PERM_JOBS if n_jobs is None else n_jobs
+    null = Parallel(n_jobs=jobs)(delayed(_null_auc)(X, yp, groups, factory, params) for yp in permuted)
     p = (1 + sum(n >= observed for n in null)) / (1 + n_perm)
     return {"observed_auc": float(observed), "p_value": float(p), "n_perm": int(n_perm)}

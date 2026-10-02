@@ -238,7 +238,8 @@ Participant 1, A4 (51 s) → 1 example → "high"
 
 ## N6. The original COLET results are probably inflated
 
-- **What:** the COLET paper used a random 80/20 split, so the same person could appear in
+- **What:** the COLET paper used a 20% hold-out and 5-fold CV that were not described as
+  participant-independent (it never says "random"; C7), so the same person could appear in
   training and testing. It also selected features (ANOVA) and scaled them on all the data
   before splitting. These are known leakage risks (Saeb 2017; Kapoor & Narayanan 2023).
 - **Why it matters:** our leave-one-participant-out results will likely be **lower** than
@@ -871,3 +872,86 @@ explains a detail a panel could ask about.
   effect. There is no blink padding, so eyelid-edge samples can create pseudo-saccades more
   often in A4. State this as a limitation in Ch. 3/5; it is not a method change (methodology
   frozen).
+
+## N27. Why P1 is nearly perfect, and why it is not a leak
+
+**The worry:** P1 scored AUC 0.98-0.99. Is the model seeing the answer?
+
+**Leak test (run 2026-10-02, after the main run; script `colet-eda/leak_check.py`):** the same
+pipeline was rerun with the labels shuffled, 40 times each way.
+
+| Model | Real labels | Labels swapped within each person | Fully random labels |
+|---|---|---|---|
+| Logistic Regression | 0.991 | mean 0.479 (max 0.650) | mean 0.458 (max 0.668) |
+| XGBoost | 0.976 | mean 0.488 (max 0.615) | mean 0.483 (max 0.676) |
+
+With shuffled labels the score drops to chance (about 0.5). **There is no leak:** the pipeline
+only scores high when the real labels are used.
+
+**Why the task is so easy (single features, no model):**
+
+| Feature | AUC raw | AUC after per-person z-score | People with the typical A4 vs A1 direction |
+|---|---|---|---|
+| Blink rate | 0.895 | **0.968** | 43/45 |
+| Pupil mean | 0.618 | **0.872** | 38/45 |
+| Saccade rate | 0.759 | 0.860 | 39/45 |
+| Fixation rate | 0.684 | 0.772 | 34/45 |
+
+Two reasons, both already disclosed:
+1. **Talking (N3):** A4 includes counting aloud, which raises blinks about 7x. Blink rate alone
+   almost separates A1 from A4. P2 (pupil only, 0.80-0.85) is the check that the result is not
+   only talking.
+2. **Per-person standardization (N7):** it removes individual differences, which helps most for
+   pupil size (0.62 -> 0.87): everyone's pupil size differs, but each person's A4 pupil is
+   larger than their own A1 pupil. It uses the test person's own unlabelled recordings, so the
+   test is easier than meeting a stranger (Tognotti 2026: +3-13 points). The optional
+   no-normalization run (S4) would measure this directly.
+
+**For a panel:** "Near-perfect discrimination reflects a large condition effect, largely from the
+spoken secondary task, and per-person standardization. A shuffled-label control fell to chance
+(AUC about 0.48), ruling out leakage. The pupil-only model (AUC 0.80-0.85) shows a load signal
+beyond talking."
+
+## N28. Reference check C7 (2026-10-02): what changed
+
+Two background checks verified every cited source (Crossref metadata; claims against full text
+where reachable). Method sources, results:
+
+| Source | Finding | What we changed |
+|---|---|---|
+| Duchowski 2017 | His 5-tap filter is a {1,2,3,2,1} smoother, not our differentiator | Velocity filter now described as **our own choice** |
+| Kothari 2020 | Angle between vectors at n-1 and n+1; Pupil Labs glasses (120 Hz) | Cited only for the vector-angle approach |
+| Kret & Sjak-Shie 2019 | 1.5-9 mm and 4 Hz confirmed; n = 16 is the code default, paper says tune | Say "default of the published code" |
+| Hooge 2019 | EyeLink 1000 Plus at 77 cm (abstract only) | Claim narrowed; Velisar 2024 carries the Pupil Core point |
+| Andersson 2017 | 45 deg/s = human coders' minimum peak saccade velocity (45.4) | Credited as COLET's source, not a general rule |
+| Trabulsi 2021 | Supports 50-75 ms (60 ms), not 55 ms | Only "55 ms lies within the evaluated range" |
+| Steinhauer 2022 | No blink-duration range (~200 ms typical, can exceed 0.5 s) | 50-500 ms is our own choice |
+| COLET 2022 | Never says "random"; LR 0.85 (k-NN 0.86) for A1 vs A4; GNB 0.88 is RTLX classes C1 vs C3 | "Not described as participant-independent" |
+
+All other method sources were supported as cited (Salvucci, Faraji, Hausamann, Hershman, Nenna,
+Komogortsev at abstract level). None of these changes alters a result; they change how the
+methods are credited.
+
+**N6 outcome:** we expected our leave-one-participant-out result to be lower than COLET's 0.85.
+It was higher (LR 0.99), because of per-person standardization and whole-activity features
+(N27), not participant overlap.
+
+**Other citations (second C7 check, 72 sources).** All exist; metadata fixed from Crossref
+(missing initials, volumes and pages; full author lists up to six). Claims reworded where the
+source did not support them:
+- Tao 2019: eye measures are among the most *widely used*, not the most often significant (eye
+  66-67% vs cardiovascular 76%, EEG 71-73%); the 79/73/71% figures are correct. Not a healthcare
+  source, so the healthcare sentence now cites Wu 2020 and Shafiei 2025.
+- Rating-scale differences: Hart 2006, not Matthews 2015. Pupil individual differences:
+  Rolon-Merette 2026 (Bargary 2017 covers eye movements only).
+- Bentivoglio 1997 supports only "talking raises blink rate" (17 to 26/min).
+- Hogervorst 2014 does not support the blink-duration missingness argument (Kapoor & Narayanan
+  2023 only); Gado 2023 did not drop middle conditions.
+- Calibration and "acknowledge unlabelled test data" are our reasoning, not Kapoor & Narayanan.
+- Shao 2026 is mixed (no significant AUC difference; accuracy favours different models).
+- Permutation test vs chance: Ojala & Garriga 2010 (Altmann 2010 is about importance p-values).
+- Narrower scope stated for Gelman 2008, Demšar 2006 (multiple datasets), Cawley & Talbot 2010
+  (nested tuning, not equal budgets), Strobl 2007 (random forests), Nogueira 2018 (selection
+  stability), Perez-Lebel 2022 (recommends indicators), Xu 2026 (all-data SHAP; not eye tracking).
+- Kaczorowska 2021 used repeated random splits, not participant-independent validation.
+

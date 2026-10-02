@@ -144,11 +144,14 @@ All thresholds were chosen after a **label-blind** data-quality inspection and f
 
 **Recipe** (the COLET paper's cited method):
 1. Convert gaze to degrees of visual angle.
-2. Compute velocity with a 5-tap FIR filter (Duchowski, ET1; COLET ref [48]).
+2. Compute velocity with a five-point smoothed central difference of the unit gaze vectors on a
+   uniform 240 Hz grid (**our own choice**; reference check C7 found Duchowski's 5-tap filter is a
+   {1,2,3,2,1} smoother, not this differentiator).
 3. Classify with **I-VT at 45°/s**, following Salvucci & Goldberg 2000 (PP1). The threshold
-   follows COLET, citing Andersson 2017 (PP3).
-4. Keep fixations of **≥ 55 ms** (COLET; its own source is a preprint, so also cite Trabulsi
-   2021, PP13).
+   follows COLET, which took it from the human-coded data of Andersson 2017 (PP3; C7: 45.4°/s was
+   the coders' minimum peak saccade velocity there, not a general recommendation).
+4. Keep fixations of **≥ 55 ms** (COLET and Andersson 2017; Trabulsi 2021, PP13, evaluated
+   50–75 ms, so 55 ms lies within its range but is not its recommendation).
 5. Reject velocities > 1000°/s (PP8).
 6. Sensitivity check: I-DT, 1.0°, 100 ms (PP1, PP12). Optional.
 7. **Sanity check (V2-2, decided; tolerances V3-3; per activity R4-2):** computed **for each
@@ -337,7 +340,8 @@ were more frequent in the multitask activities (researcher-notes N22)."*
 - The 35% recording-exclusion threshold. Nenna 2023 used 35% for trials; we apply it to
   recordings.
 - The 1 s gap rule for valid time.
-- The 50–500 ms blink range (derived from Steinhauer 2022 and Hershman 2018).
+- The 50–500 ms blink range (our choice around the typical ~200 ms blink; C7: Steinhauer 2022
+  gives no range and notes blinks can exceed 0.5 s).
 - Using the extremes A1/A4 as the binary labels (precedented, but a choice).
 - The gaze-to-degrees input, `gaze_normal0/1` (D-M1 revised, R4-1): no peer-reviewed study
   names this field. The switch is justified by our data check (N25), supported by evidence that
@@ -434,8 +438,9 @@ pinned reference checks (C7).
 decided later.**
 
 **Purpose:**
-- COLET reported LR 0.85 on A1 vs A4 using a random 80/20 split, feature selection on all the
-  data, and scaling before the split.
+- COLET reported LR 0.85 on A1 vs A4 (k-NN 0.86) using a 20% hold-out and 5-fold CV that are not
+  described as participant-independent (C7: the paper never says "random"), feature selection on
+  all the data, and scaling before the split.
 - Our leave-one-participant-out result will likely be lower.
 - This analysis shows whether the gap comes from **the testing method** rather than the
   models.

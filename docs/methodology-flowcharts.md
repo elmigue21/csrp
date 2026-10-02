@@ -68,7 +68,7 @@ flowchart TD
     end
 
     subgraph EVENTS["P9 · Event detection"]
-        E1["Velocity, 5-tap FIR filter"]
+        E1["Velocity, 5-point smoothed derivative"]
         E1 --> E2["Reject over 1000 °/s"]
         E2 --> E3["I-VT at 45 °/s"]
         E3 --> E4["Keep fixations of 55 ms or more"]
@@ -118,12 +118,13 @@ No single RRL study did the whole pipeline; each step has its own source. Full c
 | Drop recordings > 35% bad | ✅ + ⚙️ | Nenna 2023 (35% per trial); applying it per recording is our choice |
 | Trim stray pupil samples (P18) | ⚙️ | Data check (researcher-notes N14) |
 | Rates over valid time (gaps > 1 s out) | ⚙️ | Data check (N14); the 1 s cutoff is our choice |
-| Blinks 50–500 ms; merge < 100 ms apart | 📘 | Hershman 2018 (merge); range derived from Steinhauer 2022 and Hershman 2018 |
+| Blinks 50–500 ms; merge < 100 ms apart | 📘 + ⚙️ | Hershman 2018 (merge); the 50–500 ms range is our choice (typical blink ~200 ms; Steinhauer 2022) |
 | Fill gaze gaps < 75 ms | ✅ | Faraji 2023 (Pupil Core) |
 | Pupil cleaning (1.5–9 mm, MAD, 4 Hz) | 📘 | Kret & Sjak-Shie 2019; Mathôt 2018 |
 | Average both eyes' directions (`gaze_normal`) | ✅ + ⚙️ | Kothari 2020 (velocity from direction vectors, Pupil Labs); Hooge 2019 and Velisar & Shanidze 2024 (depth guess unreliable); the exact column is our choice (N25) |
 | One-eye samples → missing | ⚙️ | Data check (N25); follows Faraji 2023 (unreliable samples = gaps); decided 2026-10-02 |
-| 5-tap filter, I-VT 45°/s, fixations ≥ 55 ms | ✅ | COLET (Ktistakis 2022), following Duchowski 2017, Salvucci & Goldberg 2000, Andersson 2017, Trabulsi 2021 |
+| Velocity filter | ⚙️ | Our own 5-point smoothed derivative (C7: not Duchowski's filter) |
+| I-VT 45°/s, fixations ≥ 55 ms | ✅ | COLET (Ktistakis 2022), taken from human-coded data in Andersson 2017; I-VT from Salvucci & Goldberg 2000; 55 ms within Trabulsi 2021's 50–75 ms range |
 | Reject > 1000°/s | ✅ | Hausamann 2020 |
 | Sanity check (150–400 ms; ratio 0.8–1.25) | 📘 + ⚙️ | Komogortsev 2010 (detection must be checked); typical values from COLET and Salvucci & Goldberg 2000; the rule and tolerance are ours |
 | 5-feature fallback | ✅ | Božak 2026 (feature-subset model) |

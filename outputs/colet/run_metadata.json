@@ -1,0 +1,33 @@
+{
+  "n_participants": 45,
+  "features_p1": [
+    "pupil_mean",
+    "pupil_sd",
+    "blink_rate",
+    "fixation_rate",
+    "fixation_duration",
+    "saccade_rate",
+    "saccade_amplitude",
+    "saccade_peak_velocity",
+    "gaze_sd_x",
+    "gaze_sd_y"
+  ],
+  "sanity_passed": true,
+  "ceiling_rule_triggered": true,
+  "settings": {
+    "n_iter": 30,
+    "n_boot": 2000,
+    "n_perm": 200,
+    "n_perm_imp": 50
+  },
+  "versions": {
+    "python": "3.11.9",
+    "numpy": "2.2.4",
+    "pandas": "2.3.1",
+    "scipy": "1.15.2",
+    "scikit-learn": "1.7.1",
+    "xgboost": "3.2.0",
+    "shap": "0.51.0"
+  },
+  "runtime_seconds": 209.3
+}

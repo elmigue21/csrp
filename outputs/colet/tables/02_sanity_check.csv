@@ -1,0 +1,5 @@
+activity,recordings,fixation_median_ms,saccade_fixation_ratio,fixation_ok,ratio_ok,passed
+1,45,212.5,0.9822134387351779,True,True,True
+2,45,212.5,0.993514915693904,True,True,True
+3,45,237.5,0.933718689788054,True,True,True
+4,45,225.0,0.9310144083830593,True,True,True
