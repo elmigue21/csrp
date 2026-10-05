@@ -1,0 +1,10 @@
+flowchart TD
+    RAW["COLET raw data<br/>gaze ≈ 242 Hz · pupil ≈ 121 Hz per eye · blinks"]
+    RAW --> S1["1 · Remove bad data<br/>low-confidence samples;<br/>recordings over 35% bad"]
+    S1 --> S2["2 · Clean each signal<br/>blinks · pupil · gaze direction"]
+    S2 --> S3["3 · Detect fixations and saccades<br/>I-VT 45 °/s + sanity check"]
+    S3 --> CHK{"Sanity check<br/>passed?"}
+    CHK -- "Yes" --> F10["4 · Compute 10 features<br/>per activity"]
+    CHK -- "No" --> F5["4 · Compute 5 features<br/>(no fixation/saccade features)"]
+    F10 --> OUT["90 samples<br/>45 participants × A1 and A4"]
+    F5 --> OUT

@@ -1,0 +1,44 @@
+flowchart TD
+    D["COLET dataset<br/>47 participants, 4 activities"]
+
+    D --> LAB{"Activity"}
+    LAB -- "A1: single task,<br/>no time pressure" --> LOW["Low load"]
+    LAB -- "A4: counting aloud<br/>+ time pressure" --> HIGH["High load"]
+    LAB -- "A2, A3" --> MC["Manipulation check only<br/>NASA-RTLX, Friedman test"]
+
+    LOW --> PRE["Preprocessing<br/>(Figures 1–2)"]
+    HIGH --> PRE
+    PRE --> DATA["90 samples · 10 features<br/>balanced 1:1"]
+
+    DATA --> P1["P1 · All 10 features"]
+    DATA --> P2["P2 · Pupil mean and SD only<br/>talking-robustness check"]
+
+    P1 --> LOPO
+    P2 --> LOPO
+
+    subgraph LOPO["Leave-one-participant-out · 45 folds"]
+        direction TB
+        Z["Per-person z-score<br/>over each person's own activities, label-free"]
+        Z --> SPLIT["Train: 44 participants<br/>Test: 1 participant"]
+        SPLIT --> FIT["Fit scaling and imputation<br/>on training fold only"]
+        FIT --> TUNE["Inner participant-grouped CV<br/>equal tuning budget"]
+        TUNE --> LR["Logistic regression<br/>elastic net"]
+        TUNE --> XGB["XGBoost<br/>depth 1–3, 50–300 trees"]
+        LR --> PRED["Predict held-out participant"]
+        XGB --> PRED
+    end
+
+    PRED --> POOL["Pooled out-of-fold predictions"]
+
+    POOL --> MET["Metrics<br/>ROC-AUC + participant cluster bootstrap CI<br/>balanced accuracy, macro-F1, Brier,<br/>majority baseline"]
+    POOL --> CMP["Model comparison<br/>AUC difference + CI<br/>paired Wilcoxon<br/>permutation test vs chance"]
+    POOL --> IMP["Feature importance<br/>LR weights · SHAP for both models<br/>permutation importance<br/>Kendall τ with CI"]
+
+    MET --> CEIL{"Ceiling rule:<br/>both models above<br/>0.95 AUC in P1?"}
+    CEIL -- "No" --> R1["Compare models from P1"]
+    CEIL -- "Yes" --> R2["Compare models from P2<br/>importance still from P1"]
+
+    R1 --> REP["Report and discuss<br/>limitations: talking, refits in P2,<br/>per-person normalization bias"]
+    R2 --> REP
+    CMP --> REP
+    IMP --> REP

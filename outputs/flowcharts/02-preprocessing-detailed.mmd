@@ -1,0 +1,60 @@
+flowchart TD
+    RAW["COLET raw data<br/>47 participants × 4 activities<br/>gaze ≈ 242 Hz · pupil ≈ 121 Hz per eye · blinks"]
+
+    RAW --> P0["P0 · Inventory<br/>duration, sampling rate, gaps"]
+    P0 --> P1["P1 · Time alignment<br/>trim pupil and blinks to the gaze time range"]
+    P1 --> P2["P2 · Sample validity<br/>confidence below 0.8 = invalid"]
+    P2 --> P3{"P3 · More than 35% of<br/>samples invalid?"}
+    P3 -- "Yes" --> EXC["Exclude recording<br/>P06 A3, P06 A4, P17 A4<br/>→ P06 and P17 dropped"]
+    P3 -- "No" --> KEEP["45 participants kept"]
+
+    KEEP --> BL
+    KEEP --> GZ
+    KEEP --> PU
+
+    subgraph BLINKS["Blinks"]
+        BL["P5 · COLET blink events<br/>keep 50–500 ms<br/>merge blinks less than 100 ms apart"]
+    end
+
+    subgraph GAZE["Gaze"]
+        GZ["Blink periods → missing"]
+        GZ --> G1["One-eye samples → missing"]
+        G1 --> G2["P8 · Average both eyes' directions<br/>gaze_normal0/1"]
+        G2 --> G3["P6 · Fill gaps under 75 ms<br/>longer gaps stay missing"]
+        G3 --> G4["Angle between consecutive<br/>directions, in degrees"]
+    end
+
+    subgraph EVENTS["P9 · Event detection"]
+        E1["Velocity, 5-point smoothed derivative"]
+        E1 --> E2["Reject over 1000 °/s"]
+        E2 --> E3["I-VT at 45 °/s"]
+        E3 --> E4["Keep fixations of 55 ms or more"]
+        E4 --> SC{"Sanity check, per activity<br/>fixation median 150–400 ms<br/>saccade:fixation 0.8–1.25"}
+    end
+
+    subgraph PUPIL["Pupil"]
+        PU["Blink periods → missing"]
+        PU --> U1["P7 · diameter_3d from 3d rows<br/>keep 1.5–9 mm"]
+        U1 --> U2["MAD speed-outlier filter"]
+        U2 --> U3["Average both eyes<br/>fill gaps of 250 ms or less"]
+        U3 --> U4["4 Hz low-pass"]
+        U4 --> U5["Count 3D-model refits"]
+    end
+
+    G4 --> E1
+    BL --> VT
+    G4 --> VT
+    U5 --> VT
+
+    VT["P4 · Valid time<br/>exclude gaps over 1 s"]
+
+    SC -- "Pass in all activities" --> F10["P10 · 10 features<br/>per whole activity, as rates"]
+    SC -- "Fail in any activity" --> F5["P10 · 5-feature fallback<br/>pupil mean, pupil SD, blink rate,<br/>gaze spread x and y"]
+    VT --> F10
+    VT --> F5
+
+    F10 --> OUT["90 samples<br/>45 participants × A1 and A4"]
+    F5 --> OUT
+
+    OUT -.-> QR["P11 · Quality report by condition<br/>(not a feature)"]
+    OUT -.-> RT["P14 · Retention table<br/>incl. refit counts"]
