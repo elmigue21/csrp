@@ -12,8 +12,10 @@ Do not run on the real data until the team has approved it.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import platform
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -28,7 +30,7 @@ from checks import (
 )
 from config import (
     CACHE_DIR, CEILING_AUC, DATA_DIR, FALLBACK_FEATURES, FEATURES, N_BOOTSTRAP, N_ITER,
-    N_PERM_IMPORTANCE, N_PERMUTATIONS, OUT_DIR, PUPIL_FEATURES,
+    N_PERM_IMPORTANCE, N_PERMUTATIONS, OUT_DIR, PUPIL_FEATURES, RTLX_EXCLUDED_IDS,
 )
 from data import load_annotation
 from dataset import (
@@ -113,6 +115,26 @@ def _versions() -> dict:
             "xgboost": xgboost.__version__, "shap": shap.__version__}
 
 
+def provenance(data_dir=DATA_DIR) -> dict:
+    """Source revision and input-file hashes, so a saved run can be traced to its code and data."""
+    here = Path(__file__).resolve().parent
+    try:
+        commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=here, capture_output=True,
+                                text=True, check=True).stdout.strip()
+        dirty = bool(subprocess.run(["git", "status", "--porcelain", "--", "."], cwd=here,
+                                    capture_output=True, text=True, check=True).stdout.strip())
+    except (OSError, subprocess.CalledProcessError):
+        commit, dirty = None, None
+    files = sorted(p for p in Path(data_dir).iterdir() if p.is_file())
+    combined = hashlib.sha256()
+    for path in files:
+        combined.update(path.name.encode())
+        combined.update(hashlib.sha256(path.read_bytes()).digest())
+    src = hashlib.sha256(b"".join(p.read_bytes() for p in sorted(here.glob("*.py")))).hexdigest()
+    return {"git_commit": commit, "src_uncommitted_changes": dirty, "src_sha256": src,
+            "data_files": len(files), "data_sha256": combined.hexdigest()}
+
+
 def main(data_dir=DATA_DIR, out_dir=OUT_DIR, refresh=False, n_iter=N_ITER, n_boot=N_BOOTSTRAP,
          n_perm=N_PERMUTATIONS, n_perm_imp=N_PERM_IMPORTANCE) -> dict:
     t0 = time.time()
@@ -124,7 +146,8 @@ def main(data_dir=DATA_DIR, out_dir=OUT_DIR, refresh=False, n_iter=N_ITER, n_boo
     prep["retention"].to_csv(tables / "01_retention.csv", index=False)
     activities_per_participant(prep["table"]).to_csv(tables / "01b_activities_per_participant.csv", index=False)
     prep["sanity"].to_csv(tables / "02_sanity_check.csv", index=False)
-    manip = manipulation_check(load_annotation(data_dir), prep["participants"])
+    rtlx_participants = [p for p in prep["participants"] if p not in RTLX_EXCLUDED_IDS]
+    manip = manipulation_check(load_annotation(data_dir), rtlx_participants)
     (tables / "03_manipulation_check.json").write_text(json.dumps(manip, indent=2))
     prep["table"].to_csv(tables / "04_feature_table.csv", index=False)
     redundancy_check(prep["rows"]).to_csv(tables / "08_redundancy_v2_13.csv", index=False)
@@ -156,6 +179,7 @@ def main(data_dir=DATA_DIR, out_dir=OUT_DIR, refresh=False, n_iter=N_ITER, n_boo
         "ceiling_rule_triggered": bool((p1["roc_auc"] > CEILING_AUC).all()),
         "settings": {"n_iter": n_iter, "n_boot": n_boot, "n_perm": n_perm, "n_perm_imp": n_perm_imp},
         "versions": _versions(),
+        "provenance": provenance(data_dir),
         "runtime_seconds": round(time.time() - t0, 1),
     }
     (out_dir / "run_metadata.json").write_text(json.dumps(meta, indent=2))
@@ -164,4 +188,12 @@ def main(data_dir=DATA_DIR, out_dir=OUT_DIR, refresh=False, n_iter=N_ITER, n_boo
 
 if __name__ == "__main__":
     summary = main(refresh="--refresh" in sys.argv)
-    print(json.dumps({k: v for k, v in summary.items() if k != "analyses"}, indent=2))
+    cols = ["analysis", "model", "roc_auc", "auc_ci_low", "auc_ci_high", "balanced_accuracy", "macro_f1"]
+    results = pd.concat([a["metrics"] for a in summary["analyses"].values()], ignore_index=True)
+    print("\nRESULTS (P1 = all features, P2 = pupil only)")
+    print(results[cols].round(3).to_string(index=False))
+    for name, a in summary["analyses"].items():
+        for kind in ("shap_lr", "shap_xgb"):
+            top = a["importance"][kind].sort_values("rank")["feature"].head(3).tolist()
+            print(f"Top features {name} {kind}: {', '.join(top)}")
+    print(f"\nAll tables: {OUT_DIR / 'tables'}")
