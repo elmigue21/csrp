@@ -1,0 +1,7 @@
+test,n,statistic,p,median_after,median_before
+spearman position vs p_lr within A1,44,-0.03201499176303026,0.8365545288688668,,
+spearman position vs p_lr within A4,44,-0.09194625030563187,0.55277700417706,,
+mann-whitney margin p_lr: A4 after A1 vs before,44,230.0,0.9334168178571949,0.9046205838124037,0.9433929013520455
+spearman position vs p_xgb within A1,44,0.034750683899825,0.8228028152329442,,
+spearman position vs p_xgb within A4,44,-0.19964221517590805,0.19384852500837485,,
+mann-whitney margin p_xgb: A4 after A1 vs before,44,254.0,0.6415915735304425,0.9126110095530751,0.8748626820743084

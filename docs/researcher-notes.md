@@ -955,3 +955,113 @@ source did not support them:
   stability), Perez-Lebel 2022 (recommends indicators), Xu 2026 (all-data SHAP; not eye tracking).
 - Kaczorowska 2021 used repeated random splits, not participant-independent validation.
 
+## N29. Optional robustness analysis: P1 without blink rate (run 2026-10-02)
+
+**Why:** blink rate was the top feature for both models in P1, and talking raises blinking (N3,
+N27). This pre-listed optional check (N19, "No-blink model") repeats P1 with the other nine features.
+Same pipeline, settings and seeds as the main run; post-hoc in timing, but listed before the main
+run. Script: `colet-eda/no_blink.py` (uses `run_colet.run_analysis`; 12 workers); outputs
+`outputs/colet/tables/optional/no_blink_*`. Runtime 155 s.
+
+| Model | ROC-AUC (95% CI) | Balanced accuracy | Brier | A4 ranked above A1 | Permutation (untuned AUC, p) |
+|---|---|---|---|---|---|
+| Logistic Regression | **0.936** (0.872-0.986) | 0.911 | 0.087 | 42/45 | 0.928, p = 0.005 |
+| XGBoost | **0.882** (0.794-0.952) | 0.811 | 0.129 | 38/45 | 0.895, p = 0.005 |
+
+- **XGBoost - LR: -0.054 (95% CI -0.109 to -0.012)**. The CI excludes zero, so **LR was better**.
+  Per-participant margins: LR larger in 26/45, medians 0.73 vs 0.74, Wilcoxon p = 0.017.
+- **Top features without blinks:** LR used fixation rate, fixation duration and pupil mean; XGBoost
+  used pupil mean, saccade rate and fixation rate. Rankings agreed less than in P1 (Kendall tau 0.33
+  vs 0.78).
+
+**How to read it:**
+- Removing blinks lowers AUC from 0.98-0.99 to 0.88-0.94. That is still high, and between P1 and
+  P2 (pupil only, 0.80-0.85). Blinks add a lot, but fixation, saccade and pupil measures carry the
+  load signal too.
+- This is only a **partial** talking check. Talking also causes tracking loss and head movement,
+  which can affect fixation and saccade measures (N22). P2 stays the cleaner check.
+- **Model comparison:** this is the only analysis where the pooled AUC difference is clearly
+  non-zero, and it **favors Logistic Regression**. Together with P1 (tie at the ceiling) and P2
+  (mixed), the overall picture is unchanged: XGBoost brought no clear benefit, and LR was equal
+  or better.
+- **Report as an optional robustness check** (Ch. 4), not as a replacement for P1.
+
+## N30. Route B: the full pipeline without per-person standardization (run 2026-10-02)
+
+Pre-listed optional analysis S4, run tuned like the main analysis (script
+`colet-eda/no_standardization.py`; outputs `outputs/colet/tables/optional/raw_*`; 192 s).
+
+| ROC-AUC (95% CI) | Standardized (main) | Unstandardized |
+|---|---|---|
+| P1 LR / XGB | 0.990 / 0.983 | 0.838 (0.760-0.917) / 0.881 (0.820-0.939) |
+| P2 LR / XGB | 0.851 / 0.804 | 0.613 (0.571-0.667) / 0.659 (0.575-0.744) |
+
+- Within-person ranking stays high without standardization (A4 above A1 for 42/45 and 43/45),
+  so the drop is mostly between-person variation.
+- Not at the ceiling, so the P1 comparison is informative: XGB - LR +0.043 (-0.026 to 0.112),
+  not significant; margins larger for XGB in 29/45 (Wilcoxon p = 0.046).
+- Raw pupil-only is weak (0.61-0.66): the P2 signal is relative to each person's own baseline.
+- **Which route to take is an open adviser question (adviser-questions.md Q2).**
+
+
+## N31. Rerun after the P28/P31 duplicate fix (run 2026-10-15)
+
+**Why:** P28 and P31 hold byte-identical gaze, pupil and blink files, but different
+demographics and NASA-RTLX (review round 5, R5-1; `leakage-audit.md` §1). One person's
+recording was stored twice, so it crossed train/test boundaries in two folds.
+
+**Fix:**
+- The recording is kept once, as P28 (`config.DUPLICATE_RECORDING_IDS = (31,)`).
+- Both IDs are left out of the NASA-RTLX check (`config.RTLX_EXCLUDED_IDS`).
+- Nothing else changed.
+- Result: **44 participants, 88 samples**; NASA-RTLX check n = 43.
+- `run_metadata.json` now records the git commit, uncommitted `src/` changes, and hashes of
+  `src/` and every input file.
+
+**Main analysis (P1 10 features, P2 pupil-only), pooled ROC-AUC (95% CI):**
+
+| | Before (45) | After (44) | XGB − LR after (95% CI) |
+|---|---|---|---|
+| P1 LR / XGB | 0.990 / 0.983 | **0.992 (0.979–1.000) / 0.980 (0.957–0.997)** | −0.012 (−0.030 to 0.002) |
+| P2 LR / XGB | 0.851 / 0.804 | **0.831 (0.735–0.912) / 0.812 (0.697–0.912)** | −0.019 (−0.086 to 0.047) |
+
+- **Ranking (A4 above A1):** P1 44/44 for both models. P2 37/44 for both.
+- **Margins:**
+  - P1: XGBoost larger in 15/44 (Wilcoxon p = 0.112).
+  - P2: XGBoost larger in 29/44 (medians 0.474 vs 0.214, p = 0.007).
+  - So in P2, pooled AUC favors LR and the margins favor XGBoost.
+- **Other P1 numbers:**
+  - Brier 0.032 / 0.060.
+  - Balanced accuracy 0.966 / 0.920.
+  - Kendall τ 0.69 (0.60–0.73).
+  - The same top 3 features for both models: blink rate, pupil mean, fixation rate.
+- **NASA-RTLX (n = 43):** Friedman χ²(3) = 82.72; all 43 rated A4 above A1 (median +31.7).
+- **Shuffled labels (untuned, 40 repetitions):**
+  - Within person: LR 0.49, XGBoost 0.53.
+  - Fully random: 0.46 and 0.53.
+- **Single features:** blink 0.97 (raw 0.89), pupil 0.87 (raw 0.62); 42/44 blinked more in A4.
+
+**Optional analyses (rerun):**
+
+| ROC-AUC (95% CI) | LR | XGB | XGB − LR (95% CI) |
+|---|---|---|---|
+| P1 without blink rate (N29) | 0.929 (0.863–0.980) | 0.886 (0.803–0.956) | **−0.043 (−0.084 to −0.007)** |
+| P1 unstandardized (N30) | 0.853 (0.783–0.923) | 0.881 (0.822–0.941) | +0.028 (−0.034 to 0.094) |
+| P2 unstandardized (N30) | 0.611 (0.573–0.657) | 0.649 (0.565–0.732) | +0.038 (−0.060 to 0.129) |
+
+**What changed in the conclusions:**
+- **Nothing qualitative.** Neither model is clearly better under either protocol. The point
+  estimates favor LR with standardization and XGBoost without it.
+- **The no-blink run is still the only comparison whose CI excludes zero** (favoring LR). There,
+  LR margins are larger in 30/44 (p = 0.003).
+- **The P2 gap shrank** (−0.047 → −0.019), and the raw P1 gap shrank too (+0.043 → +0.028).
+  One duplicated person was enough to move these estimates noticeably.
+- **The chosen hyperparameters moved a lot:**
+  - P1 LR median C went from 1.03 to 4.97.
+  - XGBoost picked depth 2 in 20/44 folds (was 28/45) and depth 1 in 16.
+  - P2 XGBoost used depth 1 in 37/44 (was 44/45).
+  - With 30 random candidates and 43 training people, the tuned settings are not stable. This
+    supports wording the comparison as "LR at least matches a lightly tuned XGBoost" (R5-21).
+
+**Draft:** `CSRP-Chapter-1-to-5-draft-COLET-v4.docx` carries these numbers and the approved
+round-5 wording, all as tracked changes (author "Claude").

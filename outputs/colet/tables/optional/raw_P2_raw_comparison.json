@@ -1,0 +1,15 @@
+{
+  "analysis": "P2_raw",
+  "auc_difference": 0.03796487603305787,
+  "auc_difference_ci_low": -0.06043388429752061,
+  "auc_difference_ci_high": 0.12888042355371893,
+  "wilcoxon_statistic": 279.0,
+  "wilcoxon_p": 0.010906886607358501,
+  "n_participants": 44,
+  "shap_rank_kendall_tau": -1.0,
+  "shap_rank_ci_low": -1.0,
+  "shap_rank_ci_high": -1.0,
+  "shap_rank_n_features": 2,
+  "shap_rank_n_boot_valid": 2000,
+  "shap_rank_note": "2 features: tau is \u00b11 only"
+}

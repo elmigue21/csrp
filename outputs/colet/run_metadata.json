@@ -1,5 +1,5 @@
 {
-  "n_participants": 45,
+  "n_participants": 44,
   "features_p1": [
     "pupil_mean",
     "pupil_sd",
@@ -29,5 +29,12 @@
     "xgboost": "3.2.0",
     "shap": "0.51.0"
   },
-  "runtime_seconds": 209.3
+  "provenance": {
+    "git_commit": "df551104959b2b2764f39f59f959603adbf304e8",
+    "src_uncommitted_changes": true,
+    "src_sha256": "2589117382ae0d2b7c7c7be7c2a8dc09a3447e2904fb01feb2265f33ce70158a",
+    "data_files": 566,
+    "data_sha256": "f22cb551df7385f66440d78fd47012d322581998b4d718caa84f633674b85161"
+  },
+  "runtime_seconds": 270.1
 }

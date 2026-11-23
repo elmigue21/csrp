@@ -1,0 +1,15 @@
+model,signal,share
+Logistic Regression,saccade,0.2935919666437308
+Logistic Regression,fixation,0.2702100713088641
+Logistic Regression,gaze_speed,0.25501593095556263
+Logistic Regression,blink,0.12589767579373057
+Logistic Regression,gaze_x,0.05023779774902745
+Logistic Regression,gaze_y,0.0050465575490846
+Logistic Regression,pupil,0.0
+XGBoost,fixation,0.3112800685065058
+XGBoost,saccade,0.2841214176842636
+XGBoost,blink,0.1301943303172779
+XGBoost,gaze_x,0.08391665054084659
+XGBoost,gaze_speed,0.07891110355801886
+XGBoost,pupil,0.07113066018012508
+XGBoost,gaze_y,0.04044576921296201

@@ -13,7 +13,9 @@ from pathlib import Path
 import pandas as pd
 
 import config
-from config import CACHE_DIR, DATA_DIR, HIGH_ACTIVITY, LOW_ACTIVITY, MAX_INVALID_FRACTION
+from config import (
+    CACHE_DIR, DATA_DIR, DUPLICATE_RECORDING_IDS, HIGH_ACTIVITY, LOW_ACTIVITY, MAX_INVALID_FRACTION,
+)
 from data import load_recording, recording_keys
 from features import recording_features
 from preprocess import invalid_fraction, trim_to_gaze_range
@@ -58,8 +60,11 @@ def build_feature_table(data_dir=DATA_DIR, cache_dir=CACHE_DIR, refresh=False) -
 
 
 def analysis_participants(table: pd.DataFrame) -> list[int]:
-    """Participants whose A1 and A4 recordings both survived exclusion."""
-    kept = table[~table["excluded"]]
+    """Participants whose A1 and A4 recordings both survived exclusion, each recording counted once.
+
+    IDs in DUPLICATE_RECORDING_IDS hold copies of another participant's recordings (R5-1).
+    """
+    kept = table[~table["excluded"] & ~table["participant"].isin(DUPLICATE_RECORDING_IDS)]
     has = kept.groupby("participant")["activity"].apply(set)
     return sorted(int(p) for p, acts in has.items() if {LOW_ACTIVITY, HIGH_ACTIVITY} <= acts)
 

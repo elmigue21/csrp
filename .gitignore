@@ -8,3 +8,8 @@ data/
 
 # generated EDA intermediate (rebuild with docs/eda-scripts/load.py)
 archive/gazeload/docs/eda-scripts/eye.parquet
+
+# post-defense extraction cache and scratch files
+outputs/work/
+outputs/final.tmp/
+outputs/final.old/

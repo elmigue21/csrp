@@ -1,0 +1,13 @@
+{
+  "n_participants": 36,
+  "mean_Audio": 8.925925925925927,
+  "mean_Audiovisual": 11.314814814814815,
+  "mean_Visual": 7.25,
+  "sd_Audio": 2.60446638486885,
+  "sd_Audiovisual": 3.08498096975885,
+  "sd_Visual": 2.774744375470711,
+  "median_difference_combined_minus_visual": 3.916666666666667,
+  "n_combined_higher": 36,
+  "wilcoxon_statistic": 0.0,
+  "wilcoxon_p": 1.6780957670780608e-07
+}

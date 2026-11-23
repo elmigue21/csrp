@@ -1,0 +1,43 @@
+{
+  "features_file": "C:\\dev\\csrp\\outputs\\final\\features\\features.csv",
+  "features_sha256": "7249a59bb692b65472320480c1c93262916a369ba60cc2af56bed59cb7a8fd3b",
+  "n_participants": 44,
+  "n_rows": 88,
+  "n_features": 140,
+  "n_candidates": [
+    5,
+    10,
+    20,
+    40,
+    80,
+    140
+  ],
+  "n_iter": 30,
+  "n_boot": 2000,
+  "n_perm": 200,
+  "decisions": "docs/post-defense-modeling-plan.md (MD1-MD4)",
+  "git_commit": "c9fa61aaf87fb2008ed0ce366702ba884747e038",
+  "versions": {
+    "python": "3.11.9",
+    "numpy": "2.2.4",
+    "pandas": "2.3.1",
+    "scipy": "1.15.2",
+    "scikit-learn": "1.7.1",
+    "xgboost": "3.2.0",
+    "shap": "0.51.0"
+  },
+  "stages": {
+    "main": {
+      "date": "2026-11-11T18:26:43",
+      "runtime_seconds": 1241.7
+    },
+    "by_n": {
+      "date": "2026-11-11T19:21:26",
+      "runtime_seconds": 3283.2
+    },
+    "checks": {
+      "date": "2026-11-11T19:41:29",
+      "runtime_seconds": 1202.7
+    }
+  }
+}

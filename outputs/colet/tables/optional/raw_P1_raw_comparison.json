@@ -1,0 +1,14 @@
+{
+  "analysis": "P1_raw",
+  "auc_difference": 0.02789256198347112,
+  "auc_difference_ci_low": -0.03409090909090917,
+  "auc_difference_ci_high": 0.09350464876033057,
+  "wilcoxon_statistic": 45.0,
+  "wilcoxon_p": 1.91630533663556e-09,
+  "n_participants": 44,
+  "shap_rank_kendall_tau": 0.24444444444444444,
+  "shap_rank_ci_low": 0.1111111111111111,
+  "shap_rank_ci_high": 0.5555555555555555,
+  "shap_rank_n_features": 10,
+  "shap_rank_n_boot_valid": 2000
+}

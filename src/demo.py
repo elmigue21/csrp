@@ -1,11 +1,10 @@
-"""Live demo: compare Logistic Regression and XGBoost on the COLET eye-tracking features.
+"""Live demo: Logistic Regression vs XGBoost on the final eye-tracking features.
 
-Same data, settings and seed as run_colet.py, so it gives the same numbers.
-The two models and their tuning ranges are defined in models.py.
-Nothing is written to outputs/.
+Same features, settings and seed as run_model.py, so it prints the paper's numbers.
+Nothing is saved.
 
-Usage:  python src/demo.py            (all 10 features)
-        python src/demo.py --pupil    (pupil features only)
+Usage:  python src/demo.py          (as in the paper: 30 tuning candidates, a few minutes)
+        python src/demo.py --fast   (5 candidates: quicker, numbers differ slightly)
 """
 from __future__ import annotations
 
@@ -18,77 +17,59 @@ from sklearn.model_selection import LeaveOneGroupOut, RandomizedSearchCV, Strati
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from config import INNER_FOLDS, N_ITER, PUPIL_FEATURES, RANDOM_STATE
+from config import FINAL_DIR, INNER_FOLDS, N_ITER, RANDOM_STATE, SEARCH_JOBS
 from evaluate import score
-from importance import oof_shap, shap_summary
-from labels import binary_label, main_rows
-from models import MODELS
-from normalize import per_participant_zscore
-from run_colet import prepare
+from importance import shap_summary
+from run_model import fold_shap, load_features
+from topn import MODELS_TOPN
 
 
-def train_and_test(X, y, groups, make_model, search_space):
-    """Train, tune and test one model."""
+def train_and_test(X, y, people, make_model, settings, n_iter):
+    """Leave-one-participant-out: hide one person, train on the other 43, test on the hidden one."""
     predictions = np.full(len(y), np.nan)
     folds = []
+    for train, test in LeaveOneGroupOut().split(X, y, people):
+        # Tune on the 43 training people only: try n_iter random settings (the number of
+        # features N included) and keep the one with the best ROC-AUC over 5 inner folds.
+        inner = StratifiedGroupKFold(n_splits=INNER_FOLDS, shuffle=True, random_state=RANDOM_STATE)
+        search = RandomizedSearchCV(make_model(), settings, n_iter=n_iter, scoring="roc_auc", cv=inner,
+                                    random_state=RANDOM_STATE, n_jobs=SEARCH_JOBS, error_score=np.nan)
+        search.fit(X.iloc[train], y[train], groups=people[train])
 
-    # LOPO (leave-one-participant-out): 44 rounds. Each round hides one person,
-    # trains on the other 43, then tests on the hidden person.
-    for train_idx, test_idx in LeaveOneGroupOut().split(X, y, groups):
-        # HYPERPARAMETER TUNING (random search): try 30 random settings, score each with
-        # ROC-AUC over 5 inner folds split by person, keep the best one.
-        # Only the 43 training people are used, so the hidden person never leaks in.
-        inner_folds = StratifiedGroupKFold(n_splits=INNER_FOLDS, shuffle=True, random_state=RANDOM_STATE)
-        search = RandomizedSearchCV(make_model(), search_space, n_iter=N_ITER, scoring="roc_auc",
-                                    cv=inner_folds, random_state=RANDOM_STATE, n_jobs=-1,
-                                    error_score=np.nan)
-        search.fit(X.iloc[train_idx], y[train_idx], groups=groups[train_idx])
-
-        # TESTING: the best model predicts the hidden person's chance of high load
-        best_model = search.best_estimator_
-        predictions[test_idx] = best_model.predict_proba(X.iloc[test_idx])[:, 1]
-        folds.append({"model": best_model, "train_idx": train_idx, "test_idx": test_idx})
+        # Test: the best model predicts the hidden person's two recordings.
+        predictions[test] = search.best_estimator_.predict_proba(X.iloc[test])[:, 1]
+        folds.append({"model": search.best_estimator_, "train_idx": train, "test_idx": test})
     return predictions, folds
 
 
-def main(pupil_only=False):
-    # 1. LOAD DATA: the 10 eye-tracking features, one row per person per activity
-    prep = prepare()
-    features = PUPIL_FEATURES if pupil_only else prep["features_used"]
-    rows = prep["rows"]
+def main(n_iter=N_ITER):
+    # 1. Data: 88 recordings (44 people x A1 low, A4 high), 140 features each
+    X, y, people, _ = load_features(FINAL_DIR / "features" / "features.csv")
+    print(f"{len(y)} recordings, {len(np.unique(people))} people, {X.shape[1]} features\n")
 
-    # 2. PER-PERSON Z-SCORE: compare each person to their own average
-    z = per_participant_zscore(rows[features], rows["participant"])
-    rows = rows.assign(**{c: z[c] for c in features})
+    results, top = {}, {}
+    for name, spec in MODELS_TOPN.items():
+        print(f"Training {name} ...")
+        # 2. Train and test (feature selection, scaling and tuning all happen inside each round)
+        predictions, folds = train_and_test(X, y, people, spec["factory"], spec["space"], n_iter)
 
-    # 3. LABELS: A1 = low load (0), A4 = high load (1)
-    data = main_rows(rows)
-    X = data[features].reset_index(drop=True)
-    y = binary_label(data)
-    groups = data["participant"].to_numpy()
-
-    # 4. MODELS: Logistic Regression and XGBoost, both run through the same LOPO + tuning
-    #    (model setup and tuning ranges are in models.py)
-    results, top_features = [], {}
-    for name, spec in MODELS.items():
-        predictions, folds = train_and_test(X, y, groups, spec["factory"], spec["space"])
+        # 3. Every metric, over all 88 held-out predictions
         s = score(y, predictions)
-        results.append({"model": name, "roc_auc": s["roc_auc"],
-                        "balanced_accuracy": s["balanced_accuracy"], "f1": s["macro_f1"]})
+        results[name] = {
+            "ROC-AUC": s["roc_auc"], "Accuracy": s["accuracy"], "Precision": s["precision_macro"],
+            "Recall (low)": s["recall_low"], "Recall (high)": s["recall_high"],
+            "F1": s["macro_f1"], "Brier": s["brier"]}
 
-        # 5. FEATURE IMPORTANCE (SHAP): which eye features each model relied on most
+        # 4. Which features the model relied on (SHAP, on the people it never saw)
         kind = "lr" if name == "Logistic Regression" else "xgb"
-        shap_values = oof_shap(folds, X, kind)
-        top_features[name] = shap_summary(shap_values, features)["feature"].head(3).tolist()
+        top[name] = shap_summary(fold_shap(folds, X, kind), list(X.columns))["feature"].head(5).tolist()
 
-    # 6. RESULTS: ROC-AUC, balanced accuracy and F1 over all 44 hidden people
-    print(f"\nRESULTS ({'pupil features only' if pupil_only else 'all 10 features'}, "
-          f"{len(np.unique(groups))} participants)")
-    print(pd.DataFrame(results).round(3).to_string(index=False))
-    print("\nTop 3 features (SHAP)")
-    for name, top in top_features.items():
-        print(f"  {name}: {', '.join(top)}")
+    print("\nRESULTS (each person tested by a model that never saw them)")
+    print(pd.DataFrame(results).round(3).to_string())
+    print("\nTop 5 features (SHAP)")
+    for name, features in top.items():
+        print(f"  {name}: {', '.join(features)}")
 
 
 if __name__ == "__main__":
-    main(pupil_only="--pupil" in sys.argv)
+    main(n_iter=5 if "--fast" in sys.argv else N_ITER)

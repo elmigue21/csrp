@@ -18,7 +18,7 @@ from sklearn.metrics import roc_curve
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from config import DATA_DIR, OUT_DIR
+from config import DATA_DIR, OUT_DIR, RTLX_EXCLUDED_IDS
 from data import load_annotation
 from viz_style import INK_MUTED, INK_SECONDARY, SERIES, SERIES_ORDER, apply_style, strip_spines
 
@@ -96,7 +96,7 @@ def rtlx_figure() -> Path:
     """NASA-RTLX per activity for the analysed participants (manipulation check)."""
     keep = pd.read_csv(TABLES / "01b_activities_per_participant.csv")["participant"]
     ann = load_annotation(DATA_DIR)
-    ann = ann[ann["participant"].isin(keep)]
+    ann = ann[ann["participant"].isin(keep) & ~ann["participant"].isin(RTLX_EXCLUDED_IDS)]
     data = [ann.loc[ann["activity"] == a, "mean"].to_numpy() for a in (1, 2, 3, 4)]
     fig, ax = plt.subplots(figsize=(5.0, 3.0))
     ax.boxplot(data, widths=0.5, medianprops={"color": SERIES["Logistic Regression"], "lw": 2},

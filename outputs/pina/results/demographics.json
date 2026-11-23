@@ -1,0 +1,11 @@
+{
+  "n_participants": 36,
+  "age_mean": 31.944444444444443,
+  "age_sd": 11.31356819915032,
+  "age_min": 22.0,
+  "age_max": 62.0,
+  "sex_counts": {
+    "male": 23,
+    "female": 13
+  }
+}

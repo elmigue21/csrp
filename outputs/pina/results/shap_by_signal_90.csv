@@ -1,0 +1,9 @@
+model,signal,share
+Logistic Regression,pupil,0.5480917017734416
+Logistic Regression,gaze_x,0.2697638753243849
+Logistic Regression,gaze_y,0.12406463109032048
+Logistic Regression,blink,0.05807979181185292
+XGBoost,gaze_x,0.3143779983202257
+XGBoost,gaze_y,0.24723202603841896
+XGBoost,pupil,0.23945432373410808
+XGBoost,blink,0.1989356519072473

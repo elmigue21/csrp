@@ -8,6 +8,15 @@ cannot be verified from code alone.
 
 ## 1. High priority: duplicated participants cross evaluation boundaries
 
+**Update 2026-10-15 (review round 5, R5-1): cause established and fixed.** All 12 raw files
+(`p28_t{1..4}_{gaze,pupil,blinks}.parquet` vs P31) are byte-identical, while
+`subject_info.csv` (age 23 vs 26; acuity −0.01 vs −0.05) and the NASA-RTLX ratings differ. So
+two people share one eye recording in COLET v3 as decoded from `data_v3.mat`. Our conversion
+reads each participant's entry by position, so it did not create the copy. The recording is
+now kept once (as P28) via `config.DUPLICATE_RECORDING_IDS`, and both IDs are left out of the
+NASA-RTLX check (`config.RTLX_EXCLUDED_IDS`). All metrics were recomputed (researcher-notes
+N31). The rest of this section describes the original finding.
+
 In `outputs/colet/tables/04_feature_table.csv`, P28 and P31 have exactly identical
 values in every column except participant ID for A1, A2, A3 and A4. Their rows begin
 at CSV lines 110 and 122, respectively. Both saved Parquet feature caches contain
@@ -81,7 +90,9 @@ that historical development uses the same dataset and deserves disclosure.
   data can silently load another dataset's features. No evidence establishes that
   this caused the P28/P31 issue.
 - Saved run metadata records library versions and settings but not source commit or
-  input hashes. Exact provenance of the historical run cannot be certified.
+  input hashes. Exact provenance of the historical run cannot be certified. (Fixed
+  2026-10-15: `run_metadata.json` now records the git commit, uncommitted `src/` changes, a
+  hash of `src/` and a hash of every input file.)
 - Shuffled-label tests use untuned models (`src/run_colet.py:82`), whereas headline
   metrics use tuned models. They test a different procedure and do not rule out
   test-input normalization, duplicated recordings, or confounding.

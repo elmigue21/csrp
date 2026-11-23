@@ -13,7 +13,8 @@ import pandas as pd
 from scipy.stats import wilcoxon
 from sklearn.base import clone
 from sklearn.metrics import (
-    balanced_accuracy_score, brier_score_loss, f1_score, recall_score, roc_auc_score,
+    accuracy_score, balanced_accuracy_score, brier_score_loss, f1_score, precision_score,
+    recall_score, roc_auc_score,
 )
 from sklearn.model_selection import LeaveOneGroupOut, RandomizedSearchCV, StratifiedGroupKFold
 
@@ -49,10 +50,16 @@ def score(y, proba) -> dict:
     pred = (proba >= 0.5).astype(int)
     return {
         "roc_auc": float(roc_auc_score(y, proba)),
+        "accuracy": float(accuracy_score(y, pred)),
         "balanced_accuracy": float(balanced_accuracy_score(y, pred)),
-        "macro_f1": float(f1_score(y, pred, average="macro", zero_division=0)),
+        "precision_macro": float(precision_score(y, pred, average="macro", zero_division=0)),
+        "precision_low": float(precision_score(y, pred, pos_label=0, zero_division=0)),
+        "precision_high": float(precision_score(y, pred, pos_label=1, zero_division=0)),
         "recall_low": float(recall_score(y, pred, pos_label=0, zero_division=0)),
         "recall_high": float(recall_score(y, pred, pos_label=1, zero_division=0)),
+        "macro_f1": float(f1_score(y, pred, average="macro", zero_division=0)),
+        "f1_low": float(f1_score(y, pred, pos_label=0, zero_division=0)),
+        "f1_high": float(f1_score(y, pred, pos_label=1, zero_division=0)),
         "brier": float(brier_score_loss(y, proba)),
     }
 

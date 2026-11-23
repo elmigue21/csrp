@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-12T04:04:37",
+  "git_commit": "c9fa61aaf87fb2008ed0ce366702ba884747e038",
+  "src_uncommitted_changes": true,
+  "src_sha256": "68e9243700cb288042b3d504492818059681fbe2ab812f141c9a4d5b08c8cbf7",
+  "data_files": 566,
+  "data_sha256": "f22cb551df7385f66440d78fd47012d322581998b4d718caa84f633674b85161",
+  "settings": {
+    "BLINK_MAX_S": 0.5,
+    "BLINK_MERGE_S": 0.1,
+    "BLINK_MIN_S": 0.05,
+    "CONFIDENCE_MIN": 0.8,
+    "GAZE_GRID_HZ": 240.0,
+    "GAZE_MAX_INTERP_S": 0.075,
+    "IVT_THRESHOLD_DEG_S": 45.0,
+    "MAX_INVALID_FRACTION": 0.35,
+    "MAX_VELOCITY_DEG_S": 1000.0,
+    "MIN_FIXATION_S": 0.055,
+    "PUPIL_FEATURES": [
+      "pupil_mean",
+      "pupil_sd"
+    ],
+    "PUPIL_GRID_HZ": 120.0,
+    "PUPIL_LOWPASS_HZ": 4.0,
+    "PUPIL_LOWPASS_ORDER": 2,
+    "PUPIL_MAD_MULTIPLIER": 16.0,
+    "PUPIL_MAX_INTERP_S": 0.25,
+    "PUPIL_MAX_MM": 9.0,
+    "PUPIL_METHOD_TAG": "3d",
+    "PUPIL_MIN_MM": 1.5,
+    "VALID_TIME_MAX_GAP_S": 1.0
+  },
+  "versions": {
+    "python": "3.11.9",
+    "numpy": "2.2.4",
+    "pandas": "2.3.1",
+    "scipy": "1.15.2"
+  },
+  "n_participants": 44,
+  "n_rows": 88,
+  "n_features": 140,
+  "n_features_extracted": 173,
+  "sanity_passed": true
+}

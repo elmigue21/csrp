@@ -1,0 +1,3 @@
+model,params,observed_auc,p_value,n_perm
+Logistic Regression,"{""clf__C"": 0.4066695065393845, ""clf__l1_ratio"": 0.4146619399905236, ""select__n"": 40}",0.6539592978395061,0.004975124378109453,200
+XGBoost,"{""clf__colsample_bytree"": 0.8561432438653613, ""clf__learning_rate"": 0.083943976505948, ""clf__max_depth"": 1, ""clf__n_estimators"": 243, ""clf__reg_alpha"": 0.002691905824926, ""clf__reg_lambda"": 6.823493012435792, ""clf__subsample"": 0.8565544965250215, ""select__n"": 80}",0.629931037808642,0.004975124378109453,200

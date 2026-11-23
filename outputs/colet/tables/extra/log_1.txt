@@ -1,0 +1,25 @@
+
+P1_A2A3_z: dropped 0 participants missing a baseline activity
+ analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+P1_A2A3_z Logistic Regression              44         88    0.839        0.76        0.915              0.818
+P1_A2A3_z             XGBoost              44         88    0.898        0.83        0.956              0.841
+  XGB-LR +0.058 [-0.008, +0.124]
+
+P2_A2A3_z: dropped 0 participants missing a baseline activity
+ analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+P2_A2A3_z Logistic Regression              44         88    0.724       0.647        0.806              0.705
+P2_A2A3_z             XGBoost              44         88    0.735       0.646        0.819              0.682
+  XGB-LR +0.010 [-0.054, +0.072]
+
+P1_A2_diff: dropped 0 participants missing a baseline activity
+  analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+P1_A2_diff Logistic Regression              44         88    0.903       0.843        0.958              0.841
+P1_A2_diff             XGBoost              44         88    0.921       0.859        0.975              0.841
+  XGB-LR +0.018 [-0.051, +0.091]
+
+P2_A2_diff: dropped 0 participants missing a baseline activity
+  analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+P2_A2_diff Logistic Regression              44         88    0.763       0.677        0.851              0.727
+P2_A2_diff             XGBoost              44         88    0.736       0.633        0.834              0.750
+  XGB-LR -0.027 [-0.090, +0.040]
+runtime 349 s

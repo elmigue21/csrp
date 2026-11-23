@@ -1,0 +1,49 @@
+
+A3vA4_P1_z
+  analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+A3vA4_P1_z Logistic Regression              44         88    0.624       0.487        0.752              0.580
+A3vA4_P1_z             XGBoost              44         88    0.602       0.469        0.736              0.557
+  XGB-LR -0.022 [-0.129, +0.090]
+
+A3vA4_P2_z
+  analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+A3vA4_P2_z Logistic Regression              44         88    0.610       0.474        0.737              0.545
+A3vA4_P2_z             XGBoost              44         88    0.661       0.538        0.773              0.648
+  XGB-LR +0.051 [-0.048, +0.148]
+
+A3vA4_P1_raw
+    analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+A3vA4_P1_raw Logistic Regression              44         88    0.534       0.443        0.627              0.545
+A3vA4_P1_raw             XGBoost              44         88    0.442       0.354        0.530              0.500
+  XGB-LR -0.092 [-0.199, +0.009]
+
+A3vA4_P2_raw
+    analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+A3vA4_P2_raw Logistic Regression              44         88    0.488       0.407        0.568              0.500
+A3vA4_P2_raw             XGBoost              44         88    0.528       0.430        0.627              0.534
+  XGB-LR +0.040 [-0.049, +0.135]
+
+A1vA2_P1_z
+  analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+A1vA2_P1_z Logistic Regression              44         88    0.752       0.612        0.869              0.693
+A1vA2_P1_z             XGBoost              44         88    0.765       0.635        0.874              0.739
+  XGB-LR +0.013 [-0.064, +0.086]
+
+A1vA2_P2_z
+  analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+A1vA2_P2_z Logistic Regression              44         88    0.753       0.608        0.876              0.750
+A1vA2_P2_z             XGBoost              44         88    0.680       0.549        0.806              0.693
+  XGB-LR -0.072 [-0.137, +0.000]
+
+A1vA2_P1_raw
+    analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+A1vA2_P1_raw Logistic Regression              44         88    0.641       0.560         0.72              0.557
+A1vA2_P1_raw             XGBoost              44         88    0.576       0.487         0.67              0.580
+  XGB-LR -0.065 [-0.154, +0.016]
+
+A1vA2_P2_raw
+    analysis               model  n_participants  n_samples  roc_auc  auc_ci_low  auc_ci_high  balanced_accuracy
+A1vA2_P2_raw Logistic Regression              44         88    0.564       0.514        0.623              0.545
+A1vA2_P2_raw             XGBoost              44         88    0.495       0.434        0.560              0.557
+  XGB-LR -0.069 [-0.148, -0.001]
+runtime 620 s

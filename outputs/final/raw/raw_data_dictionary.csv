@@ -1,0 +1,80 @@
+﻿table,column,dtype,unit,example,meaning,used,why
+gaze,gaze_timestamp,float64,s,5411,Time of the gaze sample,yes,
+gaze,world_index,float64,,0,Index of the nearest head-camera video frame,no,Internal bookkeeping
+gaze,confidence,float64,0-1,0.9995,How sure the tracker is about this sample,yes,
+gaze,norm_pos_x,float64,0-1,0.4463,Gaze position left/right in the head camera's image,no,"Position in the head camera's image, not on the screen (§5, M1)"
+gaze,norm_pos_y,float64,0-1,0.8469,Gaze position up/down in the head camera's image,no,"Position in the head camera's image, not on the screen (§5, M1)"
+gaze,base_data,object,,array(['5410.549631999999-0 5410.5537...,Which pupil samples this gaze sample was built from,no,Internal bookkeeping
+gaze,gaze_point_3d_x,float64,mm,-6.721,Estimated 3D point being looked at (x),no,"Depends on the tracker's depth estimate, which is broken in COLET (R4-1)"
+gaze,gaze_point_3d_y,float64,mm,-31.25,Estimated 3D point being looked at (y),no,"Depends on the tracker's depth estimate, which is broken in COLET (R4-1)"
+gaze,gaze_point_3d_z,float64,mm,80.7,Estimated 3D point being looked at (z),no,"Depends on the tracker's depth estimate, which is broken in COLET (R4-1)"
+gaze,eye_center0_3d_x,float64,mm,20,Position of eye 0's eyeball centre (x),no,"Eyeball position, not where the eye points"
+gaze,eye_center0_3d_y,float64,mm,15.86,Position of eye 0's eyeball centre (y),no,"Eyeball position, not where the eye points"
+gaze,eye_center0_3d_z,float64,mm,-19.04,Position of eye 0's eyeball centre (z),no,"Eyeball position, not where the eye points"
+gaze,gaze_normal0_x,float64,unit vector,-0.2353,Direction eye 0 points (x),yes,
+gaze,gaze_normal0_y,float64,unit vector,-0.4202,Direction eye 0 points (y),yes,
+gaze,gaze_normal0_z,float64,unit vector,0.8764,Direction eye 0 points (z),yes,
+gaze,eye_center1_3d_x,float64,mm,-39.2,Position of eye 1's eyeball centre (x),no,"Eyeball position, not where the eye points"
+gaze,eye_center1_3d_y,float64,mm,15.1,Position of eye 1's eyeball centre (y),no,"Eyeball position, not where the eye points"
+gaze,eye_center1_3d_z,float64,mm,-21.6,Position of eye 1's eyeball centre (z),no,"Eyeball position, not where the eye points"
+gaze,gaze_normal1_x,float64,unit vector,0.2776,Direction eye 1 points (x),yes,
+gaze,gaze_normal1_y,float64,unit vector,-0.3913,Direction eye 1 points (y),yes,
+gaze,gaze_normal1_z,float64,unit vector,0.8774,Direction eye 1 points (z),yes,
+pupil,pupil_timestamp,float64,s,5411,Time of the pupil sample,yes,
+pupil,world_index,float64,,0,Index of the nearest head-camera video frame,no,Internal bookkeeping
+pupil,eye_id,float64,,1,Which eye: 0 or 1,yes,
+pupil,confidence,float64,0-1,1,How sure the tracker is about this sample,yes,
+pupil,norm_pos_x,float64,0-1,0.4062,Pupil position left/right in the eye camera's image,no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,norm_pos_y,float64,0-1,0.7085,Pupil position up/down in the eye camera's image,no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,diameter,float64,px,40.76,Pupil size in eye-camera pixels,no,Pixels change with camera distance; diameter_3d (mm) is used instead
+pupil,method,object,,"array(['2d c++'], dtype='<U6')",Measurement method: '2d c++' (pixels) or '3d c++' (mm); each sample has one row of each,yes,
+pupil,ellipse_center_x,float64,px,77.99,Centre of the fitted pupil ellipse (x),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,ellipse_center_y,float64,px,55.97,Centre of the fitted pupil ellipse (y),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,ellipse_axis_a,float64,px,25.38,First axis of the fitted pupil ellipse,no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,ellipse_axis_b,float64,px,40.76,Second axis of the fitted pupil ellipse,no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,ellipse_angle,float64,deg,18.93,Rotation of the fitted pupil ellipse,no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,diameter_3d,float64,mm,3.944,Pupil size in mm from the 3D eye model (3d rows only),yes,
+pupil,model_confidence,float64,0-1,0.9634,How well the 3D eye model fits,no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,model_id,float64,,72,ID of the 3D eye model; changes when the tracker refits it,qc only,Only used to count model refits per recording (C7)
+pupil,sphere_center_x,float64,mm,6.38,Eyeball centre in eye-camera space (x),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,sphere_center_y,float64,mm,-2.098,Eyeball centre in eye-camera space (y),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,sphere_center_z,float64,mm,36.19,Eyeball centre in eye-camera space (z),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,sphere_radius,float64,mm,12,Eyeball radius assumed by the model (fixed 12 mm),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,circle_3d_center_x,float64,mm,-1.819,Pupil centre in 3D (x),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,circle_3d_center_y,float64,mm,-3.909,Pupil centre in 3D (y),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,circle_3d_center_z,float64,mm,27.61,Pupil centre in 3D (z),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,circle_3d_normal_x,float64,unit vector,-0.6833,Direction the pupil faces in eye-camera space (x),no,Eye-camera frame; gaze direction comes from the gaze table instead
+pupil,circle_3d_normal_y,float64,unit vector,-0.1509,Direction the pupil faces in eye-camera space (y),no,Eye-camera frame; gaze direction comes from the gaze table instead
+pupil,circle_3d_normal_z,float64,unit vector,-0.7144,Direction the pupil faces in eye-camera space (z),no,Eye-camera frame; gaze direction comes from the gaze table instead
+pupil,circle_3d_radius,float64,mm,1.972,Pupil radius in 3D,no,Half of diameter_3d; diameter_3d is used
+pupil,theta,float64,rad,1.419,Pupil direction as a spherical angle (vertical),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,phi,float64,rad,-2.334,Pupil direction as a spherical angle (horizontal),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,projected_sphere_center_x,float64,px,145.9,Eyeball centre projected into the eye image (x),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,projected_sphere_center_y,float64,px,79.57,Eyeball centre projected into the eye image (y),no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,projected_sphere_axis_a,float64,px,187.9,"Projected eyeball ellipse, axis a",no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,projected_sphere_axis_b,float64,px,187.9,"Projected eyeball ellipse, axis b",no,"Tracker's internal eye-model geometry, not eye behaviour"
+pupil,projected_sphere_angle,float64,deg,90,Projected eyeball ellipse rotation,no,"Tracker's internal eye-model geometry, not eye behaviour"
+blinks,id,float64,,1,Blink number within the recording,no,Internal bookkeeping
+blinks,start_timestamp,float64,s,5438,When the blink started,yes,
+blinks,duration,float64,s,0.2361,Blink length as exported,no,Recomputed from start and end after merging close blinks (C5)
+blinks,end_timestamp,float64,s,5438,When the blink ended,yes,
+blinks,start_frame_index,float64,,37,Head-camera frame where the blink started,no,Internal bookkeeping
+blinks,index,float64,,40,Head-camera frame index of the blink,no,Internal bookkeeping
+blinks,end_frame_index,float64,,44,Head-camera frame where the blink ended,no,Internal bookkeeping
+blinks,confidence,float64,0-1,0.7039,How sure the blink detector is,no,Blinks are filtered by length instead (C5)
+blinks,filter_response,object,,array(['0.5068225043614704 0.55126694...,Raw output of the blink detector's filter,no,Internal bookkeeping
+blinks,base_data,object,,array(['5437.625617 5437.629564 5437....,Pupil timestamps the blink was detected from,no,Internal bookkeeping
+annotation,participant,int64,,1,Participant number,check only,"Manipulation check only, not a feature"
+annotation,task,int64,,1,Activity number (1-4),check only,"Manipulation check only, not a feature"
+annotation,mental,float64,0-100,10,NASA-RTLX mental demand rating,check only,"Manipulation check only, not a feature"
+annotation,physical,float64,0-100,5,NASA-RTLX physical demand rating,check only,"Manipulation check only, not a feature"
+annotation,temporal,float64,0-100,15,NASA-RTLX temporal demand rating,check only,"Manipulation check only, not a feature"
+annotation,performance,float64,0-100,25,NASA-RTLX performance demand rating,check only,"Manipulation check only, not a feature"
+annotation,effort,float64,0-100,25,NASA-RTLX effort demand rating,check only,"Manipulation check only, not a feature"
+annotation,frustration,float64,0-100,10,NASA-RTLX frustration demand rating,check only,"Manipulation check only, not a feature"
+annotation,mean,float64,0-100,15,NASA-RTLX overall workload (mean of the six ratings),check only,"Manipulation check only, not a feature"
+subject_info,participant,int64,,1,Participant number,no,"Demographics are described, not modelled"
+subject_info,VisualAcuity_logMAR_,float64,logMAR,-0.04,Visual acuity (lower = sharper),no,"Demographics are described, not modelled"
+subject_info,Gender,object,,['F'],Gender as recorded by COLET,no,"Demographics are described, not modelled"
+subject_info,Age,float64,years,28,Age,no,"Demographics are described, not modelled"
+subject_info,Education,float64,years,18,Years of education,no,"Demographics are described, not modelled"

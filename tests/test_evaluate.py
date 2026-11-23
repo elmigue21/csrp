@@ -28,8 +28,17 @@ def test_lopo_both_models_learn_signal():
 
 def test_score_keys_and_brier_range():
     s = score(np.array([0, 1, 0, 1]), np.array([0.2, 0.8, 0.4, 0.6]))
-    assert set(s) == {"roc_auc", "balanced_accuracy", "macro_f1", "recall_low", "recall_high", "brier"}
+    assert set(s) == {"roc_auc", "accuracy", "balanced_accuracy", "precision_macro", "precision_low",
+                      "precision_high", "recall_low", "recall_high", "macro_f1", "f1_low", "f1_high",
+                      "brier"}
     assert s["roc_auc"] == 1.0 and 0 <= s["brier"] <= 1
+
+
+def test_score_precision_and_accuracy():
+    # predictions at 0.5: [0, 1, 1, 0] vs truth [0, 1, 0, 1] -> 2 of 4 right
+    s = score(np.array([0, 1, 0, 1]), np.array([0.2, 0.8, 0.6, 0.4]))
+    assert s["accuracy"] == 0.5 and s["precision_high"] == 0.5 and s["precision_low"] == 0.5
+    assert s["precision_macro"] == 0.5 and s["f1_high"] == 0.5
 
 
 def test_margins_and_bootstrap():

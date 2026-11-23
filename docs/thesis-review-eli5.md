@@ -4,6 +4,17 @@
 **Main manuscript reviewed:** `CSRP-Chapter-1-to-5-draft-COLET-v3.docx`  
 **Review date:** October 2026
 
+> **Update 2026-10-15: read `review-issues-status-5.md` first.** This review predates three
+> findings:
+> - P28 and P31 hold the same eye recordings. The duplicate was removed and everything rerun,
+>   so the analysis is now 44 participants and 88 samples (`researcher-notes.md` N31).
+> - The tuned unstandardized run exists (N30, rerun in N31). Its model ranking points the
+>   other way: XGBoost's point estimates are higher, though not significantly.
+> - The approved round-5 wording is in `CSRP-Chapter-1-to-5-draft-COLET-v4.docx` as tracked
+>   changes.
+>
+> Numbers below refer to the v3 run (45 participants).
+
 ---
 
 ## 1. What did the reviewers decide overall?

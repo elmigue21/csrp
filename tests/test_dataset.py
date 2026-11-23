@@ -23,6 +23,14 @@ def test_exclusion_and_analysis_set(tmp_path):
     assert set(ret.columns) >= {"activity", "recordings", "excluded", "invalid_fraction_median"}
 
 
+def test_duplicate_recording_ids_dropped(tmp_path, monkeypatch):
+    root = write_synthetic_dataset(tmp_path / "d", n_participants=3, seconds=2.0)
+    table = build_feature_table(root, cache_dir=tmp_path / "c")
+    monkeypatch.setattr(dataset, "DUPLICATE_RECORDING_IDS", (3,))
+    assert analysis_participants(table) == [1, 2]
+    assert 3 not in set(analysis_rows(table)["participant"])
+
+
 def test_cache_reused(tmp_path):
     root = write_synthetic_dataset(tmp_path / "d", n_participants=1, seconds=2.0)
     a = build_feature_table(root, cache_dir=tmp_path / "c")

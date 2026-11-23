@@ -1,0 +1,174 @@
+﻿feature,blank_A1,blank_A4,blank_all,dropped,drop_reason
+pupil__min,0,0,0,False,
+pupil__max,0,0,0,False,
+pupil__range,0,0,0,False,
+pupil__mean,0,0,0,False,
+pupil__median,0,0,0,False,
+pupil__sd,0,0,0,False,
+pupil__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+pupil__cv,0,0,0,False,
+pupil__iqr,0,0,0,False,
+pupil__p05,0,0,0,False,
+pupil__p10,0,0,0,False,
+pupil__p25,0,0,0,False,
+pupil__p75,0,0,0,False,
+pupil__p90,0,0,0,False,
+pupil__p95,0,0,0,False,
+pupil__skew,0,0,0,False,
+pupil__kurt,0,0,0,False,
+gaze_x__min,0,0,0,False,
+gaze_x__max,0,0,0,False,
+gaze_x__range,0,0,0,False,
+gaze_x__mean,0,0,0,False,
+gaze_x__median,0,0,0,False,
+gaze_x__sd,0,0,0,False,
+gaze_x__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+gaze_x__cv,0,0,0,False,
+gaze_x__iqr,0,0,0,False,
+gaze_x__p05,0,0,0,False,
+gaze_x__p10,0,0,0,False,
+gaze_x__p25,0,0,0,False,
+gaze_x__p75,0,0,0,False,
+gaze_x__p90,0,0,0,False,
+gaze_x__p95,0,0,0,False,
+gaze_x__skew,0,0,0,False,
+gaze_x__kurt,0,0,0,False,
+gaze_y__min,0,0,0,False,
+gaze_y__max,0,0,0,False,
+gaze_y__range,0,0,0,False,
+gaze_y__mean,0,0,0,False,
+gaze_y__median,0,0,0,False,
+gaze_y__sd,0,0,0,False,
+gaze_y__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+gaze_y__cv,0,0,0,False,
+gaze_y__iqr,0,0,0,False,
+gaze_y__p05,0,0,0,False,
+gaze_y__p10,0,0,0,False,
+gaze_y__p25,0,0,0,False,
+gaze_y__p75,0,0,0,False,
+gaze_y__p90,0,0,0,False,
+gaze_y__p95,0,0,0,False,
+gaze_y__skew,0,0,0,False,
+gaze_y__kurt,0,0,0,False,
+gaze_speed__min,0,0,0,False,
+gaze_speed__max,0,0,0,False,
+gaze_speed__range,0,0,0,True,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+gaze_speed__mean,0,0,0,False,
+gaze_speed__median,0,0,0,False,
+gaze_speed__sd,0,0,0,False,
+gaze_speed__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+gaze_speed__cv,0,0,0,False,
+gaze_speed__iqr,0,0,0,False,
+gaze_speed__p05,0,0,0,False,
+gaze_speed__p10,0,0,0,False,
+gaze_speed__p25,0,0,0,False,
+gaze_speed__p75,0,0,0,False,
+gaze_speed__p90,0,0,0,False,
+gaze_speed__p95,0,0,0,False,
+gaze_speed__skew,0,0,0,False,
+gaze_speed__kurt,0,0,0,False,
+fixation_duration__min,0,0,0,False,
+fixation_duration__max,0,0,0,False,
+fixation_duration__range,0,0,0,True,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+fixation_duration__mean,0,0,0,False,
+fixation_duration__median,0,0,0,False,
+fixation_duration__sd,0,0,0,False,
+fixation_duration__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+fixation_duration__cv,0,0,0,False,
+fixation_duration__iqr,0,0,0,False,
+fixation_duration__p05,0,0,0,False,
+fixation_duration__p10,0,0,0,False,
+fixation_duration__p25,0,0,0,False,
+fixation_duration__p75,0,0,0,False,
+fixation_duration__p90,0,0,0,False,
+fixation_duration__p95,0,0,0,False,
+fixation_duration__skew,0,0,0,False,
+fixation_duration__kurt,0,0,0,False,
+saccade_amplitude__min,0,0,0,False,
+saccade_amplitude__max,0,0,0,False,
+saccade_amplitude__range,0,0,0,True,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+saccade_amplitude__mean,0,0,0,False,
+saccade_amplitude__median,0,0,0,False,
+saccade_amplitude__sd,0,0,0,False,
+saccade_amplitude__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+saccade_amplitude__cv,0,0,0,False,
+saccade_amplitude__iqr,0,0,0,False,
+saccade_amplitude__p05,0,0,0,False,
+saccade_amplitude__p10,0,0,0,False,
+saccade_amplitude__p25,0,0,0,False,
+saccade_amplitude__p75,0,0,0,False,
+saccade_amplitude__p90,0,0,0,False,
+saccade_amplitude__p95,0,0,0,False,
+saccade_amplitude__skew,0,0,0,False,
+saccade_amplitude__kurt,0,0,0,False,
+saccade_peak_velocity__min,0,0,0,False,
+saccade_peak_velocity__max,0,0,0,False,
+saccade_peak_velocity__range,0,0,0,True,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+saccade_peak_velocity__mean,0,0,0,False,
+saccade_peak_velocity__median,0,0,0,False,
+saccade_peak_velocity__sd,0,0,0,False,
+saccade_peak_velocity__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+saccade_peak_velocity__cv,0,0,0,False,
+saccade_peak_velocity__iqr,0,0,0,False,
+saccade_peak_velocity__p05,0,0,0,False,
+saccade_peak_velocity__p10,0,0,0,False,
+saccade_peak_velocity__p25,0,0,0,False,
+saccade_peak_velocity__p75,0,0,0,False,
+saccade_peak_velocity__p90,0,0,0,False,
+saccade_peak_velocity__p95,0,0,0,False,
+saccade_peak_velocity__skew,0,0,0,False,
+saccade_peak_velocity__kurt,0,0,0,False,
+saccade_mean_velocity__min,0,0,0,False,
+saccade_mean_velocity__max,0,0,0,False,
+saccade_mean_velocity__range,0,0,0,True,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+saccade_mean_velocity__mean,0,0,0,False,
+saccade_mean_velocity__median,0,0,0,False,
+saccade_mean_velocity__sd,0,0,0,False,
+saccade_mean_velocity__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+saccade_mean_velocity__cv,0,0,0,False,
+saccade_mean_velocity__iqr,0,0,0,False,
+saccade_mean_velocity__p05,0,0,0,False,
+saccade_mean_velocity__p10,0,0,0,False,
+saccade_mean_velocity__p25,0,0,0,False,
+saccade_mean_velocity__p75,0,0,0,False,
+saccade_mean_velocity__p90,0,0,0,False,
+saccade_mean_velocity__p95,0,0,0,False,
+saccade_mean_velocity__skew,0,0,0,False,
+saccade_mean_velocity__kurt,0,0,0,False,
+saccade_duration__min,0,0,0,True,D6a: stuck at one sample (4.17 ms) in 83 of 88 recordings; measures the tracker
+saccade_duration__max,0,0,0,False,
+saccade_duration__range,0,0,0,True,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+saccade_duration__mean,0,0,0,False,
+saccade_duration__median,0,0,0,False,
+saccade_duration__sd,0,0,0,False,
+saccade_duration__var,0,0,0,True,"D8: variance is SD squared, an exact copy of the SD feature"
+saccade_duration__cv,0,0,0,False,
+saccade_duration__iqr,0,0,0,False,
+saccade_duration__p05,0,0,0,False,
+saccade_duration__p10,0,0,0,False,
+saccade_duration__p25,0,0,0,False,
+saccade_duration__p75,0,0,0,False,
+saccade_duration__p90,0,0,0,False,
+saccade_duration__p95,0,0,0,False,
+saccade_duration__skew,0,0,0,False,
+saccade_duration__kurt,0,0,0,False,
+blink_duration__min,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__max,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__range,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__mean,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__median,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__sd,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__var,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__cv,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__iqr,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p05,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p10,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p25,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p75,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p90,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p95,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__skew,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__kurt,43,36,79,True,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_rate,0,0,0,False,
+fixation_rate,0,0,0,False,
+saccade_rate,0,0,0,False,

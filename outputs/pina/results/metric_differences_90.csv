@@ -1,0 +1,22 @@
+comparison,metric,difference,ci_low,ci_high
+Logistic Regression minus One feature (chosen in-fold),accuracy,-0.01909722222222232,-0.07118055555555558,0.03298611111111105
+Logistic Regression minus One feature (chosen in-fold),precision_macro,-0.020626680767503625,-0.07511676612495059,0.031729004510352876
+Logistic Regression minus One feature (chosen in-fold),recall_low,-0.03819444444444442,-0.125,0.04861111111111116
+Logistic Regression minus One feature (chosen in-fold),recall_high,0.0,-0.0798611111111111,0.08333333333333337
+Logistic Regression minus One feature (chosen in-fold),macro_f1,-0.01811301707909463,-0.06977071258709147,0.03424582239711647
+Logistic Regression minus One feature (chosen in-fold),brier,0.006922407412500858,-0.0075347583282864075,0.02225047116561779
+Logistic Regression minus One feature (chosen in-fold),roc_auc,0.038960021219135776,-0.020786464361496802,0.08980004581404301
+XGBoost minus One feature (chosen in-fold),accuracy,-0.015625,-0.06080729166666672,0.03298611111111105
+XGBoost minus One feature (chosen in-fold),precision_macro,-0.018116378844782233,-0.06905474737433161,0.03357575943195061
+XGBoost minus One feature (chosen in-fold),recall_low,-0.0625,-0.1771701388888889,0.0625
+XGBoost minus One feature (chosen in-fold),recall_high,0.03125,-0.052083333333333315,0.11111111111111105
+XGBoost minus One feature (chosen in-fold),macro_f1,-0.013569449824948787,-0.05781300243734602,0.03269275293241726
+XGBoost minus One feature (chosen in-fold),brier,0.017867296970266094,0.0025071937303105005,0.03286345270190035
+XGBoost minus One feature (chosen in-fold),roc_auc,0.015685281635802406,-0.03863826798804016,0.06319986979166657
+XGBoost minus Logistic Regression,accuracy,0.003472222222222321,-0.04861111111111105,0.05555555555555558
+XGBoost minus Logistic Regression,precision_macro,0.002510301922721392,-0.05055518133175361,0.056756379447839796
+XGBoost minus Logistic Regression,recall_low,-0.02430555555555558,-0.13194444444444442,0.09375
+XGBoost minus Logistic Regression,recall_high,0.03125,-0.04513888888888884,0.10763888888888895
+XGBoost minus Logistic Regression,macro_f1,0.004543567254145842,-0.04635216450861921,0.05604651399179645
+XGBoost minus Logistic Regression,brier,0.010944889557765236,-0.0022302465424099463,0.023898111042011654
+XGBoost minus Logistic Regression,roc_auc,-0.02327473958333337,-0.063791835455247,0.021843050733024682

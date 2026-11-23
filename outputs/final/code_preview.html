@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code tour</title>
+<style>
+body{font-family:Segoe UI,Arial,sans-serif;max-width:1000px;margin:0 auto;padding:16px;color:#111;background:#fff;line-height:1.5}
+h1{font-size:24px} h2{font-size:19px;margin-top:32px;border-top:1px solid #ddd;padding-top:16px}
+.loc{color:#555;margin:0} .say{background:#eef4fc;padding:8px 12px;border-left:4px solid #2a78d6}
+.code{overflow-x:auto;font-size:13px;border:1px solid #ddd} .code pre{margin:0}
+.code td.linenos{color:#999;padding-right:8px;user-select:none}
+table.res{border-collapse:collapse;font-size:14px} table.res td,table.res th{border:1px solid #ccc;padding:4px 8px}
+.note{color:#555;font-size:13px} ol li{margin:2px 0}
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code .hll { background-color: #ffffcc }
+.code { background: #f8f8f8; }
+.code .c { color: #3D7B7B; font-style: italic } /* Comment */
+.code .err { border: 1px solid #FF0000 } /* Error */
+.code .k { color: #008000; font-weight: bold } /* Keyword */
+.code .o { color: #666666 } /* Operator */
+.code .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.code .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.code .cp { color: #9C6500 } /* Comment.Preproc */
+.code .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.code .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.code .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.code .gd { color: #A00000 } /* Generic.Deleted */
+.code .ge { font-style: italic } /* Generic.Emph */
+.code .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code .gr { color: #E40000 } /* Generic.Error */
+.code .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code .gi { color: #008400 } /* Generic.Inserted */
+.code .go { color: #717171 } /* Generic.Output */
+.code .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.code .gs { font-weight: bold } /* Generic.Strong */
+.code .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code .gt { color: #0044DD } /* Generic.Traceback */
+.code .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.code .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.code .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.code .kp { color: #008000 } /* Keyword.Pseudo */
+.code .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.code .kt { color: #B00040 } /* Keyword.Type */
+.code .m { color: #666666 } /* Literal.Number */
+.code .s { color: #BA2121 } /* Literal.String */
+.code .na { color: #687822 } /* Name.Attribute */
+.code .nb { color: #008000 } /* Name.Builtin */
+.code .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.code .no { color: #880000 } /* Name.Constant */
+.code .nd { color: #AA22FF } /* Name.Decorator */
+.code .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.code .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.code .nf { color: #0000FF } /* Name.Function */
+.code .nl { color: #767600 } /* Name.Label */
+.code .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.code .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.code .nv { color: #19177C } /* Name.Variable */
+.code .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.code .w { color: #bbbbbb } /* Text.Whitespace */
+.code .mb { color: #666666 } /* Literal.Number.Bin */
+.code .mf { color: #666666 } /* Literal.Number.Float */
+.code .mh { color: #666666 } /* Literal.Number.Hex */
+.code .mi { color: #666666 } /* Literal.Number.Integer */
+.code .mo { color: #666666 } /* Literal.Number.Oct */
+.code .sa { color: #BA2121 } /* Literal.String.Affix */
+.code .sb { color: #BA2121 } /* Literal.String.Backtick */
+.code .sc { color: #BA2121 } /* Literal.String.Char */
+.code .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.code .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.code .s2 { color: #BA2121 } /* Literal.String.Double */
+.code .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.code .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.code .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.code .sx { color: #008000 } /* Literal.String.Other */
+.code .sr { color: #A45A77 } /* Literal.String.Regex */
+.code .s1 { color: #BA2121 } /* Literal.String.Single */
+.code .ss { color: #19177C } /* Literal.String.Symbol */
+.code .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.code .fm { color: #0000FF } /* Name.Function.Magic */
+.code .vc { color: #19177C } /* Name.Variable.Class */
+.code .vg { color: #19177C } /* Name.Variable.Global */
+.code .vi { color: #19177C } /* Name.Variable.Instance */
+.code .vm { color: #19177C } /* Name.Variable.Magic */
+.code .il { color: #666666 } /* Literal.Number.Integer.Long */
+</style></head><body>
+<h1>Code tour: from raw eye data to results</h1>
+<p>The real code of each step, read from <code>src/</code> when this page was made, in the order the
+pipeline runs. Run everything with <code>python src/run_extract.py</code> (steps 1–5) and
+<code>python src/run_model.py</code> (steps 6–11).</p>
+<ol><li><a href='#s0'>1. Read one recording</a></li><li><a href='#s1'>2. Clean the signals</a></li><li><a href='#s2'>3. Detect fixations and saccades</a></li><li><a href='#s3'>4. Summarize each signal (flattening)</a></li><li><a href='#s4'>5. Build the feature row of a recording</a></li><li><a href='#s5'>6. Pick the best N features (inside each fold)</a></li><li><a href='#s6'>7a. Logistic Regression pipeline</a></li><li><a href='#s7'>7b. XGBoost pipeline</a></li><li><a href='#s8'>8. Leave-one-participant-out with inner tuning</a></li><li><a href='#s9'>9. Every metric</a></li><li><a href='#s10'>10. Chance test (leakage check)</a></li><li><a href='#s11'>11. Feature importance (SHAP)</a></li></ol>
+<h2>Result these steps produce</h2><table class='res'><tr><th>Model</th><th>ROC-AUC (95% CI)</th><th>Accuracy</th><th>Precision</th><th>Recall low / high</th><th>F1</th><th>Brier</th><th>Chance test p</th></tr><tr><td>Logistic Regression</td><td>0.862 (0.794–0.933)</td><td>0.830</td><td>0.844</td><td>0.932 / 0.727</td><td>0.828</td><td>0.172</td><td>0.005</td></tr><tr><td>XGBoost</td><td>0.862 (0.795–0.919)</td><td>0.739</td><td>0.740</td><td>0.773 / 0.705</td><td>0.738</td><td>0.167</td><td>0.005</td></tr></table><p class='note'>From outputs/final/results/results.csv (leave-one-participant-out, 44 people, 88 recordings).</p>
+<section id='s0'><h2>1. Read one recording</h2><p class='loc'><code>src/data.py</code>, <code>load_recording</code>, line 25</p><p><b>What it does:</b> Loads the gaze, pupil and blink tables of one participant and activity.</p><p class='say'><b>Say to the panel:</b> Each recording is read on its own; nothing from other people is mixed in.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">load_recording</span><span class="p">(</span><span class="n">participant</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">activity</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The three tables of one recording, keyed by signal name.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">recording_path</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">activity</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">SIGNALS</span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+</section><section id='s1'><h2>2. Clean the signals</h2><p class='loc'><code>src/features.py</code>, <code>recording_signals</code>, line 25</p><p><b>What it does:</b> Trims stray samples, drops low-confidence data, cleans blinks, pupil and gaze, and returns every cleaned signal as a list of values plus the blink, fixation and saccade rates.</p><p class='say'><b>Say to the panel:</b> Cleaning follows published guidelines for Pupil Core data (Chapter 3, Table 4).</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">recording_signals</span><span class="p">(</span><span class="n">rec</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Every cleaned signal of one recording as plain value arrays, plus the rates and QC.</span>
+
+<span class="sd">    &quot;signals&quot;: 1-D arrays without NaNs, one value per sample (pupil mm, gaze_x/gaze_y deg,</span>
+<span class="sd">    gaze_speed deg/s) or per event (fixation/saccade/blink durations in ms, saccade amplitude</span>
+<span class="sd">    deg, saccade velocities deg/s). These are what flatten.py summarizes.</span>
+<span class="sd">    &quot;rates&quot;: blink, fixation and saccade rates. &quot;qc&quot;: quality numbers, never model inputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">trim_to_gaze_range</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+    <span class="n">gaze</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;gaze&quot;</span><span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">gaze</span><span class="p">[</span><span class="s2">&quot;gaze_timestamp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">vt</span> <span class="o">=</span> <span class="n">valid_time_s</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">blinks</span> <span class="o">=</span> <span class="n">clean_blinks</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;blinks&quot;</span><span class="p">])</span>
+
+    <span class="n">grid</span><span class="p">,</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">gaze_directions</span><span class="p">(</span><span class="n">gaze</span><span class="p">,</span> <span class="n">blinks</span><span class="p">)</span>
+    <span class="n">ev</span> <span class="o">=</span> <span class="n">detect_events</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">GAZE_GRID_HZ</span><span class="p">)</span>
+    <span class="n">finite</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">finite</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">ev</span><span class="p">[</span><span class="s2">&quot;artifact_mask&quot;</span><span class="p">]</span>
+    <span class="n">az</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">xyz</span><span class="p">[</span><span class="n">keep</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">xyz</span><span class="p">[</span><span class="n">keep</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+    <span class="n">el</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">xyz</span><span class="p">[</span><span class="n">keep</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">xyz</span><span class="p">[</span><span class="n">keep</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">xyz</span><span class="p">[</span><span class="n">keep</span><span class="p">,</span> <span class="mi">2</span><span class="p">])))</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="n">angular_speed_deg_s</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">GAZE_GRID_HZ</span><span class="p">)</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="n">speed</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">speed</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">ev</span><span class="p">[</span><span class="s2">&quot;artifact_mask&quot;</span><span class="p">]]</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">pupil</span> <span class="o">=</span> <span class="n">clean_pupil</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;pupil&quot;</span><span class="p">],</span> <span class="n">blinks</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">t</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+    <span class="n">fix</span> <span class="o">=</span> <span class="n">ev</span><span class="p">[</span><span class="s2">&quot;fixation_durations_s&quot;</span><span class="p">]</span>
+    <span class="n">sac</span> <span class="o">=</span> <span class="n">ev</span><span class="p">[</span><span class="s2">&quot;saccade_amplitudes_deg&quot;</span><span class="p">]</span>
+    <span class="n">gaze_time_s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">finite</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">/</span> <span class="n">GAZE_GRID_HZ</span>
+    <span class="n">signals</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;pupil&quot;</span><span class="p">:</span> <span class="n">pupil</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">pupil</span><span class="p">)],</span>
+        <span class="s2">&quot;gaze_x&quot;</span><span class="p">:</span> <span class="n">az</span><span class="p">,</span>
+        <span class="s2">&quot;gaze_y&quot;</span><span class="p">:</span> <span class="n">el</span><span class="p">,</span>
+        <span class="s2">&quot;gaze_speed&quot;</span><span class="p">:</span> <span class="n">speed</span><span class="p">,</span>
+        <span class="s2">&quot;fixation_duration&quot;</span><span class="p">:</span> <span class="n">fix</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+        <span class="s2">&quot;saccade_amplitude&quot;</span><span class="p">:</span> <span class="n">sac</span><span class="p">,</span>
+        <span class="s2">&quot;saccade_peak_velocity&quot;</span><span class="p">:</span> <span class="n">ev</span><span class="p">[</span><span class="s2">&quot;saccade_peak_velocities&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;saccade_mean_velocity&quot;</span><span class="p">:</span> <span class="n">ev</span><span class="p">[</span><span class="s2">&quot;saccade_mean_velocities&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;saccade_duration&quot;</span><span class="p">:</span> <span class="n">ev</span><span class="p">[</span><span class="s2">&quot;saccade_durations_s&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+        <span class="s2">&quot;blink_duration&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">blinks</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">blinks</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">rates</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;blink_rate&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">blinks</span><span class="p">)</span> <span class="o">*</span> <span class="mf">60.0</span> <span class="o">/</span> <span class="n">vt</span> <span class="k">if</span> <span class="n">vt</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;fixation_rate&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">fix</span><span class="p">)</span> <span class="o">/</span> <span class="n">gaze_time_s</span> <span class="k">if</span> <span class="n">gaze_time_s</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;saccade_rate&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">sac</span><span class="p">)</span> <span class="o">/</span> <span class="n">gaze_time_s</span> <span class="k">if</span> <span class="n">gaze_time_s</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">qc</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;valid_time_s&quot;</span><span class="p">:</span> <span class="n">vt</span><span class="p">,</span>
+        <span class="s2">&quot;gaze_time_s&quot;</span><span class="p">:</span> <span class="n">gaze_time_s</span><span class="p">,</span>
+        <span class="s2">&quot;binocular_fraction&quot;</span><span class="p">:</span> <span class="n">binocular_fraction</span><span class="p">(</span><span class="n">gaze</span><span class="p">),</span>
+        <span class="s2">&quot;refits&quot;</span><span class="p">:</span> <span class="n">count_refits</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;pupil&quot;</span><span class="p">]),</span>
+        <span class="s2">&quot;n_blinks&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">blinks</span><span class="p">)),</span>
+        <span class="s2">&quot;n_fixations&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fix</span><span class="p">)),</span>
+        <span class="s2">&quot;n_saccades&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sac</span><span class="p">)),</span>
+        <span class="s2">&quot;fixation_median_ms&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">fix</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fix</span><span class="p">)</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;saccade_mean_velocity&quot;</span><span class="p">:</span> <span class="n">_mean</span><span class="p">(</span><span class="n">ev</span><span class="p">[</span><span class="s2">&quot;saccade_mean_velocities&quot;</span><span class="p">]),</span>
+        <span class="s2">&quot;saccade_duration_ms&quot;</span><span class="p">:</span> <span class="n">_mean</span><span class="p">(</span><span class="n">ev</span><span class="p">[</span><span class="s2">&quot;saccade_durations_s&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+        <span class="s2">&quot;gaze_valid_fraction&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">finite</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;pupil_valid_fraction&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">pupil</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pupil</span><span class="p">)</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;artifact_samples&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">ev</span><span class="p">[</span><span class="s2">&quot;artifact_mask&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;signals&quot;</span><span class="p">:</span> <span class="n">signals</span><span class="p">,</span> <span class="s2">&quot;rates&quot;</span><span class="p">:</span> <span class="n">rates</span><span class="p">,</span> <span class="s2">&quot;qc&quot;</span><span class="p">:</span> <span class="n">qc</span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+</section><section id='s2'><h2>3. Detect fixations and saccades</h2><p class='loc'><code>src/events.py</code>, <code>detect_events</code>, line 50</p><p><b>What it does:</b> Labels each gaze sample as saccade (faster than 45 deg/s) or fixation, and drops fixations shorter than 55 ms (I-VT, the COLET authors&#x27; settings).</p><p class='say'><b>Say to the panel:</b> Same velocity threshold and minimum fixation as the COLET paper.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">detect_events</span><span class="p">(</span><span class="n">xyz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="n">angular_speed_deg_s</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">hz</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">speed</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">finite</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">speed</span><span class="p">)</span>
+    <span class="n">labels</span><span class="p">[</span><span class="n">finite</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">speed</span> <span class="o">&lt;</span> <span class="n">IVT_THRESHOLD_DEG_S</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_FIX</span>
+    <span class="n">labels</span><span class="p">[</span><span class="n">finite</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">speed</span> <span class="o">&gt;=</span> <span class="n">IVT_THRESHOLD_DEG_S</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_SAC</span>
+    <span class="n">artifact</span> <span class="o">=</span> <span class="n">finite</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">speed</span> <span class="o">&gt;</span> <span class="n">MAX_VELOCITY_DEG_S</span><span class="p">)</span>
+    <span class="n">labels</span><span class="p">[</span><span class="n">artifact</span><span class="p">]</span> <span class="o">=</span> <span class="n">_BAD</span>
+
+    <span class="n">fix</span><span class="p">,</span> <span class="n">amp</span><span class="p">,</span> <span class="n">peak</span><span class="p">,</span> <span class="n">mean_v</span><span class="p">,</span> <span class="n">sac_dur</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">lab</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="ow">in</span> <span class="n">_runs</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">lab</span> <span class="o">==</span> <span class="n">_FIX</span><span class="p">:</span>
+            <span class="n">dur</span> <span class="o">=</span> <span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="n">hz</span>
+            <span class="k">if</span> <span class="n">dur</span> <span class="o">&gt;=</span> <span class="n">MIN_FIXATION_S</span><span class="p">:</span>
+                <span class="n">fix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dur</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">lab</span> <span class="o">==</span> <span class="n">_SAC</span><span class="p">:</span>
+            <span class="n">before</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">after</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">stop</span><span class="p">]</span> <span class="k">if</span> <span class="n">stop</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">if</span> <span class="n">before</span> <span class="o">==</span> <span class="n">_BAD</span> <span class="ow">or</span> <span class="n">after</span> <span class="o">==</span> <span class="n">_BAD</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">xyz</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()):</span>
+                <span class="k">continue</span>
+            <span class="n">amp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_angle_deg</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+            <span class="n">peak</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">speed</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">])))</span>
+            <span class="n">mean_v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">speed</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">])))</span>
+            <span class="n">sac_dur</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="n">hz</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;fixation_durations_s&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fix</span><span class="p">),</span>
+        <span class="s2">&quot;saccade_amplitudes_deg&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">amp</span><span class="p">),</span>
+        <span class="s2">&quot;saccade_peak_velocities&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">peak</span><span class="p">),</span>
+        <span class="s2">&quot;saccade_mean_velocities&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mean_v</span><span class="p">),</span>
+        <span class="s2">&quot;saccade_durations_s&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sac_dur</span><span class="p">),</span>
+        <span class="s2">&quot;artifact_mask&quot;</span><span class="p">:</span> <span class="n">artifact</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div></td></tr></table></div>
+</section><section id='s3'><h2>4. Summarize each signal (flattening)</h2><p class='loc'><code>src/flatten.py</code>, <code>summarize</code>, line 76</p><p><b>What it does:</b> Turns one signal into 17 numbers: min, max, range, mean, median, SD, variance, CV, IQR, 6 percentiles, skewness and kurtosis.</p><p class='say'><b>Say to the panel:</b> We did not pick statistics by hand: every signal gets all 17.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span>
+<span class="normal">98</span>
+<span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">skip</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The 17 statistics of one signal (minus `skip`), NaN where n is too small (module doc).&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">nan</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">STATISTICS</span><span class="p">,</span> <span class="n">nan</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span><span class="p">:</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">pct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">25</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="o">*</span><span class="n">_PERCENTILES</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">max</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="nb">range</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span>
+                   <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_PERCENTILES</span><span class="p">,</span> <span class="n">pct</span><span class="p">[</span><span class="mi">2</span><span class="p">:])})</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Values equal up to float rounding (e.g. 12.5 vs 12.500000000000004) count as</span>
+            <span class="c1"># constant: SD 0 and no skew/kurt, instead of a 1e-17 SD and a scipy warning.</span>
+            <span class="n">varies</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">sd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="k">if</span> <span class="n">varies</span> <span class="k">else</span> <span class="mf">0.0</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sd</span><span class="o">=</span><span class="n">sd</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">sd</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">iqr</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">pct</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pct</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">varies</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">,</span>
+                       <span class="n">cv</span><span class="o">=</span><span class="n">sd</span> <span class="o">/</span> <span class="n">mean</span> <span class="k">if</span> <span class="n">mean</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">nan</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">varies</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="s2">&quot;skew&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">skew</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">varies</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="s2">&quot;kurt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">kurtosis</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fisher</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip</span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+</section><section id='s4'><h2>5. Build the feature row of a recording</h2><p class='loc'><code>src/flatten.py</code>, <code>flat_features</code>, line 102</p><p><b>What it does:</b> Applies step 4 to every signal and adds the three rates: 173 features, 140 after removing copies and unusable statistics.</p><p class='say'><b>Say to the panel:</b> One row per recording: 88 rows (44 people x A1 and A4).</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">flat_features</span><span class="p">(</span><span class="n">sig</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The 173 features of one recording from recording_signals output, in feature_names order.&quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">SIGNALS</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sig</span><span class="p">[</span><span class="s2">&quot;signals&quot;</span><span class="p">][</span><span class="n">signal</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MIN_VALUES</span><span class="p">:</span>                       <span class="c1"># D2: too few values to describe</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">signal</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">sig</span><span class="p">[</span><span class="s2">&quot;rates&quot;</span><span class="p">][</span><span class="n">rate</span><span class="p">])</span> <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">RATES</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">out</span>
+</pre></div></td></tr></table></div>
+</section><section id='s5'><h2>6. Pick the best N features (inside each fold)</h2><p class='loc'><code>src/topn.py</code>, <code>TopNByAUC</code>, line 30</p><p><b>What it does:</b> Scores every feature alone by how well it separates low from high load (|AUC - 0.5|) on the training people only, and keeps the best N.</p><p class='say'><b>Say to the panel:</b> Selection is refit in every fold, so the held-out person never influences which features are chosen.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">class</span> <span class="nc">TopNByAUC</span><span class="p">(</span><span class="n">SelectorMixin</span><span class="p">,</span> <span class="n">BaseEstimator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Keep the n features whose values alone best separate the two classes.</span>
+
+<span class="sd">    Score per feature: |ROC-AUC - 0.5| over the rows where that feature is not blank (0 when a</span>
+<span class="sd">    feature has no usable rows). Ties keep the earlier column. n larger than the number of</span>
+<span class="sd">    features keeps them all.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">ensure_all_finite</span><span class="o">=</span><span class="s2">&quot;allow-nan&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">ok</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">scores</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">ok</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">ok</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scores_</span> <span class="o">=</span> <span class="n">scores</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">scores</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;stable&quot;</span><span class="p">)[:</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">support_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">support_</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">_get_support_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">support_</span>
+
+    <span class="k">def</span> <span class="nf">__sklearn_tags__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__sklearn_tags__</span><span class="p">()</span>
+        <span class="n">tags</span><span class="o">.</span><span class="n">input_tags</span><span class="o">.</span><span class="n">allow_nan</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">tags</span>
+</pre></div></td></tr></table></div>
+</section><section id='s6'><h2>7a. Logistic Regression pipeline</h2><p class='loc'><code>src/topn.py</code>, <code>make_logistic_regression_topn</code>, line 64</p><p><b>What it does:</b> Fill blanks -&gt; pick top N -&gt; scale -&gt; elastic-net Logistic Regression. Every step is fitted on the training people only.</p><p class='say'><b>Say to the panel:</b> Scaling and imputation are part of the model, so they never see the test person.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">make_logistic_regression_topn</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Pipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Impute (training median) -&gt; pick top N -&gt; scale (training mean/SD) -&gt; elastic-net LR.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Pipeline</span><span class="p">([</span>
+        <span class="p">(</span><span class="s2">&quot;impute&quot;</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">&quot;select&quot;</span><span class="p">,</span> <span class="n">TopNByAUC</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s2">&quot;clf&quot;</span><span class="p">,</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s2">&quot;elasticnet&quot;</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;saga&quot;</span><span class="p">,</span> <span class="n">l1_ratio</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                   <span class="n">max_iter</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)),</span>
+    <span class="p">])</span>
+</pre></div></td></tr></table></div>
+</section><section id='s7'><h2>7b. XGBoost pipeline</h2><p class='loc'><code>src/topn.py</code>, <code>make_xgboost_topn</code>, line 75</p><p><b>What it does:</b> Pick top N -&gt; XGBoost with shallow trees.</p><p class='say'><b>Say to the panel:</b> Same features and the same selection step as Logistic Regression.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">make_xgboost_topn</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Pipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pick top N -&gt; XGBoost (handles blanks itself, needs no scaling).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">&quot;select&quot;</span><span class="p">,</span> <span class="n">TopNByAUC</span><span class="p">()),</span> <span class="p">(</span><span class="s2">&quot;clf&quot;</span><span class="p">,</span> <span class="n">make_xgboost</span><span class="p">())])</span>
+</pre></div></td></tr></table></div>
+</section><section id='s8'><h2>8. Leave-one-participant-out with inner tuning</h2><p class='loc'><code>src/evaluate.py</code>, <code>run_lopo</code>, line 24</p><p><b>What it does:</b> 44 rounds: hide one person, tune N and the model settings with 5 inner folds on the other 43 (30 random candidates), then predict the hidden person.</p><p class='say'><b>Say to the panel:</b> Every prediction is for a person the model never saw: no leakage across people.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">run_lopo</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="n">N_ITER</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+    <span class="n">oof</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">folds</span><span class="p">,</span> <span class="n">chosen</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">train_idx</span><span class="p">,</span> <span class="n">test_idx</span> <span class="ow">in</span> <span class="n">LeaveOneGroupOut</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="n">factory</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">est</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tune</span> <span class="ow">and</span> <span class="n">space</span><span class="p">:</span>
+            <span class="n">inner</span> <span class="o">=</span> <span class="n">StratifiedGroupKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="n">INNER_FOLDS</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
+            <span class="n">search</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s2">&quot;roc_auc&quot;</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">inner</span><span class="p">,</span>
+                                        <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">SEARCH_JOBS</span><span class="p">,</span> <span class="n">error_score</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="n">search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">[</span><span class="n">train_idx</span><span class="p">])</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">best</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">,</span> <span class="n">search</span><span class="o">.</span><span class="n">best_params_</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">best</span> <span class="o">=</span> <span class="n">clone</span><span class="p">(</span><span class="n">est</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">]),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">oof</span><span class="p">[</span><span class="n">test_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">test_idx</span><span class="p">])[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">folds</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train_idx&quot;</span><span class="p">:</span> <span class="n">train_idx</span><span class="p">,</span> <span class="s2">&quot;test_idx&quot;</span><span class="p">:</span> <span class="n">test_idx</span><span class="p">,</span>
+                      <span class="s2">&quot;participant&quot;</span><span class="p">:</span> <span class="n">groups</span><span class="p">[</span><span class="n">test_idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]})</span>
+        <span class="n">chosen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;oof_proba&quot;</span><span class="p">:</span> <span class="n">oof</span><span class="p">,</span> <span class="s2">&quot;fold_models&quot;</span><span class="p">:</span> <span class="n">folds</span><span class="p">,</span> <span class="s2">&quot;chosen_params&quot;</span><span class="p">:</span> <span class="n">chosen</span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+</section><section id='s9'><h2>9. Every metric</h2><p class='loc'><code>src/evaluate.py</code>, <code>score</code>, line 48</p><p><b>What it does:</b> ROC-AUC, accuracy, balanced accuracy, precision, recall and F1 (per class and macro), and the Brier score.</p><p class='say'><b>Say to the panel:</b> We report every metric, not only ROC-AUC.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">proba</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">y</span><span class="p">,</span> <span class="n">proba</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">proba</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="p">(</span><span class="n">proba</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;roc_auc&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">proba</span><span class="p">)),</span>
+        <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">)),</span>
+        <span class="s2">&quot;balanced_accuracy&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">balanced_accuracy_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">)),</span>
+        <span class="s2">&quot;precision_macro&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+        <span class="s2">&quot;precision_low&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+        <span class="s2">&quot;precision_high&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+        <span class="s2">&quot;recall_low&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+        <span class="s2">&quot;recall_high&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+        <span class="s2">&quot;macro_f1&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+        <span class="s2">&quot;f1_low&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+        <span class="s2">&quot;f1_high&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
+        <span class="s2">&quot;brier&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">brier_score_loss</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">proba</span><span class="p">)),</span>
+    <span class="p">}</span>
+</pre></div></td></tr></table></div>
+</section><section id='s10'><h2>10. Chance test (leakage check)</h2><p class='loc'><code>src/evaluate.py</code>, <code>permutation_test</code>, line 151</p><p><b>What it does:</b> Shuffles each person&#x27;s two labels 200 times and reruns the whole pipeline, feature selection included. If something leaked, shuffled runs would also score high.</p><p class='say'><b>Say to the panel:</b> None of 200 shuffled runs reached the real score (p = 0.005).</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">permutation_test</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">n_perm</span><span class="o">=</span><span class="n">N_PERMUTATIONS</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Grouped permutation test against chance (§10).</span>
+
+<span class="sd">    Labels are permuted within participants (each participant&#39;s A1/A4 swapped at random),</span>
+<span class="sd">    keeping the paired structure; hyperparameters are fixed to `params` for speed.</span>
+<span class="sd">    All permuted label vectors are drawn first, in a fixed order, and only the refits run</span>
+<span class="sd">    in parallel (PERM_JOBS workers), so the p-value does not depend on the worker count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y</span><span class="p">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+    <span class="n">observed</span> <span class="o">=</span> <span class="n">_null_auc</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
+    <span class="n">permuted</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_perm</span><span class="p">):</span>
+        <span class="n">yp</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">groups</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">groups</span> <span class="o">==</span> <span class="n">g</span><span class="p">)</span>
+                <span class="n">yp</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">yp</span><span class="p">[</span><span class="n">idx</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">permuted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yp</span><span class="p">)</span>
+    <span class="n">jobs</span> <span class="o">=</span> <span class="n">PERM_JOBS</span> <span class="k">if</span> <span class="n">n_jobs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">n_jobs</span>
+    <span class="n">null</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">jobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">_null_auc</span><span class="p">)(</span><span class="n">X</span><span class="p">,</span> <span class="n">yp</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">yp</span> <span class="ow">in</span> <span class="n">permuted</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">observed</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">null</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">n_perm</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;observed_auc&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">observed</span><span class="p">),</span> <span class="s2">&quot;p_value&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="s2">&quot;n_perm&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_perm</span><span class="p">)}</span>
+</pre></div></td></tr></table></div>
+</section><section id='s11'><h2>11. Feature importance (SHAP)</h2><p class='loc'><code>src/run_model.py</code>, <code>fold_shap</code>, line 61</p><p><b>What it does:</b> Explains each fold&#x27;s model on the person it never saw; a feature not picked in that fold counts as 0.</p><p class='say'><b>Say to the panel:</b> Both models are explained with the same method, on held-out people.</p><div class="code"><table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><span class="k">def</span> <span class="nf">fold_shap</span><span class="p">(</span><span class="n">fold_models</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Out-of-fold SHAP over all features: each fold&#39;s model explains the participant it never</span>
+<span class="sd">    saw; features that fold did not pick get 0 (MD4).&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">shap</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fold_models</span><span class="p">:</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">te</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;train_idx&quot;</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;test_idx&quot;</span><span class="p">]</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">selected_features</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">names</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;xgb&quot;</span><span class="p">:</span>
+            <span class="n">sel</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;select&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">te</span><span class="p">])</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">TreeExplainer</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;clf&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">shap_values</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pre</span> <span class="o">=</span> <span class="n">model</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">LinearExplainer</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;clf&quot;</span><span class="p">],</span> <span class="n">pre</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">tr</span><span class="p">]))</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">explainer</span><span class="o">.</span><span class="n">shap_values</span><span class="p">(</span><span class="n">pre</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">te</span><span class="p">]))</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[:,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">te</span><span class="p">,</span> <span class="n">cols</span><span class="p">)]</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="k">return</span> <span class="n">out</span>
+</pre></div></td></tr></table></div>
+</section>
+</body></html>

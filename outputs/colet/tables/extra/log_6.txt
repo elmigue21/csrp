@@ -1,0 +1,13 @@
+                                  0       1
+analysis                         P1      P2
+auc_difference              -0.0124 -0.0186
+ci95_low                      -0.03 -0.0857
+ci95_high                    0.0015  0.0465
+ci90_low                    -0.0269 -0.0729
+ci90_high                       0.0  0.0362
+official_ci95_low             -0.03 -0.0857
+official_ci95_high           0.0015  0.0465
+equivalent_90ci_within_0.05    True   False
+equivalent_95ci_within_0.05    True   False
+equivalent_90ci_within_0.02   False   False
+equivalent_95ci_within_0.02   False   False

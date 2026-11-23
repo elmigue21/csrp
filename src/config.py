@@ -14,11 +14,36 @@ DATA_DIR = Path(os.environ.get("COLET_DATA_DIR", PROJECT_ROOT / "data" / "colet"
 OUT_DIR = Path(os.environ.get("COLET_OUT_DIR", PROJECT_ROOT / "outputs" / "colet"))
 TABLE_DIR = OUT_DIR / "tables"
 CACHE_DIR = OUT_DIR / "cache"
+# Post-defense extraction (post-defense-data-processing.md §7.1): only run_extract.py writes
+# FINAL_DIR, and replaces it on every run; caches and scratch files go in WORK_DIR.
+FINAL_DIR = Path(os.environ.get("COLET_FINAL_DIR", PROJECT_ROOT / "outputs" / "final"))
+WORK_DIR = Path(os.environ.get("COLET_WORK_DIR", PROJECT_ROOT / "outputs" / "work"))
+
+# Pina et al. 2025 (Zenodo 18669059): the extracted gaze/, trial/ and tlx/ folders, and the
+# outputs of run_pina.py. Plan: docs/pina-analysis-plan.md (written before the eye data were loaded).
+PINA_DATA_DIR = Path(os.environ.get("PINA_DATA_DIR", PROJECT_ROOT / "data" / "pina"))
+PINA_DIR = Path(os.environ.get("PINA_OUT_DIR", PROJECT_ROOT / "outputs" / "pina"))
+
+# --------------------------------------------------------------------------- Pina design
+PINA_CONDITIONS = {0: ("90", "low"), 1: ("90", "high"), 2: ("360", "low"), 3: ("360", "high")}
+PINA_MAIN_AREA = "90"            # the 360-degree area is a separate check, never pooled
+PINA_WINDOW_S = 30.0             # each ~4-min segment -> 8 non-overlapping 30 s windows
+PINA_N_WINDOWS = 8
+# Dropped together if the fixation sanity check fails (the planned fallback)
+EVENT_PREFIXES = ("gaze_speed__", "fixation_", "saccade_")
 
 # --------------------------------------------------------------------------- design
 ACTIVITIES = (1, 2, 3, 4)
 LOW_ACTIVITY = 1    # single task, no time pressure
 HIGH_ACTIVITY = 4   # counting aloud + time pressure
+
+# --------------------------------------------------------------------------- data errors (R5-1)
+# COLET v3 holds byte-identical gaze, pupil and blink files under P28 and P31, whose
+# demographics and NASA-RTLX differ: one person's eye data is stored twice and its owner is
+# unknown. The recording is kept once (as P28) for the models; both IDs are left out of the
+# NASA-RTLX check.
+DUPLICATE_RECORDING_IDS = (31,)
+RTLX_EXCLUDED_IDS = (28, 31)
 
 # --------------------------------------------------------------------------- P2-P4 quality
 CONFIDENCE_MIN = 0.8
@@ -64,8 +89,11 @@ PUPIL_FEATURES = ["pupil_mean", "pupil_sd"]
 # --------------------------------------------------------------------------- evaluation
 RANDOM_STATE = 0
 INNER_FOLDS = 5
-SEARCH_JOBS = -1            # parallel inner-search fits; candidates are seeded, so results do not change
-PERM_JOBS = -1              # parallel permutation refits; permuted labels are drawn first, so results do not change
+# Parallel workers. Results do not depend on these (candidates are seeded; permuted labels are
+# drawn first). Capped at 6 because 20 workers ran out of memory on a 24 GB laptop (2026-11-11);
+# set COLET_JOBS (e.g. -1 = all cores on Colab) to change it.
+SEARCH_JOBS = int(os.environ.get("COLET_JOBS", 6))   # parallel inner-search fits
+PERM_JOBS = int(os.environ.get("COLET_JOBS", 6))     # parallel permutation refits
 N_ITER = 30                 # random-search candidates per model: the equal tuning budget
 N_BOOTSTRAP = 2000
 N_PERMUTATIONS = 200

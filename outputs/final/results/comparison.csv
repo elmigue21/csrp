@@ -1,0 +1,2 @@
+auc_difference,auc_difference_ci_low,auc_difference_ci_high,wilcoxon_statistic,wilcoxon_p,n_participants,ceiling_rule_triggered,features_sha256
+0.0,-0.05371900826446285,0.04753357438016512,130.0,5.5318294016615255e-06,44,False,7249a59bb692b65472320480c1c93262916a369ba60cc2af56bed59cb7a8fd3b

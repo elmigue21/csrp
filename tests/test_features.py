@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 import pandas as pd
 
@@ -56,3 +57,31 @@ def test_event_rate_not_lowered_by_missing_gaze():
     f2 = recording_features(rec2)
     assert f1["fixation_rate"] > 0
     assert abs(f2["fixation_rate"] - f1["fixation_rate"]) <= 0.15 * f1["fixation_rate"]
+
+
+SIGNAL_NAMES = {
+    "pupil", "gaze_x", "gaze_y", "gaze_speed", "fixation_duration", "saccade_amplitude",
+    "saccade_peak_velocity", "saccade_mean_velocity", "saccade_duration", "blink_duration",
+}
+
+
+def test_recording_signals_shape_and_units():
+    from features import recording_signals
+    rec = make_recording(1, 4, np.random.default_rng(0), seconds=8.0)
+    s = recording_signals(rec)
+    assert set(s["signals"]) == SIGNAL_NAMES
+    for name, values in s["signals"].items():
+        assert values.ndim == 1 and np.isfinite(values).all(), name
+    assert 240 < np.median(s["signals"]["fixation_duration"]) < 320      # ms
+    assert abs(np.median(s["signals"]["blink_duration"]) - 150) < 20      # ms
+    assert s["rates"]["blink_rate"] > 0
+    assert set(s["rates"]) == {"blink_rate", "fixation_rate", "saccade_rate"}
+
+
+def test_recording_features_unchanged_by_refactor():
+    from features import recording_signals
+    rec = make_recording(1, 4, np.random.default_rng(0), seconds=8.0)
+    f = recording_features(rec)
+    sig = recording_signals(rec)["signals"]
+    assert f["pupil_mean"] == pytest.approx(np.mean(sig["pupil"]))
+    assert f["fixation_duration"] == pytest.approx(np.mean(sig["fixation_duration"]))

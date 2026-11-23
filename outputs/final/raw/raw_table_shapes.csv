@@ -1,0 +1,6 @@
+﻿table,files,columns,rows_min,rows_median,rows_max,rows_total,one_row_is
+gaze,188,21,2568,10237.5,34709,2252854,one gaze sample (about 242 per second)
+pupil,188,34,5142,20483.0,69418,4506032,one pupil sample per eye per method (2d and 3d)
+blinks,188,10,0,4.0,100,1992,one blink
+annotation,1,9,188,188.0,188,188,one participant x activity
+subject_info,1,5,47,47.0,47,47,one participant

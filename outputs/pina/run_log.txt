@@ -1,0 +1,4 @@
+stage main done (495s)
+stage permutation done (469s)
+stage sensitivity done (929s)
+Saved in C:\dev\csrp\outputs\pina

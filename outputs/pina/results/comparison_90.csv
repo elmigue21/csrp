@@ -1,0 +1,4 @@
+comparison,auc_difference,ci_low,ci_high,ci_above_0
+Logistic Regression minus One feature (chosen in-fold),0.038960021219135776,-0.020786464361496802,0.08980004581404301,False
+XGBoost minus One feature (chosen in-fold),0.015685281635802406,-0.03863826798804016,0.06319986979166657,False
+XGBoost minus Logistic Regression,-0.02327473958333337,-0.063791835455247,0.021843050733024682,False

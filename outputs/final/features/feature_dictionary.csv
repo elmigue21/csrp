@@ -1,0 +1,174 @@
+﻿feature,signal,statistic,unit,tag,meaning,kept,drop_reason
+pupil__min,pupil,min,mm,,Smallest pupil size (mm),True,
+pupil__max,pupil,max,mm,,Largest pupil size (mm),True,
+pupil__range,pupil,range,mm,,Largest minus smallest pupil size (mm),True,
+pupil__mean,pupil,mean,mm,,Average pupil size (mm),True,
+pupil__median,pupil,median,mm,,Middle value of pupil size (mm),True,
+pupil__sd,pupil,sd,mm,,How much pupil size varies around its average (mm),True,
+pupil__var,pupil,var,mm²,,"SD of pupil size, squared (mm²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+pupil__cv,pupil,cv,ratio,,SD of pupil size divided by its average: variation relative to size,True,
+pupil__iqr,pupil,iqr,mm,,Spread of the middle half of pupil size values (mm),True,
+pupil__p05,pupil,p05,mm,,Pupil size (mm) that 5% of values stay below,True,
+pupil__p10,pupil,p10,mm,,Pupil size (mm) that 10% of values stay below,True,
+pupil__p25,pupil,p25,mm,,Pupil size (mm) that 25% of values stay below,True,
+pupil__p75,pupil,p75,mm,,Pupil size (mm) that 75% of values stay below,True,
+pupil__p90,pupil,p90,mm,,Pupil size (mm) that 90% of values stay below,True,
+pupil__p95,pupil,p95,mm,,Pupil size (mm) that 95% of values stay below,True,
+pupil__skew,pupil,skew,,,Lopsidedness of pupil size: positive = a long tail of high values,True,
+pupil__kurt,pupil,kurt,,,Peakedness of pupil size: higher = more extreme values,True,
+gaze_x__min,gaze_x,min,deg,position,Smallest left/right gaze angle (deg),True,
+gaze_x__max,gaze_x,max,deg,position,Largest left/right gaze angle (deg),True,
+gaze_x__range,gaze_x,range,deg,,Largest minus smallest left/right gaze angle (deg),True,
+gaze_x__mean,gaze_x,mean,deg,position,Average left/right gaze angle (deg),True,
+gaze_x__median,gaze_x,median,deg,position,Middle value of left/right gaze angle (deg),True,
+gaze_x__sd,gaze_x,sd,deg,,How much left/right gaze angle varies around its average (deg),True,
+gaze_x__var,gaze_x,var,deg²,,"SD of left/right gaze angle, squared (deg²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+gaze_x__cv,gaze_x,cv,ratio,position,"SD of left/right gaze angle divided by its average; gaze angles have no true zero, so this depends on how the headset sat (tagged position)",True,
+gaze_x__iqr,gaze_x,iqr,deg,,Spread of the middle half of left/right gaze angle values (deg),True,
+gaze_x__p05,gaze_x,p05,deg,position,Left/right gaze angle (deg) that 5% of values stay below,True,
+gaze_x__p10,gaze_x,p10,deg,position,Left/right gaze angle (deg) that 10% of values stay below,True,
+gaze_x__p25,gaze_x,p25,deg,position,Left/right gaze angle (deg) that 25% of values stay below,True,
+gaze_x__p75,gaze_x,p75,deg,position,Left/right gaze angle (deg) that 75% of values stay below,True,
+gaze_x__p90,gaze_x,p90,deg,position,Left/right gaze angle (deg) that 90% of values stay below,True,
+gaze_x__p95,gaze_x,p95,deg,position,Left/right gaze angle (deg) that 95% of values stay below,True,
+gaze_x__skew,gaze_x,skew,,,Lopsidedness of left/right gaze angle: positive = a long tail of high values,True,
+gaze_x__kurt,gaze_x,kurt,,,Peakedness of left/right gaze angle: higher = more extreme values,True,
+gaze_y__min,gaze_y,min,deg,position,Smallest up/down gaze angle (deg),True,
+gaze_y__max,gaze_y,max,deg,position,Largest up/down gaze angle (deg),True,
+gaze_y__range,gaze_y,range,deg,,Largest minus smallest up/down gaze angle (deg),True,
+gaze_y__mean,gaze_y,mean,deg,position,Average up/down gaze angle (deg),True,
+gaze_y__median,gaze_y,median,deg,position,Middle value of up/down gaze angle (deg),True,
+gaze_y__sd,gaze_y,sd,deg,,How much up/down gaze angle varies around its average (deg),True,
+gaze_y__var,gaze_y,var,deg²,,"SD of up/down gaze angle, squared (deg²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+gaze_y__cv,gaze_y,cv,ratio,position,"SD of up/down gaze angle divided by its average; gaze angles have no true zero, so this depends on how the headset sat (tagged position)",True,
+gaze_y__iqr,gaze_y,iqr,deg,,Spread of the middle half of up/down gaze angle values (deg),True,
+gaze_y__p05,gaze_y,p05,deg,position,Up/down gaze angle (deg) that 5% of values stay below,True,
+gaze_y__p10,gaze_y,p10,deg,position,Up/down gaze angle (deg) that 10% of values stay below,True,
+gaze_y__p25,gaze_y,p25,deg,position,Up/down gaze angle (deg) that 25% of values stay below,True,
+gaze_y__p75,gaze_y,p75,deg,position,Up/down gaze angle (deg) that 75% of values stay below,True,
+gaze_y__p90,gaze_y,p90,deg,position,Up/down gaze angle (deg) that 90% of values stay below,True,
+gaze_y__p95,gaze_y,p95,deg,position,Up/down gaze angle (deg) that 95% of values stay below,True,
+gaze_y__skew,gaze_y,skew,,,Lopsidedness of up/down gaze angle: positive = a long tail of high values,True,
+gaze_y__kurt,gaze_y,kurt,,,Peakedness of up/down gaze angle: higher = more extreme values,True,
+gaze_speed__min,gaze_speed,min,deg/s,,Smallest eye movement speed (deg/s),True,
+gaze_speed__max,gaze_speed,max,deg/s,,Largest eye movement speed (deg/s),True,
+gaze_speed__range,gaze_speed,range,deg/s,,Largest minus smallest eye movement speed (deg/s),False,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+gaze_speed__mean,gaze_speed,mean,deg/s,,Average eye movement speed (deg/s),True,
+gaze_speed__median,gaze_speed,median,deg/s,,Middle value of eye movement speed (deg/s),True,
+gaze_speed__sd,gaze_speed,sd,deg/s,,How much eye movement speed varies around its average (deg/s),True,
+gaze_speed__var,gaze_speed,var,deg/s²,,"SD of eye movement speed, squared (deg/s²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+gaze_speed__cv,gaze_speed,cv,ratio,,SD of eye movement speed divided by its average: variation relative to size,True,
+gaze_speed__iqr,gaze_speed,iqr,deg/s,,Spread of the middle half of eye movement speed values (deg/s),True,
+gaze_speed__p05,gaze_speed,p05,deg/s,,Eye movement speed (deg/s) that 5% of values stay below,True,
+gaze_speed__p10,gaze_speed,p10,deg/s,,Eye movement speed (deg/s) that 10% of values stay below,True,
+gaze_speed__p25,gaze_speed,p25,deg/s,,Eye movement speed (deg/s) that 25% of values stay below,True,
+gaze_speed__p75,gaze_speed,p75,deg/s,,Eye movement speed (deg/s) that 75% of values stay below,True,
+gaze_speed__p90,gaze_speed,p90,deg/s,,Eye movement speed (deg/s) that 90% of values stay below,True,
+gaze_speed__p95,gaze_speed,p95,deg/s,,Eye movement speed (deg/s) that 95% of values stay below,True,
+gaze_speed__skew,gaze_speed,skew,,,Lopsidedness of eye movement speed: positive = a long tail of high values,True,
+gaze_speed__kurt,gaze_speed,kurt,,,Peakedness of eye movement speed: higher = more extreme values,True,
+fixation_duration__min,fixation_duration,min,ms,,Smallest fixation length (ms),True,
+fixation_duration__max,fixation_duration,max,ms,,Largest fixation length (ms),True,
+fixation_duration__range,fixation_duration,range,ms,,Largest minus smallest fixation length (ms),False,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+fixation_duration__mean,fixation_duration,mean,ms,,Average fixation length (ms),True,
+fixation_duration__median,fixation_duration,median,ms,,Middle value of fixation length (ms),True,
+fixation_duration__sd,fixation_duration,sd,ms,,How much fixation length varies around its average (ms),True,
+fixation_duration__var,fixation_duration,var,ms²,,"SD of fixation length, squared (ms²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+fixation_duration__cv,fixation_duration,cv,ratio,,SD of fixation length divided by its average: variation relative to size,True,
+fixation_duration__iqr,fixation_duration,iqr,ms,,Spread of the middle half of fixation length values (ms),True,
+fixation_duration__p05,fixation_duration,p05,ms,,Fixation length (ms) that 5% of values stay below,True,
+fixation_duration__p10,fixation_duration,p10,ms,,Fixation length (ms) that 10% of values stay below,True,
+fixation_duration__p25,fixation_duration,p25,ms,,Fixation length (ms) that 25% of values stay below,True,
+fixation_duration__p75,fixation_duration,p75,ms,,Fixation length (ms) that 75% of values stay below,True,
+fixation_duration__p90,fixation_duration,p90,ms,,Fixation length (ms) that 90% of values stay below,True,
+fixation_duration__p95,fixation_duration,p95,ms,,Fixation length (ms) that 95% of values stay below,True,
+fixation_duration__skew,fixation_duration,skew,,,Lopsidedness of fixation length: positive = a long tail of high values,True,
+fixation_duration__kurt,fixation_duration,kurt,,,Peakedness of fixation length: higher = more extreme values,True,
+saccade_amplitude__min,saccade_amplitude,min,deg,,Smallest saccade size (deg),True,
+saccade_amplitude__max,saccade_amplitude,max,deg,,Largest saccade size (deg),True,
+saccade_amplitude__range,saccade_amplitude,range,deg,,Largest minus smallest saccade size (deg),False,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+saccade_amplitude__mean,saccade_amplitude,mean,deg,,Average saccade size (deg),True,
+saccade_amplitude__median,saccade_amplitude,median,deg,,Middle value of saccade size (deg),True,
+saccade_amplitude__sd,saccade_amplitude,sd,deg,,How much saccade size varies around its average (deg),True,
+saccade_amplitude__var,saccade_amplitude,var,deg²,,"SD of saccade size, squared (deg²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+saccade_amplitude__cv,saccade_amplitude,cv,ratio,,SD of saccade size divided by its average: variation relative to size,True,
+saccade_amplitude__iqr,saccade_amplitude,iqr,deg,,Spread of the middle half of saccade size values (deg),True,
+saccade_amplitude__p05,saccade_amplitude,p05,deg,,Saccade size (deg) that 5% of values stay below,True,
+saccade_amplitude__p10,saccade_amplitude,p10,deg,,Saccade size (deg) that 10% of values stay below,True,
+saccade_amplitude__p25,saccade_amplitude,p25,deg,,Saccade size (deg) that 25% of values stay below,True,
+saccade_amplitude__p75,saccade_amplitude,p75,deg,,Saccade size (deg) that 75% of values stay below,True,
+saccade_amplitude__p90,saccade_amplitude,p90,deg,,Saccade size (deg) that 90% of values stay below,True,
+saccade_amplitude__p95,saccade_amplitude,p95,deg,,Saccade size (deg) that 95% of values stay below,True,
+saccade_amplitude__skew,saccade_amplitude,skew,,,Lopsidedness of saccade size: positive = a long tail of high values,True,
+saccade_amplitude__kurt,saccade_amplitude,kurt,,,Peakedness of saccade size: higher = more extreme values,True,
+saccade_peak_velocity__min,saccade_peak_velocity,min,deg/s,,Smallest saccade peak speed (deg/s),True,
+saccade_peak_velocity__max,saccade_peak_velocity,max,deg/s,,Largest saccade peak speed (deg/s),True,
+saccade_peak_velocity__range,saccade_peak_velocity,range,deg/s,,Largest minus smallest saccade peak speed (deg/s),False,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+saccade_peak_velocity__mean,saccade_peak_velocity,mean,deg/s,,Average saccade peak speed (deg/s),True,
+saccade_peak_velocity__median,saccade_peak_velocity,median,deg/s,,Middle value of saccade peak speed (deg/s),True,
+saccade_peak_velocity__sd,saccade_peak_velocity,sd,deg/s,,How much saccade peak speed varies around its average (deg/s),True,
+saccade_peak_velocity__var,saccade_peak_velocity,var,deg/s²,,"SD of saccade peak speed, squared (deg/s²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+saccade_peak_velocity__cv,saccade_peak_velocity,cv,ratio,,SD of saccade peak speed divided by its average: variation relative to size,True,
+saccade_peak_velocity__iqr,saccade_peak_velocity,iqr,deg/s,,Spread of the middle half of saccade peak speed values (deg/s),True,
+saccade_peak_velocity__p05,saccade_peak_velocity,p05,deg/s,,Saccade peak speed (deg/s) that 5% of values stay below,True,
+saccade_peak_velocity__p10,saccade_peak_velocity,p10,deg/s,,Saccade peak speed (deg/s) that 10% of values stay below,True,
+saccade_peak_velocity__p25,saccade_peak_velocity,p25,deg/s,,Saccade peak speed (deg/s) that 25% of values stay below,True,
+saccade_peak_velocity__p75,saccade_peak_velocity,p75,deg/s,,Saccade peak speed (deg/s) that 75% of values stay below,True,
+saccade_peak_velocity__p90,saccade_peak_velocity,p90,deg/s,,Saccade peak speed (deg/s) that 90% of values stay below,True,
+saccade_peak_velocity__p95,saccade_peak_velocity,p95,deg/s,,Saccade peak speed (deg/s) that 95% of values stay below,True,
+saccade_peak_velocity__skew,saccade_peak_velocity,skew,,,Lopsidedness of saccade peak speed: positive = a long tail of high values,True,
+saccade_peak_velocity__kurt,saccade_peak_velocity,kurt,,,Peakedness of saccade peak speed: higher = more extreme values,True,
+saccade_mean_velocity__min,saccade_mean_velocity,min,deg/s,,Smallest saccade average speed (deg/s),True,
+saccade_mean_velocity__max,saccade_mean_velocity,max,deg/s,,Largest saccade average speed (deg/s),True,
+saccade_mean_velocity__range,saccade_mean_velocity,range,deg/s,,Largest minus smallest saccade average speed (deg/s),False,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+saccade_mean_velocity__mean,saccade_mean_velocity,mean,deg/s,,Average saccade average speed (deg/s),True,
+saccade_mean_velocity__median,saccade_mean_velocity,median,deg/s,,Middle value of saccade average speed (deg/s),True,
+saccade_mean_velocity__sd,saccade_mean_velocity,sd,deg/s,,How much saccade average speed varies around its average (deg/s),True,
+saccade_mean_velocity__var,saccade_mean_velocity,var,deg/s²,,"SD of saccade average speed, squared (deg/s²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+saccade_mean_velocity__cv,saccade_mean_velocity,cv,ratio,,SD of saccade average speed divided by its average: variation relative to size,True,
+saccade_mean_velocity__iqr,saccade_mean_velocity,iqr,deg/s,,Spread of the middle half of saccade average speed values (deg/s),True,
+saccade_mean_velocity__p05,saccade_mean_velocity,p05,deg/s,,Saccade average speed (deg/s) that 5% of values stay below,True,
+saccade_mean_velocity__p10,saccade_mean_velocity,p10,deg/s,,Saccade average speed (deg/s) that 10% of values stay below,True,
+saccade_mean_velocity__p25,saccade_mean_velocity,p25,deg/s,,Saccade average speed (deg/s) that 25% of values stay below,True,
+saccade_mean_velocity__p75,saccade_mean_velocity,p75,deg/s,,Saccade average speed (deg/s) that 75% of values stay below,True,
+saccade_mean_velocity__p90,saccade_mean_velocity,p90,deg/s,,Saccade average speed (deg/s) that 90% of values stay below,True,
+saccade_mean_velocity__p95,saccade_mean_velocity,p95,deg/s,,Saccade average speed (deg/s) that 95% of values stay below,True,
+saccade_mean_velocity__skew,saccade_mean_velocity,skew,,,Lopsidedness of saccade average speed: positive = a long tail of high values,True,
+saccade_mean_velocity__kurt,saccade_mean_velocity,kurt,,,Peakedness of saccade average speed: higher = more extreme values,True,
+saccade_duration__min,saccade_duration,min,ms,,Smallest saccade length (ms),False,D6a: stuck at one sample (4.17 ms) in 83 of 88 recordings; measures the tracker
+saccade_duration__max,saccade_duration,max,ms,,Largest saccade length (ms),True,
+saccade_duration__range,saccade_duration,range,ms,,Largest minus smallest saccade length (ms),False,"D9: minimum is fixed near zero or a detection threshold, so range copies max"
+saccade_duration__mean,saccade_duration,mean,ms,,Average saccade length (ms),True,
+saccade_duration__median,saccade_duration,median,ms,,Middle value of saccade length (ms),True,
+saccade_duration__sd,saccade_duration,sd,ms,,How much saccade length varies around its average (ms),True,
+saccade_duration__var,saccade_duration,var,ms²,,"SD of saccade length, squared (ms²)",False,"D8: variance is SD squared, an exact copy of the SD feature"
+saccade_duration__cv,saccade_duration,cv,ratio,,SD of saccade length divided by its average: variation relative to size,True,
+saccade_duration__iqr,saccade_duration,iqr,ms,,Spread of the middle half of saccade length values (ms),True,
+saccade_duration__p05,saccade_duration,p05,ms,,Saccade length (ms) that 5% of values stay below,True,
+saccade_duration__p10,saccade_duration,p10,ms,,Saccade length (ms) that 10% of values stay below,True,
+saccade_duration__p25,saccade_duration,p25,ms,,Saccade length (ms) that 25% of values stay below,True,
+saccade_duration__p75,saccade_duration,p75,ms,,Saccade length (ms) that 75% of values stay below,True,
+saccade_duration__p90,saccade_duration,p90,ms,,Saccade length (ms) that 90% of values stay below,True,
+saccade_duration__p95,saccade_duration,p95,ms,,Saccade length (ms) that 95% of values stay below,True,
+saccade_duration__skew,saccade_duration,skew,,,Lopsidedness of saccade length: positive = a long tail of high values,True,
+saccade_duration__kurt,saccade_duration,kurt,,,Peakedness of saccade length: higher = more extreme values,True,
+blink_duration__min,blink_duration,min,ms,,Smallest blink length (ms),False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__max,blink_duration,max,ms,,Largest blink length (ms),False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__range,blink_duration,range,ms,,Largest minus smallest blink length (ms),False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__mean,blink_duration,mean,ms,,Average blink length (ms),False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__median,blink_duration,median,ms,,Middle value of blink length (ms),False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__sd,blink_duration,sd,ms,,How much blink length varies around its average (ms),False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__var,blink_duration,var,ms²,,"SD of blink length, squared (ms²)",False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__cv,blink_duration,cv,ratio,,SD of blink length divided by its average: variation relative to size,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__iqr,blink_duration,iqr,ms,,Spread of the middle half of blink length values (ms),False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p05,blink_duration,p05,ms,,Blink length (ms) that 5% of values stay below,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p10,blink_duration,p10,ms,,Blink length (ms) that 10% of values stay below,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p25,blink_duration,p25,ms,,Blink length (ms) that 25% of values stay below,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p75,blink_duration,p75,ms,,Blink length (ms) that 75% of values stay below,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p90,blink_duration,p90,ms,,Blink length (ms) that 90% of values stay below,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__p95,blink_duration,p95,ms,,Blink length (ms) that 95% of values stay below,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__skew,blink_duration,skew,,,Lopsidedness of blink length: positive = a long tail of high values,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_duration__kurt,blink_duration,kurt,,,Peakedness of blink length: higher = more extreme values,False,"D1: blank in 79 of 88 recordings (fewer than 20 blinks); 8 of the 9 with values are high load, so whether a value exists reveals the label"
+blink_rate,blink_rate,rate,per min,,Blinks per minute of usable recording time,True,
+fixation_rate,fixation_rate,rate,per s,,Fixations per second of time with a valid gaze direction,True,
+saccade_rate,saccade_rate,rate,per s,,Saccades per second of time with a valid gaze direction,True,

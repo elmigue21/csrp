@@ -3,6 +3,14 @@
 **Title:** COMPARATIVE ANALYSIS OF LOGISTIC REGRESSION AND XGBOOST FOR COGNITIVE LOAD
 DETECTION USING EYE TRACKING FEATURES WITH FEATURE IMPORTANCE ANALYSIS
 
+> **Partly superseded after the proposal defense (2026-11-11).** This is the defended method,
+> kept as a record. The data preparation is replaced by `post-defense-data-processing.md`
+> (final) and the modeling setup is being revised in `post-defense-modeling-plan.md`. Still
+> current: §2 dataset, §3 labels, §4–§5 cleaning and event detection (C1–C10, kept), §8–§9
+> models and LOPO. Superseded: §6 features, §7 per-person normalization, the 10-feature P1/P2
+> in §11, and every "45 participants / 90 samples" (now 44 / 88; P31 duplicates P28).
+> `thesis-changes-post-defense.md` lists every outdated passage.
+
 **Status:** working plan (clean version, 2026-10-01). It reflects decisions C1–C3 in
 `rrl-decision-log.md`. **All methodology decisions are made (2026-10-01);** only adviser sign-off (C5) is pending. The layered earlier
 version is archived at `archive/methodology-colet-v1-layered.md`.
@@ -134,7 +142,7 @@ All thresholds were chosen after a **label-blind** data-quality inspection and f
 | P10. Features | §6, computed per whole activity, as **rates** (never counts or duration). Fixation and saccade rates: per second of time with a valid gaze direction; blink rate: per minute of valid recording time (N26) | N5 |
 | P11. Quality report | Valid-sample % per recording, reported by condition. It is **not** a feature. | PP7, LB13 |
 | P12. Luminance check | Brightness of the 21 stimulus images by condition (**optional**, C8; decided 2026-10-02). COLET's own check: 2 of 47 participants correlated. | CF2, CF3, EM7 |
-| P13. Fold-aware steps | Per-person normalization (§7), scaling and imputation, all fitted inside training folds | EV2, LB13 |
+| P13. Fold-aware steps | Scaling and imputation fitted inside training folds. Per-person normalization (§7) is the exception: it uses each participant's own unlabelled recordings, including the test participant's (label-free; stated as a limitation) | EV2, LB13 |
 | P14. Retention table | Samples and recordings kept at each step, by participant and condition | LB13 |
 
 ## 5. Event detection (fixations and saccades)
@@ -203,6 +211,9 @@ must not be used (N1).
 
 ## 6. Features
 
+> **Superseded (2026-11-11):** see `post-defense-data-processing.md` §4 and §6. Now 10 signals ×
+> 17 statistics + 3 rates = 173 extracted, 140 model features; top-N chosen inside each fold.
+
 **Decided (C4):** the 10 features marked Core below. The reasons for leaving features out are in
 researcher-notes N21. Features were judged on quality and literature support only, never on how
 well they separate A1 from A4.
@@ -233,6 +244,10 @@ well they separate A1 from A4.
 - **Decision:** drop the feature and keep blink rate, following Hogervorst 2014 (which discarded segments with undefined blink duration).
 
 ## 7. Per-person normalization
+
+> **Superseded (2026-11-11):** per-person normalization was removed after the defense
+> (`post-defense-data-processing.md` §5). A2/A3 are no longer in the feature table; any scaling a
+> model needs is fitted on the training participants inside each fold.
 
 - **Method:**
   - Z-score each feature using that person's own mean and SD over all 4 activities.
@@ -298,6 +313,9 @@ well they separate A1 from A4.
 - Interpretation: importance means model reliance, not cause (FI9).
 
 ## 11. Analysis plan
+
+> **Being revised (2026-11-11):** P1/P2 below use the old 10 features. See
+> `post-defense-modeling-plan.md` (MD3).
 
 **Decided:** P1 and P2 are required (D-N5, V2-1); everything else is optional (researcher-notes N19).
 
