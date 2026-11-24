@@ -1,0 +1,2 @@
+area,n_participants,n_windows,n_excluded_invalid,n_extraction_errors,fixation_median_ms,sanity_check_passed,event_features_dropped,blink_rate_dropped,n_features
+360,36,572,4,0,125.0,False,True,True,48

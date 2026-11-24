@@ -37,12 +37,19 @@ def recording_signals(rec: dict) -> dict:
     blinks = clean_blinks(rec["blinks"])
 
     grid, xyz = gaze_directions(gaze, blinks)
-    ev = detect_events(xyz, GAZE_GRID_HZ)
+    # Pina post-hoc run only: events and gaze speed from gaze in the room (head rotation applied);
+    # the gaze angle features below stay head-relative.
+    event_xyz = xyz
+    if "world_normal0_x" in gaze:
+        world = gaze.drop(columns=[c for c in gaze if c.startswith("gaze_normal")]).rename(
+            columns=lambda c: c.replace("world_normal", "gaze_normal"))
+        _, event_xyz = gaze_directions(world, blinks)
+    ev = detect_events(event_xyz, GAZE_GRID_HZ)
     finite = np.isfinite(xyz).all(1)
     keep = finite & ~ev["artifact_mask"]
     az = np.degrees(np.arctan2(xyz[keep, 0], xyz[keep, 2]))
     el = np.degrees(np.arctan2(xyz[keep, 1], np.hypot(xyz[keep, 0], xyz[keep, 2])))
-    speed = angular_speed_deg_s(xyz, GAZE_GRID_HZ)
+    speed = angular_speed_deg_s(event_xyz, GAZE_GRID_HZ)
     speed = speed[np.isfinite(speed) & ~ev["artifact_mask"]]
 
     _, pupil = clean_pupil(rec["pupil"], blinks, t.min(), t.max())

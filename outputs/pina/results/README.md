@@ -22,3 +22,5 @@ were decided after the main results and are never the main result.
 | `sensitivity_*_90_keep_events.csv` | Same run keeping the event features that failed the check |
 | `metric_ci_<area>.csv` | Accuracy, precision, recall, F1, Brier, ROC-AUC with participant-bootstrap 95% CIs |
 | `metric_differences_<area>.csv` | The same metrics as paired differences: model minus baseline, XGBoost minus LR |
+| `review_checks_90.csv` | Post-hoc: models without blink rate, tracking-quality baseline, results by condition order |
+| `review_checks_medians_90.csv` | Median blink rate and invalid-sample share per load |

@@ -22,7 +22,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from config import PINA_CONDITIONS, PINA_DATA_DIR, PINA_N_WINDOWS, PINA_WINDOW_S
+from config import PINA_CONDITIONS, PINA_DATA_DIR, PINA_N_WINDOWS, PINA_WINDOW_S, PINA_WORLD_GAZE
 from features import recording_signals
 from flatten import DROPPED, flat_features
 from preprocess import invalid_fraction
@@ -39,6 +39,30 @@ TLX_SCALES = ["Mental Demand", "Physical Demand", "Temporal Demand", "Performanc
 def parse_vectors(s: pd.Series) -> np.ndarray:
     """'(x, y, z)' text -> (n, 3) floats."""
     return s.str.extract(r"\(([-\d.]+),\s*([-\d.]+),\s*([-\d.]+)\)").astype(float).to_numpy()
+
+
+def parse_quaternions(s: pd.Series) -> np.ndarray:
+    """'(x, y, z, w)' text -> (n, 4) floats."""
+    return s.str.extract(r"\(([-\d.]+),\s*([-\d.]+),\s*([-\d.]+),\s*([-\d.]+)\)").astype(float).to_numpy()
+
+
+def head_rotation_per_sample(t: np.ndarray, q: np.ndarray) -> np.ndarray:
+    """The headset rotation is logged at the render rate (~90 Hz, so it repeats for 2-3 eye
+    samples). Keep the samples where it changes and interpolate between them (normalized linear
+    interpolation, signs aligned so q and -q do not flip)."""
+    q = q.copy()
+    for i in range(1, len(q)):                       # same rotation, consistent sign
+        if np.nansum(q[i] * q[i - 1]) < 0:
+            q[i] = -q[i]
+    key = np.r_[True, np.abs(np.diff(q, axis=0)).sum(1) > 0] & np.isfinite(q).all(1)
+    out = np.column_stack([np.interp(t, t[key], q[key, k]) for k in range(4)])
+    return out / np.linalg.norm(out, axis=1, keepdims=True)
+
+
+def rotate(q: np.ndarray, v: np.ndarray) -> np.ndarray:
+    """Rotate vectors v (n, 3) by unit quaternions q (n, 4) in (x, y, z, w) order."""
+    u, w = q[:, :3], q[:, 3:4]
+    return v + 2.0 * np.cross(u, np.cross(u, v) + w * v)
 
 
 def parse_numbers(s: pd.Series) -> np.ndarray:
@@ -70,7 +94,8 @@ def blink_runs(t: np.ndarray, left_valid: np.ndarray, right_valid: np.ndarray) -
 def load_participant(user: int, data_dir: Path = PINA_DATA_DIR):
     """(gaze, pupil, blinks, trial, hour offset) for one participant."""
     trial = pd.read_csv(data_dir / "trial" / f"user_{user}.csv")
-    g = pd.read_csv(data_dir / "gaze" / f"user_{user}gaze.csv", sep=";", usecols=GAZE_COLUMNS, dtype=str)
+    cols = GAZE_COLUMNS + (["HMDRotation"] if PINA_WORLD_GAZE else [])
+    g = pd.read_csv(data_dir / "gaze" / f"user_{user}gaze.csv", sep=";", usecols=cols, dtype=str)
     start = trial.loc[trial.TrialType.isin(PINA_CONDITIONS), "StartTime"].median() / 1000
     t, hours = unix_seconds(g["CaptureTime"].astype("int64").to_numpy(),
                             g["LogTime"].astype("int64").to_numpy(), start)
@@ -80,6 +105,12 @@ def load_participant(user: int, data_dir: Path = PINA_DATA_DIR):
     gaze = pd.DataFrame({"gaze_timestamp": t, "confidence": ok.astype(float),
                          **{f"gaze_normal0_{a}": left[:, i] for i, a in enumerate("xyz")},
                          **{f"gaze_normal1_{a}": right[:, i] for i, a in enumerate("xyz")}})
+    if PINA_WORLD_GAZE:                               # post-hoc: gaze in the room, for event detection
+        q = head_rotation_per_sample(t, parse_quaternions(g["HMDRotation"]))
+        for eye, v in ((0, left), (1, right)):
+            wv = rotate(q, v)
+            for i, a in enumerate("xyz"):
+                gaze[f"world_normal{eye}_{a}"] = wv[:, i]
     pupil = pd.concat([pd.DataFrame({"pupil_timestamp": t, "eye_id": float(eye), "method": "3d",
                                      "confidence": valid.astype(float), "diameter_3d": diam, "model_id": 0})
                        for eye, valid, diam in ((0, lv, parse_numbers(g["LeftPupilDiameterInMM"])),

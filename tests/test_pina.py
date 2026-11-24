@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pina import DOTNET_EPOCH_MS, blink_runs, parse_numbers, parse_vectors, unix_seconds
+from pina import (DOTNET_EPOCH_MS, blink_runs, head_rotation_per_sample, parse_numbers, parse_quaternions,
+                  parse_vectors, rotate, unix_seconds)
 from run_pina import BASELINE, area_data, signal, stage_main
 
 
@@ -28,6 +29,23 @@ def test_unix_seconds_removes_the_hour_offset():
     log = (unix + 3600) * 1000 + DOTNET_EPOCH_MS              # local time = UTC+1, logged in ms
     t, hours = unix_seconds(cap, log, trial_start_s=unix.mean())
     assert hours == 1 and t == pytest.approx(unix)
+
+
+def test_rotate_by_quaternion():
+    half = np.sqrt(0.5)
+    q = np.array([[0, 0, 0, 1], [0, half, 0, half]], float)         # identity; 90 deg about y
+    v = np.array([[0, 0, 1], [0, 0, 1]], float)
+    out = rotate(q, v)
+    assert out[0] == pytest.approx([0, 0, 1]) and out[1] == pytest.approx([1, 0, 0], abs=1e-12)
+
+
+def test_head_rotation_is_interpolated_between_updates():
+    half = np.sqrt(0.5)
+    q = parse_quaternions(pd.Series(["(0, 0, 0, 1)", "(0, 0, 0, 1)", f"(0, {half}, 0, {half})"]))
+    out = head_rotation_per_sample(np.array([0.0, 0.5, 1.0]), q)
+    assert np.linalg.norm(out, axis=1) == pytest.approx(np.ones(3))
+    assert out[0] == pytest.approx([0, 0, 0, 1])
+    assert 0 < out[1, 1] < out[2, 1]                     # the repeated sample is filled in, not held
 
 
 def test_signal_families():
@@ -62,6 +80,15 @@ def test_area_data_applies_exclusion_order_and_fallback():
     assert "saccade_rate" in X and check["event_features_dropped"] is False
     X, *_ , check = area_data(_table(fix_ms=250), "90")
     assert check["sanity_check_passed"] and "saccade_rate" in X
+
+
+def test_area_data_can_drop_blink_rate(monkeypatch):
+    import run_pina
+    X, *_ = area_data(_table(fix_ms=665), "90")
+    assert "blink_rate" in X
+    monkeypatch.setattr(run_pina, "PINA_DROP_BLINK", True)
+    X, *_, check = area_data(_table(fix_ms=665), "90")
+    assert "blink_rate" not in X and "pupil__mean" in X and check["blink_rate_dropped"] is True
 
 
 def test_stage_main_writes_every_file(tmp_path):

@@ -15,8 +15,8 @@ from docx.shared import Emu, Pt
 
 ROOT = Path(r"C:\dev\csrp")
 SRC = ROOT / "docs" / "old" / "CSRP-Chapter-1-to-5-draft-COLET-v4-6.docx"
-MD = ROOT / "docs" / "CSRP-Chapter-1-to-5-draft-Pina-v5.md"
-OUT = ROOT / "docs" / "CSRP-Chapter-1-to-5-draft-Pina-v5.docx"
+MD = ROOT / "docs" / "old" / "CSRP-Chapter-1-to-5-draft-Pina-v5.md"
+OUT = ROOT / "docs" / "old" / "CSRP-Chapter-1-to-5-draft-Pina-v5.docx"
 
 NEW_REFS = {
     "guyon": "I. Guyon and A. Elisseeff, \u201cAn introduction to variable and feature selection,\u201d "

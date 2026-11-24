@@ -13,6 +13,8 @@ Stages (each saves its files as soon as it finishes; run_info.json records when 
                  most-chosen settings (chosen with the true labels), selection rerun inside
 - sensitivity  : 90 only, decided after the main results: the event features kept despite the
                  failed check. Never the main result.
+- review_checks: 90 only, decided after the main results (reviewer follow-up): both models without
+                 blink rate, a tracking-quality one-feature baseline, results split by condition order
 
 Usage:  PINA_DATA_DIR=<folder with gaze/, trial/, tlx/>  python src/run_pina.py [--stages a,b]
 """
@@ -38,7 +40,7 @@ from sklearn.preprocessing import StandardScaler
 
 from config import (
     EVENT_PREFIXES, MAX_INVALID_FRACTION, N_BOOTSTRAP, N_ITER, N_PERMUTATIONS, PINA_DATA_DIR,
-    PINA_DIR, PINA_MAIN_AREA, RANDOM_STATE, SANITY_FIXATION_MEDIAN_MS,
+    PINA_DIR, PINA_DROP_BLINK, PINA_MAIN_AREA, RANDOM_STATE, SANITY_FIXATION_MEDIAN_MS,
 )
 from evaluate import chosen_params_table, compare_models, permutation_test, run_lopo, score
 from importance import shap_summary
@@ -46,7 +48,7 @@ from pina import META, demographics, participant_windows, participants, tlx_tabl
 from run_model import FILE, SHORT, _git_commit, _metrics, _versions, fold_shap, selection_count
 from topn import MODELS_TOPN, TopNByAUC
 
-STAGES = ("extract", "manipulation", "main", "permutation", "sensitivity", "metric_ci")
+STAGES = ("extract", "manipulation", "main", "permutation", "sensitivity", "metric_ci", "review_checks")
 BASELINE = "One feature (chosen in-fold)"
 AREAS = (PINA_MAIN_AREA, "360")
 
@@ -78,11 +80,13 @@ def area_data(table: pd.DataFrame, area: str, keep_events: bool = False):
     passed = SANITY_FIXATION_MEDIAN_MS[0] <= fix_median <= SANITY_FIXATION_MEDIAN_MS[1]
     drop_events = not passed and not keep_events
     names = [c for c in d.columns if c not in META and c != "_o"
-             and not (drop_events and c.startswith(EVENT_PREFIXES))]
+             and not (drop_events and c.startswith(EVENT_PREFIXES))
+             and not (PINA_DROP_BLINK and signal(c) == "blink")]
     check = {"area": area, "n_participants": int(d.participant.nunique()), "n_windows": len(d),
              "n_excluded_invalid": n_before - len(d), "n_extraction_errors": n_errors,
              "fixation_median_ms": fix_median, "sanity_check_passed": passed,
-             "event_features_dropped": drop_events, "n_features": len(names)}
+             "event_features_dropped": drop_events, "blink_rate_dropped": PINA_DROP_BLINK,
+             "n_features": len(names)}
     ids = d[["participant", "area", "load", "window"]]
     return d[names], d.load.eq("high").astype(int).to_numpy(), d.participant.to_numpy(), ids, check
 
@@ -246,10 +250,12 @@ def stage_main(table, results, n_iter, n_boot) -> dict:
         sig.to_csv(results / f"shap_by_signal_{area}.csv", index=False)
         selection_count({m: fits[m] for m in MODELS_TOPN}, list(X.columns)).to_csv(
             results / f"selection_count_{area}.csv", index=False)
-        top = sig.groupby("signal")["share"].mean().idxmax()      # averaged over both models
-        keep = [c for c in X.columns if signal(c) != top]
         rows = []
         for model, spec in MODELS_TOPN.items():
+            # Appendix A: each model is refit without the signal of its own top SHAP feature
+            # (before 2026-11-24 the shares were averaged over both models, a deviation)
+            top = signal(feat[feat.model == model].sort_values("share", ascending=False).feature.iloc[0])
+            keep = [c for c in X.columns if signal(c) != top]
             r = run_lopo(X[keep], y, g, spec["factory"], spec["space"], n_iter=n_iter)
             rows.append({"without_signal": top, "model": model, "n_features_available": len(keep),
                          **_metrics(y, r["oof_proba"], g, n_boot)})
@@ -287,6 +293,53 @@ def stage_sensitivity(table, results, n_iter, n_boot) -> pd.DataFrame:
     return res
 
 
+def condition_order(data_dir: Path) -> pd.Series:
+    """Per participant: 'low first' or 'high first' in the 90-degree area (first trial start)."""
+    out = {}
+    for f in sorted((data_dir / "trial").glob("user_*.csv")):
+        first = pd.read_csv(f).groupby("TrialType")["StartTime"].min()
+        out[int(f.stem[len("user_"):])] = "low first" if first[0] < first[1] else "high first"
+    return pd.Series(out, name="order")
+
+
+def stage_review_checks(table, data_dir, results, n_iter, n_boot) -> pd.DataFrame:
+    """Decided after the main results (reviewer follow-up), never the main result:
+    - each model refit without the signal of its own top SHAP feature (Appendix A wording);
+      for XGBoost that is blink rate, so both models are refit without blink rate
+    - a one-feature tracking-quality baseline (share of invalid samples), to see whether the
+      blink-rate baseline only tracks headset dropouts
+    - the main predictions split by condition order."""
+    X, y, g, ids, _ = area_data(table, PINA_MAIN_AREA)
+    rows = []
+    keep = [c for c in X.columns if signal(c) != "blink"]
+    for model, spec in MODELS_TOPN.items():
+        r = run_lopo(X[keep], y, g, spec["factory"], spec["space"], n_iter=n_iter)
+        rows.append({"check": "without blink rate", "model": model, "n_features_available": len(keep),
+                     **_metrics(y, r["oof_proba"], g, n_boot)})
+    invalid = ids.merge(table[list(ids.columns) + ["invalid_frac"]], on=list(ids.columns), how="left")["invalid_frac"]
+    tracking = run_lopo(invalid.to_frame(), y, g, one_feature_baseline, None, tune=False)
+    rows.append({"check": "tracking-quality baseline", "model": "invalid_frac only", "n_features_available": 1,
+                 **_metrics(y, tracking["oof_proba"], g, n_boot)})
+    pred = pd.read_csv(results / f"predictions_{PINA_MAIN_AREA}.csv")
+    blink_vs_tracking = compare_models(y, pred["p_one_feature"].to_numpy(), tracking["oof_proba"], g, n_boot)
+    rows.append({"check": "tracking minus blink baseline", "model": "difference",
+                 "roc_auc": blink_vs_tracking["auc_difference"],
+                 "auc_ci_low": blink_vs_tracking["auc_difference_ci_low"],
+                 "auc_ci_high": blink_vs_tracking["auc_difference_ci_high"]})
+    order = pred["participant"].map(condition_order(data_dir))
+    for o in ("low first", "high first"):
+        d = pred[order == o]
+        for model, col in PRED_COLUMNS.items():
+            rows.append({"check": f"order: {o}", "model": model, "n_participants": int(d.participant.nunique()),
+                         **score(d["y"].to_numpy(), d[col].to_numpy())})
+    out = pd.DataFrame(rows)
+    out.to_csv(results / f"review_checks_{PINA_MAIN_AREA}.csv", index=False)
+    by_load = X.assign(load=np.where(y == 1, "high", "low"), invalid_frac=invalid.to_numpy())
+    by_load.groupby("load")[["blink_rate", "invalid_frac"]].median().to_csv(
+        results / f"review_checks_medians_{PINA_MAIN_AREA}.csv")
+    return out
+
+
 README = """# Pina et al. 2025 results
 
 Written by `src/run_pina.py`; plan: `docs/pina-analysis-plan.md` (written before the eye data were
@@ -311,6 +364,8 @@ were decided after the main results and are never the main result.
 | `sensitivity_*_90_keep_events.csv` | Same run keeping the event features that failed the check |
 | `metric_ci_<area>.csv` | Accuracy, precision, recall, F1, Brier, ROC-AUC with participant-bootstrap 95% CIs |
 | `metric_differences_<area>.csv` | The same metrics as paired differences: model minus baseline, XGBoost minus LR |
+| `review_checks_90.csv` | Post-hoc: models without blink rate, tracking-quality baseline, results by condition order |
+| `review_checks_medians_90.csv` | Median blink rate and invalid-sample share per load |
 """
 
 
@@ -322,7 +377,8 @@ def main(data_dir=None, out_dir=None, n_iter=N_ITER, n_boot=N_BOOTSTRAP, n_perm=
     info_path = results / "run_info.json"
     info = json.loads(info_path.read_text(encoding="utf-8")) if info_path.exists() else {}
     info.update({"data_dir": str(data_dir), "n_iter": n_iter, "n_boot": n_boot, "n_perm": n_perm,
-                 "plan": "docs/pina-analysis-plan.md", "git_commit": _git_commit(), "versions": _versions()})
+                 "plan": "docs/pina-analysis-plan.md", "drop_blink": PINA_DROP_BLINK, "git_commit": _git_commit(),
+                 "versions": _versions()})
     info.setdefault("stages", {})
     table = pd.read_csv(out_dir / "features" / "features.csv") if "extract" not in stages else None
     out = {}
@@ -340,6 +396,8 @@ def main(data_dir=None, out_dir=None, n_iter=N_ITER, n_boot=N_BOOTSTRAP, n_perm=
             out["sensitivity"] = stage_sensitivity(table, results, n_iter, n_boot)
         elif stage == "metric_ci":
             out["metric_ci"] = stage_metric_ci(results, n_boot)
+        elif stage == "review_checks":
+            out["review_checks"] = stage_review_checks(table, data_dir, results, n_iter, n_boot)
         else:
             raise ValueError(f"unknown stage {stage!r}; choose from {STAGES}")
         info["stages"][stage] = {"date": datetime.now().isoformat(timespec="seconds"),

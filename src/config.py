@@ -23,6 +23,14 @@ WORK_DIR = Path(os.environ.get("COLET_WORK_DIR", PROJECT_ROOT / "outputs" / "wor
 # outputs of run_pina.py. Plan: docs/pina-analysis-plan.md (written before the eye data were loaded).
 PINA_DATA_DIR = Path(os.environ.get("PINA_DATA_DIR", PROJECT_ROOT / "data" / "pina"))
 PINA_DIR = Path(os.environ.get("PINA_OUT_DIR", PROJECT_ROOT / "outputs" / "pina"))
+# Post-hoc (reviewer follow-up), never the main result: when "1", fixations, saccades and gaze
+# speed are detected on gaze rotated by the headset's rotation (gaze in the room, not the head).
+# Gaze angle features stay head-relative. Use a separate PINA_OUT_DIR for these runs.
+PINA_WORLD_GAZE = os.environ.get("PINA_WORLD_GAZE", "0") == "1"
+# v5-1 main analysis: blink rate is excluded because the headset's "both eyes invalid" runs do not
+# measure blinks (median 0-2 per minute against ~15 at rest) and track the share of invalid samples.
+# Decided after the pre-set results (outputs/pina, blink kept). Use PINA_OUT_DIR=outputs/pina-noblink.
+PINA_DROP_BLINK = os.environ.get("PINA_DROP_BLINK", "0") == "1"
 
 # --------------------------------------------------------------------------- Pina design
 PINA_CONDITIONS = {0: ("90", "low"), 1: ("90", "high"), 2: ("360", "low"), 3: ("360", "high")}
